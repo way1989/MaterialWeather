@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+       xmlns:app="http://schemas.android.com/apk/res-auto"
+       xmlns:tools="http://schemas.android.com/tools"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       tools:context="com.ape.material.weather.main.MainActivity">
+
+    <com.ape.material.weather.dynamicweather.DynamicWeatherView
+        android:id="@+id/dynamic_weather_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <com.ape.material.weather.widget.MxxViewPager
+        android:id="@+id/main_view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.ape.material.weather.widget.MxxPagerTitleStrip
+            android:id="@+id/pager_title_strip"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/w_titlebar_size"
+            android:layout_gravity="top"
+            android:gravity="center_vertical"
+            android:textColor="@android:color/white"
+            android:textSize="18dp"
+            app:pts_background="#55ffffff"
+            app:pts_gravity="center"
+            app:pts_margin="6dp"
+            app:pts_radius="2dp"
+            app:pts_selected_background="@android:color/white"/>
+    </com.ape.material.weather.widget.MxxViewPager>
+
+</merge>

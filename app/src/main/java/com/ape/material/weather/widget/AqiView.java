@@ -11,8 +11,7 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import com.ape.material.weather.App;
-import com.ape.material.weather.bean.entity.Aqi;
-import com.ape.material.weather.bean.entity.City;
+import com.ape.material.weather.bean.HeWeather;
 
 
 /**
@@ -21,15 +20,13 @@ import com.ape.material.weather.bean.entity.City;
  * @author Mixiaoxiao
  */
 public class AqiView extends View {
-    private final float density;
     // private float lineSize;//每一行高度
     private TextPaint textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     private RectF rectF = new RectF();
-    private City aqiCity;
+    private HeWeather.HeWeather5Bean.AqiBean.CityBean aqiCity;
 
     public AqiView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        density = context.getResources().getDisplayMetrics().density;
         textPaint.setTextAlign(Align.CENTER);
         if (isInEditMode()) {
             return;
@@ -56,7 +53,7 @@ public class AqiView extends View {
         }
         float currAqiPercent = -1f;
         try {
-            currAqiPercent = Float.valueOf(aqiCity.aqi) / 500f;// 污染%
+            currAqiPercent = Float.valueOf(aqiCity.getAqi()) / 500f;// 污染%
             currAqiPercent = Math.min(currAqiPercent, 1f);
         } catch (Exception e) {
             e.printStackTrace();
@@ -88,14 +85,16 @@ public class AqiView extends View {
             textPaint.setTextSize(lineSize * 1.5f);
             textPaint.setColor(0xffffffff);
             try {
-                canvas.drawText(aqiCity.aqi + "", 0, lineSize * 3, textPaint);
+                canvas.drawText(aqiCity.getAqi() + "", 0, lineSize * 3, textPaint);
             } catch (Exception e) {
+                e.printStackTrace();
             }
             textPaint.setTextSize(lineSize * 1f);
             textPaint.setColor(0x88ffffff);
             try {
-                canvas.drawText(aqiCity.qlty + "", 0, lineSize * 4.25f, textPaint);
+                canvas.drawText(aqiCity.getQlty() + "", 0, lineSize * 4.25f, textPaint);
             } catch (Exception e) {
+                e.printStackTrace();
             }
 
             // draw the aqi line
@@ -108,9 +107,9 @@ public class AqiView extends View {
         canvas.restoreToCount(saveCount);
     }
 
-    public void setData(Aqi aqi) {
-        if (aqi != null && aqi.city != null) {
-            this.aqiCity = aqi.city;
+    public void setData(HeWeather.HeWeather5Bean.AqiBean aqi) {
+        if (aqi != null && aqi.getCity() != null) {
+            this.aqiCity = aqi.getCity();
             invalidate();
         }
     }

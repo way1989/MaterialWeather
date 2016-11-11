@@ -14,11 +14,10 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import com.ape.material.weather.App;
-import com.ape.material.weather.bean.entity.HourlyForecast;
-import com.ape.material.weather.bean.entity.Weather;
+import com.ape.material.weather.bean.HeWeather;
 import com.ape.material.weather.util.FormatUtil;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 一天24h预报
@@ -31,11 +30,10 @@ public class HourlyForecastView extends View {
 
     // private float percent = 0f;;
     private final float density;
-    private final int full_data_count = 9;//理论上有8个数据（从1：00到22:00每隔3小时共8个数据）(添加第一列显示行的名称)，但是api只会返回现在的时间之后的
     private final DashPathEffect dashPathEffect;
     private final TextPaint paint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     private int width, height;
-    private ArrayList<HourlyForecast> forecastList;
+    private List<HeWeather.HeWeather5Bean.HourlyForecastBean> forecastList;
     private Path tmpPath = new Path();
     private Path goneTmpPath = new Path();
     private Data[] datas;
@@ -47,7 +45,7 @@ public class HourlyForecastView extends View {
         if (isInEditMode()) {
             return;
         }
-        init(context);
+        init();
     }
 
     public static float getTextPaintOffset(Paint paint) {
@@ -55,7 +53,7 @@ public class HourlyForecastView extends View {
         return -(fontMetrics.bottom - fontMetrics.top) / 2f - fontMetrics.top;
     }
 
-    private void init(Context context) {
+    private void init() {
         paint.setColor(Color.WHITE);
         paint.setStrokeWidth(1f * density);
         paint.setTextSize(12f * density);
@@ -86,6 +84,7 @@ public class HourlyForecastView extends View {
             canvas.drawLine(0, dCenterY, this.width, dCenterY, paint);// 没有数据的情况下只画一条线
             return;
         }
+        int full_data_count = 9;
         final float dW = this.width * 1f / full_data_count;//datas.length;
 
         tmpPath.reset();
@@ -162,26 +161,26 @@ public class HourlyForecastView extends View {
 
     }
 
-    public void setData(Weather weather) {
+    public void setData(HeWeather weather) {
         if (weather == null || !weather.isOK()) {
             return;
         }
 
-        if (this.forecastList == weather.get().hourlyForecast) {
+        if (this.forecastList == weather.get().getHourly_forecast()) {
 //			percent = 0f;
             invalidate();
             return;
         }
         try {
-            final ArrayList<HourlyForecast> w_hourlyForecast = weather.get().hourlyForecast;
+            final List<HeWeather.HeWeather5Bean.HourlyForecastBean> w_hourlyForecast = weather.get().getHourly_forecast();
             if (w_hourlyForecast.size() == 0) {// 有可能为空
                 return;
             }
-            if (!FormatUtil.isToday(w_hourlyForecast.get(0).date)) {// 不是今天的数据
+            if (!FormatUtil.isToday(w_hourlyForecast.get(0).getDate())) {// 不是今天的数据
                 return;
             }
             this.forecastList = w_hourlyForecast;
-            if (forecastList == null && forecastList.size() == 0) {
+            if (forecastList.size() == 0) {
                 return;
             }
             // this.points = new PointF[forecastList.size()];
@@ -189,8 +188,8 @@ public class HourlyForecastView extends View {
             int all_max = Integer.MIN_VALUE;
             int all_min = Integer.MAX_VALUE;
             for (int i = 0; i < forecastList.size(); i++) {
-                HourlyForecast forecast = forecastList.get(i);
-                int tmp = Integer.valueOf(forecast.tmp);
+                HeWeather.HeWeather5Bean.HourlyForecastBean forecast = forecastList.get(i);
+                int tmp = Integer.valueOf(forecast.getTmp());
                 if (all_max < tmp) {
                     all_max = tmp;
                 }
@@ -199,9 +198,9 @@ public class HourlyForecastView extends View {
                 }
                 final Data data = new Data();
                 data.tmp = tmp;
-                data.date = forecast.date;
-                data.wind_sc = forecast.wind.sc;
-                data.pop = forecast.pop;
+                data.date = forecast.getDate();
+                data.wind_sc = forecast.getWind().getSc();
+                data.pop = forecast.getPop();
                 datas[i] = data;
             }
             float all_distance = Math.abs(all_max - all_min);
@@ -226,17 +225,17 @@ public class HourlyForecastView extends View {
     }
 
     public class Data {
-        public float offsetPercent;// , maxOffsetPercent;// 差值%
-        public int tmp;// , tmp_min;
+        float offsetPercent;// , maxOffsetPercent;// 差值%
+        int tmp;// , tmp_min;
         /**
          * 2015-11-05 04:00
          **/
-        public String date;
-        public String wind_sc;
+        String date;
+        String wind_sc;
         /**
          * 降水概率
          **/
-        public String pop;
+        String pop;
     }
 
 }

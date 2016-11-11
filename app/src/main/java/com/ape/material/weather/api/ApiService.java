@@ -1,7 +1,7 @@
 package com.ape.material.weather.api;
 
-import com.ape.material.weather.bean.GsonCity;
-import com.ape.material.weather.bean.entity.Weather;
+import com.ape.material.weather.bean.HeCity;
+import com.ape.material.weather.bean.HeWeather;
 
 import retrofit2.http.GET;
 import retrofit2.http.Query;
@@ -19,8 +19,8 @@ public interface ApiService {
      * @return 多语言，默认为中文，可选参数
      */
     @GET("weather?")
-    Observable<Weather> getWeather(@Query("key") String key, @Query("city") String city,
-                                   @Query("lang") String lang);
+    Observable<HeWeather> getWeather(@Query("key") String key, @Query("city") String city,
+                                     @Query("lang") String lang);
 
     /**
      * @param key  用户认证key
@@ -28,5 +28,5 @@ public interface ApiService {
      * @return
      */
     @GET("search?")
-    Observable<GsonCity> searchCity(@Query("key") String key, @Query("city") String city);
+    Observable<HeCity> searchCity(@Query("key") String key, @Query("city") String city);
 }

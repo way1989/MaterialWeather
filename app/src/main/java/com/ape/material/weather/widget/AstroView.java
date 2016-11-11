@@ -16,9 +16,7 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import com.ape.material.weather.App;
-import com.ape.material.weather.bean.entity.DailyForecast;
-import com.ape.material.weather.bean.entity.Now;
-import com.ape.material.weather.bean.entity.Weather;
+import com.ape.material.weather.bean.HeWeather;
 import com.ape.material.weather.util.UiUtil;
 
 import java.util.Calendar;
@@ -34,7 +32,7 @@ public class AstroView extends View {
     private final float density;
     private final DashPathEffect dashPathEffect;
     private final TextPaint paint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-    private int width, height;
+    private int width;
     private Path sunPath = new Path();
     private RectF sunRectF = new RectF();
     private Path fanPath = new Path();// 旋转的风扇的扇叶
@@ -42,8 +40,8 @@ public class AstroView extends View {
     private float fanPillerHeight;
     private float paintTextOffset;
     private float curRotate;// 旋转的风扇的角度
-    private DailyForecast todayForecast;
-    private Now now;
+    private HeWeather.HeWeather5Bean.DailyForecastBean todayForecast;
+    private HeWeather.HeWeather5Bean.NowBean now;
     //	private PorterDuffXfermode clearfXfermode = new PorterDuffXfermode(Mode.CLEAR);
     private float sunArcHeight, sunArcRadius;
 
@@ -64,11 +62,11 @@ public class AstroView extends View {
         paint.setTypeface(App.getTypeface());
     }
 
-    public void setData(Weather weather) {
+    public void setData(HeWeather weather) {
         try {
             if (weather != null && weather.isOK()) {
-                this.now = weather.get().now;
-                final DailyForecast forecast = weather.getTodayDailyForecast();
+                this.now = weather.get().getNow();
+                final HeWeather.HeWeather5Bean.DailyForecastBean forecast = weather.getTodayDailyForecast();
                 if (forecast != null) {
                     todayForecast = forecast;
                 }
@@ -106,14 +104,14 @@ public class AstroView extends View {
             paint.setTextAlign(Align.LEFT);
             final float fanHeight = textSize * 2f;
             canvas.drawText("风速", fanHeight + textSize, -textSize, paint);
-            canvas.drawText(now.wind.spd + "km/h " + now.wind.dir, fanHeight + textSize, 0, paint);
+            canvas.drawText(now.getWind().getSpd() + "km/h " + now.getWind().getDir(), fanHeight + textSize, 0, paint);
             // draw fan and fanPillar
             paint.setStyle(Style.STROKE);
             canvas.drawPath(fanPillarPath, paint);
             canvas.rotate(curRotate * 360f);
             float speed = 0f;
             try {
-                speed = Float.valueOf(now.wind.spd);
+                speed = Float.valueOf(now.getWind().getSpd());
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -141,22 +139,22 @@ public class AstroView extends View {
             paint.setStyle(Style.FILL);
             paint.setTextAlign(Align.RIGHT);
             final float pressureTextRight = width / 2f + sunArcRadius - textSize * 2.5f;
-            canvas.drawText("气压 " + now.pres + "hpa", pressureTextRight, sunArcHeight + paintTextOffset, paint);
+            canvas.drawText("气压 " + now.getPres() + "hpa", pressureTextRight, sunArcHeight + paintTextOffset, paint);
             // draw astor info
             final float textLeft = width / 2f - sunArcRadius;// sunArcSize;
             paint.setTextAlign(Align.CENTER);
-            canvas.drawText("日出 " + todayForecast.astro.sr, textLeft, textSize * 10.5f + paintTextOffset, paint);
-            canvas.drawText(todayForecast.astro.ss + " 日落", width - textLeft, textSize * 10.5f + paintTextOffset, paint);
+            canvas.drawText("日出 " + todayForecast.getAstro().getSr(), textLeft, textSize * 10.5f + paintTextOffset, paint);
+            canvas.drawText(todayForecast.getAstro().getSs() + " 日落", width - textLeft, textSize * 10.5f + paintTextOffset, paint);
         } catch (Exception e1) {
             e1.printStackTrace();
         }
 
         try {
             // draw the sun
-            String[] sr = todayForecast.astro.sr.split(":");// 日出
-            int srTime = Integer.valueOf(sr[0]) * 60 * 60 + Integer.valueOf(sr[1]) * 60 + 0;// 精确到秒
-            String[] ss = todayForecast.astro.ss.split(":");// 日落
-            int ssTime = Integer.valueOf(ss[0]) * 60 * 60 + Integer.valueOf(ss[1]) * 60 + 0;
+            String[] sr = todayForecast.getAstro().getSr().split(":");// 日出
+            int srTime = Integer.valueOf(sr[0]) * 60 * 60 + Integer.valueOf(sr[1]) * 60;// 精确到秒
+            String[] ss = todayForecast.getAstro().getSs().split(":");// 日落
+            int ssTime = Integer.valueOf(ss[0]) * 60 * 60 + Integer.valueOf(ss[1]) * 60;
             Calendar c = Calendar.getInstance();
             int curTime = c.get(Calendar.HOUR_OF_DAY) * 60 * 60 + c.get(Calendar.MINUTE) * 60 + c.get(Calendar.MINUTE);
             if (curTime >= srTime && curTime <= ssTime) {// 说明是在白天，需要画太阳
@@ -215,10 +213,9 @@ public class AstroView extends View {
         // 间距1 图8.5行 间距0.5 字1行 间距1 = 12;
         // 9.5 10 11 12
         this.width = w;
-        this.height = h;
 
         try {
-            final float textSize = height / 12f;
+            final float textSize = h / 12f;
             paint.setTextSize(textSize);
             paintTextOffset = UiUtil.getTextPaintOffset(paint);
 

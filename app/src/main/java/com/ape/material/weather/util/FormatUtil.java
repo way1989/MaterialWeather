@@ -3,8 +3,7 @@ package com.ape.material.weather.util;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.ape.material.weather.bean.entity.DailyForecast;
-import com.ape.material.weather.bean.entity.Weather;
+import com.ape.material.weather.bean.HeWeather;
 import com.ape.material.weather.dynamicweather.BaseDrawer;
 
 import java.text.ParseException;
@@ -422,13 +421,13 @@ public class FormatUtil {
      * @param weather
      * @return
      */
-    public static BaseDrawer.Type convertWeatherType(Weather weather) {
+    public static BaseDrawer.Type convertWeatherType(HeWeather weather) {
         if (weather == null || !weather.isOK()) {
             return BaseDrawer.Type.DEFAULT;
         }
         final boolean isNight = isNight(weather);
         try {
-            final int w = Integer.valueOf(weather.get().now.cond.code);
+            final int w = Integer.valueOf(weather.get().getNow().getCond().getCode());
             switch (w) {
                 case 100:
                     return isNight ? BaseDrawer.Type.CLEAR_N : BaseDrawer.Type.CLEAR_D;
@@ -499,7 +498,7 @@ public class FormatUtil {
         return isNight ? BaseDrawer.Type.UNKNOWN_N : BaseDrawer.Type.UNKNOWN_D;
     }
 
-    public static boolean isNight(Weather weather) {
+    public static boolean isNight(HeWeather weather) {
         if (weather == null || !weather.isOK()) {
             return false;
         }
@@ -508,17 +507,17 @@ public class FormatUtil {
             final Date date = new Date();
             String todaydate = (new SimpleDateFormat("yyyy-MM-dd")).format(date);
             String todaydate1 = (new SimpleDateFormat("yyyy-M-d")).format(date);
-            DailyForecast todayForecast = null;
-            for (DailyForecast forecast : weather.get().dailyForecast) {
-                if (TextUtils.equals(todaydate, forecast.date) || TextUtils.equals(todaydate1, forecast.date)) {
+            HeWeather.HeWeather5Bean.DailyForecastBean todayForecast = null;
+            for (HeWeather.HeWeather5Bean.DailyForecastBean forecast : weather.get().getDaily_forecast()) {
+                if (TextUtils.equals(todaydate, forecast.getDate()) || TextUtils.equals(todaydate1, forecast.getDate())) {
                     todayForecast = forecast;
                     break;
                 }
             }
             if (todayForecast != null) {
                 final int curTime = Integer.valueOf((new SimpleDateFormat("HHmm").format(date)));
-                final int srTime = Integer.valueOf(todayForecast.astro.sr.replaceAll(":", ""));// 日出
-                final int ssTime = Integer.valueOf(todayForecast.astro.ss.replaceAll(":", ""));// 日落
+                final int srTime = Integer.valueOf(todayForecast.getAstro().getSr().replaceAll(":", ""));// 日出
+                final int ssTime = Integer.valueOf(todayForecast.getAstro().getSs().replaceAll(":", ""));// 日落
                 if (curTime > srTime && curTime <= ssTime) {// 是白天
                     return false;
                 } else {

@@ -6,7 +6,7 @@ import java.util.List;
  * Created by android on 16-11-10.
  */
 
-public class GsonCity {
+public class HeCity {
 
 
     /**

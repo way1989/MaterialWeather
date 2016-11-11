@@ -5,7 +5,7 @@ import android.util.Log;
 import com.ape.material.weather.App;
 import com.ape.material.weather.BuildConfig;
 import com.ape.material.weather.api.Api;
-import com.ape.material.weather.bean.entity.Weather;
+import com.ape.material.weather.bean.HeWeather;
 import com.ape.material.weather.util.DeviceUtil;
 import com.ape.material.weather.util.DiskLruCacheUtil;
 import com.ape.material.weather.util.PreferenceUtil;
@@ -30,31 +30,31 @@ public class WeatherModel implements WeatherContract.Model {
     private static final long OTHER_CACHE_TIME = 60 * 60 * 1000;
 
     @Override
-    public Observable<Weather> getWeather(String city, String lang, boolean force) {
-        Observable<Weather> disk = getLocalWeather(city, force);
-        Observable<Weather> network = getRemoteWeather(city, lang);
-        return Observable.concat(disk, network).filter(new Func1<Weather, Boolean>() {
+    public Observable<HeWeather> getWeather(String city, String lang, boolean force) {
+        Observable<HeWeather> disk = getLocalWeather(city, force);
+        Observable<HeWeather> network = getRemoteWeather(city, lang);
+        return Observable.concat(disk, network).filter(new Func1<HeWeather, Boolean>() {
             @Override
-            public Boolean call(Weather weather) {
+            public Boolean call(HeWeather weather) {
                 return weather != null && weather.isOK();
             }
-        }).first().compose(RxSchedulers.<Weather>io_main());
+        }).first().compose(RxSchedulers.<HeWeather>io_main());
     }
 
-    private Observable<Weather> getLocalWeather(final String city, final boolean force) {
-        return Observable.create(new Observable.OnSubscribe<Weather>() {
+    private Observable<HeWeather> getLocalWeather(final String city, final boolean force) {
+        return Observable.create(new Observable.OnSubscribe<HeWeather>() {
 
             @Override
-            public void call(Subscriber<? super Weather> subscriber) {
-                Weather weather = (Weather) DiskLruCacheUtil.getInstance(App.getContext())
+            public void call(Subscriber<? super HeWeather> subscriber) {
+                HeWeather weather = (HeWeather) DiskLruCacheUtil.getInstance(App.getContext())
                         .readObject(city);
                 if (weather != null && weather.isOK())
                     subscriber.onNext(weather);
                 subscriber.onCompleted();
             }
-        }).filter(new Func1<Weather, Boolean>() {
+        }).filter(new Func1<HeWeather, Boolean>() {
             @Override
-            public Boolean call(Weather weather) {
+            public Boolean call(HeWeather weather) {
                 if (!hasInternet()) return true;//如果没有网，直接使用缓存
                 if (force) return false;//如果强制刷新数据
                 //判断是否缓存超时
@@ -78,16 +78,16 @@ public class WeatherModel implements WeatherContract.Model {
         return failure;
     }
 
-    private Observable<Weather> getRemoteWeather(final String city, String lang) {
+    private Observable<HeWeather> getRemoteWeather(final String city, String lang) {
         return Api.getInstance().getWeather(BuildConfig.HEWEATHER_KEY, city, lang)
-                .filter(new Func1<Weather, Boolean>() {
+                .filter(new Func1<HeWeather, Boolean>() {
                     @Override
-                    public Boolean call(Weather weather) {
+                    public Boolean call(HeWeather weather) {
                         return weather != null && weather.isOK();
                     }
-                }).map(new Func1<Weather, Weather>() {
+                }).map(new Func1<HeWeather, HeWeather>() {
                     @Override
-                    public Weather call(Weather weather) {
+                    public HeWeather call(HeWeather weather) {
                         DiskLruCacheUtil.getInstance(App.getContext()).saveObject(city, weather);
                         PreferenceUtil.getInstance(App.getContext()).setCacheTime(city, System.currentTimeMillis());
                         return weather;

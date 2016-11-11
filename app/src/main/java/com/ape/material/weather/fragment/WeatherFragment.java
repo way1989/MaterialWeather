@@ -11,8 +11,7 @@ import android.widget.Toast;
 import com.ape.material.weather.R;
 import com.ape.material.weather.base.BaseFragment;
 import com.ape.material.weather.bean.City;
-import com.ape.material.weather.bean.entity.HeWeather5;
-import com.ape.material.weather.bean.entity.Weather;
+import com.ape.material.weather.bean.HeWeather;
 import com.ape.material.weather.dynamicweather.BaseDrawer;
 import com.ape.material.weather.util.FormatUtil;
 import com.ape.material.weather.widget.AqiView;
@@ -91,7 +90,7 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter, WeatherModel
     }
 
     @Override
-    public void onWeatherChange(Weather weather) {
+    public void onWeatherChange(HeWeather weather) {
         updateWeatherUI(weather);
     }
 
@@ -138,7 +137,7 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter, WeatherModel
         getWeather(true);
     }
 
-    private void updateWeatherUI(Weather weather) {
+    private void updateWeatherUI(HeWeather weather) {
         mWPullRefreshLayout.setRefreshing(false);
         if (weather == null || !weather.isOK()) {
             return;
@@ -147,12 +146,12 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter, WeatherModel
             mWeatherType = FormatUtil.convertWeatherType(weather);
             mListener.onDrawerTypeChange(mWeatherType);
 
-            HeWeather5 w = weather.get();
+            HeWeather.HeWeather5Bean w = weather.get();
             mWDailyForecastView.setData(weather);
             mWHourlyForecastView.setData(weather);
-            mWAqiView.setData(w.aqi);
+            mWAqiView.setData(w.getAqi());
             mWAstroView.setData(weather);
-            final String tmp = w.now.tmp;
+            final String tmp = w.getNow().getTmp();
             try {
                 final int tmp_int = Integer.valueOf(tmp);
                 if (tmp_int < 0) {
@@ -168,48 +167,48 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter, WeatherModel
                 rootView.findViewById(R.id.w_now_tmp_minus).setVisibility(View.GONE);
             }
 
-            setTextViewString(R.id.w_now_cond_text, w.now.cond.txt);
+            setTextViewString(R.id.w_now_cond_text, w.getNow().getCond().getTxt());
 
-            if (FormatUtil.isToday(w.basic.update.loc)) {
-                setTextViewString(R.id.w_basic_update_loc, w.basic.update.loc.substring(11) + " 发布");
+            if (FormatUtil.isToday(w.getBasic().getUpdate().getLoc())) {
+                setTextViewString(R.id.w_basic_update_loc, w.getBasic().getUpdate().getLoc().substring(11) + " 发布");
             } else {
-                setTextViewString(R.id.w_basic_update_loc, w.basic.update.loc.substring(5) + " 发布");
+                setTextViewString(R.id.w_basic_update_loc, w.getBasic().getUpdate().getLoc().substring(5) + " 发布");
             }
 
-            setTextViewString(R.id.w_todaydetail_bottomline, w.now.cond.txt + "  " + weather.getTodayTempDescription());
-            setTextViewString(R.id.w_todaydetail_temp, w.now.tmp + "°");
+            setTextViewString(R.id.w_todaydetail_bottomline, w.getNow().getCond().getTxt() + "  " + weather.getTodayTempDescription());
+            setTextViewString(R.id.w_todaydetail_temp, w.getNow().getTmp() + "°");
 
-            setTextViewString(R.id.w_now_fl, w.now.fl + "°");
-            setTextViewString(R.id.w_now_hum, w.now.hum + "%");// 湿度
-            setTextViewString(R.id.w_now_vis, w.now.vis + "km");// 能见度
+            setTextViewString(R.id.w_now_fl, w.getNow().getFl() + "°");
+            setTextViewString(R.id.w_now_hum, w.getNow().getHum() + "%");// 湿度
+            setTextViewString(R.id.w_now_vis, w.getNow().getVis() + "km");// 能见度
 
-            setTextViewString(R.id.w_now_pcpn, w.now.pcpn + "mm"); // 降雨量
+            setTextViewString(R.id.w_now_pcpn, w.getNow().getPcpn() + "mm"); // 降雨量
 
             if (weather.hasAqi()) {
-                setTextViewString(R.id.w_aqi_text, w.aqi.city.qlty);
-                setTextViewString(R.id.w_aqi_detail_text, w.aqi.city.qlty);
-                setTextViewString(R.id.w_aqi_pm25, w.aqi.city.pm25 + "μg/m³");
-                setTextViewString(R.id.w_aqi_pm10, w.aqi.city.pm10 + "μg/m³");
-                setTextViewString(R.id.w_aqi_so2, w.aqi.city.so2 + "μg/m³");
-                setTextViewString(R.id.w_aqi_no2, w.aqi.city.no2 + "μg/m³");
+                setTextViewString(R.id.w_aqi_text, w.getAqi().getCity().getQlty());
+                setTextViewString(R.id.w_aqi_detail_text, w.getAqi().getCity().getQlty());
+                setTextViewString(R.id.w_aqi_pm25, w.getAqi().getCity().getPm25() + "μg/m³");
+                setTextViewString(R.id.w_aqi_pm10, w.getAqi().getCity().getPm10() + "μg/m³");
+                setTextViewString(R.id.w_aqi_so2, w.getAqi().getCity().getSo2() + "μg/m³");
+                setTextViewString(R.id.w_aqi_no2, w.getAqi().getCity().getNo2() + "μg/m³");
             } else {
                 setTextViewString(R.id.w_aqi_text, "");
             }
-            if (w.suggestion != null) {
-                setTextViewString(R.id.w_suggestion_comf, w.suggestion.comf.txt);
-                setTextViewString(R.id.w_suggestion_cw, w.suggestion.cw.txt);
-                setTextViewString(R.id.w_suggestion_drsg, w.suggestion.drsg.txt);
-                setTextViewString(R.id.w_suggestion_flu, w.suggestion.flu.txt);
-                setTextViewString(R.id.w_suggestion_sport, w.suggestion.sport.txt);
-                setTextViewString(R.id.w_suggestion_tarv, w.suggestion.trav.txt);
-                setTextViewString(R.id.w_suggestion_uv, w.suggestion.uv.txt);
-                setTextViewString(R.id.w_suggestion_comf_brf, w.suggestion.comf.brf);
-                setTextViewString(R.id.w_suggestion_cw_brf, w.suggestion.cw.brf);
-                setTextViewString(R.id.w_suggestion_drsg_brf, w.suggestion.drsg.brf);
-                setTextViewString(R.id.w_suggestion_flu_brf, w.suggestion.flu.brf);
-                setTextViewString(R.id.w_suggestion_sport_brf, w.suggestion.sport.brf);
-                setTextViewString(R.id.w_suggestion_tarv_brf, w.suggestion.trav.brf);
-                setTextViewString(R.id.w_suggestion_uv_brf, w.suggestion.uv.brf);
+            if (w.getSuggestion() != null) {
+                setTextViewString(R.id.w_suggestion_comf, w.getSuggestion().getComf().getTxt());
+                setTextViewString(R.id.w_suggestion_cw, w.getSuggestion().getCw().getTxt());
+                setTextViewString(R.id.w_suggestion_drsg, w.getSuggestion().getDrsg().getTxt());
+                setTextViewString(R.id.w_suggestion_flu, w.getSuggestion().getFlu().getTxt());
+                setTextViewString(R.id.w_suggestion_sport, w.getSuggestion().getSport().getTxt());
+                setTextViewString(R.id.w_suggestion_tarv, w.getSuggestion().getTrav().getTxt());
+                setTextViewString(R.id.w_suggestion_uv, w.getSuggestion().getUv().getTxt());
+                setTextViewString(R.id.w_suggestion_comf_brf, w.getSuggestion().getComf().getBrf());
+                setTextViewString(R.id.w_suggestion_cw_brf, w.getSuggestion().getCw().getBrf());
+                setTextViewString(R.id.w_suggestion_drsg_brf, w.getSuggestion().getDrsg().getBrf());
+                setTextViewString(R.id.w_suggestion_flu_brf, w.getSuggestion().getFlu().getBrf());
+                setTextViewString(R.id.w_suggestion_sport_brf, w.getSuggestion().getSport().getBrf());
+                setTextViewString(R.id.w_suggestion_tarv_brf, w.getSuggestion().getTrav().getBrf());
+                setTextViewString(R.id.w_suggestion_uv_brf, w.getSuggestion().getUv().getBrf());
             }
         } catch (Exception e) {
             e.printStackTrace();

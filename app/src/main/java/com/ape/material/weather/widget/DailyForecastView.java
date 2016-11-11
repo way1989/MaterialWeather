@@ -14,11 +14,10 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import com.ape.material.weather.App;
-import com.ape.material.weather.bean.entity.DailyForecast;
-import com.ape.material.weather.bean.entity.Weather;
+import com.ape.material.weather.bean.HeWeather;
 import com.ape.material.weather.util.FormatUtil;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 一周天气预报
@@ -34,7 +33,7 @@ public class DailyForecastView extends View {
     ;
     private int width, height;
     private float percent = 0f;
-    private ArrayList<DailyForecast> forecastList;
+    private List<HeWeather.HeWeather5Bean.DailyForecastBean> forecastList;
     private Path tmpMaxPath = new Path();
     private Path tmpMinPath = new Path();
     //	private final float textSize;
@@ -177,17 +176,17 @@ public class DailyForecastView extends View {
     }
     //private Rect rect = new Rect();
 
-    public void setData(Weather weather) {
+    public void setData(HeWeather weather) {
         if (weather == null || !weather.isOK()) {
             return;
         }
 
-        if (this.forecastList == weather.get().dailyForecast) {
+        if (this.forecastList == weather.get().getDaily_forecast()) {
             percent = 0f;
             invalidate();
             return;
         }
-        this.forecastList = weather.get().dailyForecast;
+        this.forecastList = weather.get().getDaily_forecast();
         if (forecastList == null && forecastList.size() == 0) {
             return;
         }
@@ -197,9 +196,9 @@ public class DailyForecastView extends View {
             int all_max = Integer.MIN_VALUE;
             int all_min = Integer.MAX_VALUE;
             for (int i = 0; i < forecastList.size(); i++) {
-                DailyForecast forecast = forecastList.get(i);
-                int max = Integer.valueOf(forecast.tmp.max);
-                int min = Integer.valueOf(forecast.tmp.min);
+                HeWeather.HeWeather5Bean.DailyForecastBean forecast = forecastList.get(i);
+                int max = Integer.valueOf(forecast.getTmp().getMax());
+                int min = Integer.valueOf(forecast.getTmp().getMin());
                 if (all_max < max) {
                     all_max = max;
                 }
@@ -209,9 +208,9 @@ public class DailyForecastView extends View {
                 final Data data = new Data();
                 data.tmp_max = max;
                 data.tmp_min = min;
-                data.date = forecast.date;
-                data.wind_sc = forecast.wind.sc;
-                data.cond_txt_d = forecast.cond.txtD;
+                data.date = forecast.getDate();
+                data.wind_sc = forecast.getWind().getSc();
+                data.cond_txt_d = forecast.getCond().getTxt_d();
                 datas[i] = data;
             }
             float all_distance = Math.abs(all_max - all_min);

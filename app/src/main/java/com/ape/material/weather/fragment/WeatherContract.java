@@ -3,7 +3,7 @@ package com.ape.material.weather.fragment;
 import com.ape.material.weather.base.BaseModel;
 import com.ape.material.weather.base.BasePresenter;
 import com.ape.material.weather.base.BaseView;
-import com.ape.material.weather.bean.entity.Weather;
+import com.ape.material.weather.bean.HeWeather;
 
 import rx.Observable;
 
@@ -14,14 +14,14 @@ import rx.Observable;
 public class WeatherContract {
     interface View extends BaseView {
         //返回获取的天气
-        void onWeatherChange(Weather weather);
+        void onWeatherChange(HeWeather weather);
 
         void showErrorTip(String msg);
     }
 
     interface Model extends BaseModel {
         //请求获取天气
-        Observable<Weather> getWeather(String city, String lang, boolean force);
+        Observable<HeWeather> getWeather(String city, String lang, boolean force);
     }
 
     abstract static class Presenter extends BasePresenter<WeatherContract.View, WeatherContract.Model> {

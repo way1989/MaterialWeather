@@ -1,6 +1,5 @@
 package com.ape.material.weather.widget;
 
-import android.animation.Animator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -14,7 +13,6 @@ import android.view.View;
 import com.ape.material.weather.App;
 import com.ape.material.weather.bean.entity.Aqi;
 import com.ape.material.weather.bean.entity.City;
-import com.ape.material.weather.main.MainActivity;
 
 
 /**

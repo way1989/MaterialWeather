@@ -15,16 +15,17 @@ public class WeatherContract {
     interface View extends BaseView {
         //返回获取的天气
         void onWeatherChange(Weather weather);
+
         void showErrorTip(String msg);
     }
 
     interface Model extends BaseModel {
         //请求获取天气
-        Observable<Weather> getWeather(String city, String lang);
+        Observable<Weather> getWeather(String city, String lang, boolean force);
     }
 
     abstract static class Presenter extends BasePresenter<WeatherContract.View, WeatherContract.Model> {
         //发起获取天气
-        public abstract void getWeather(String city, String lang);
+        public abstract void getWeather(String city, String lang, boolean force);
     }
 }

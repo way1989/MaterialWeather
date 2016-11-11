@@ -35,19 +35,15 @@ public abstract class BaseFragment<T extends BasePresenter, E extends BaseModel>
 
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if(isVisibleToUser)
-        prepareFetchData();
+        if (isVisibleToUser)
+            prepareFetchData();
     }
 
-    public abstract void fetchData();
+    public abstract void loadDataFirstTime();
 
-    public boolean prepareFetchData() {
-        return prepareFetchData(false);
-    }
-
-    public boolean prepareFetchData(boolean forceUpdate) {
-        if (getUserVisibleHint() && isViewInitiated && (!isDataInitiated || forceUpdate)) {
-            fetchData();
+    private boolean prepareFetchData() {
+        if (getUserVisibleHint() && isViewInitiated && !isDataInitiated) {
+            loadDataFirstTime();
             isDataInitiated = true;
             return true;
         }

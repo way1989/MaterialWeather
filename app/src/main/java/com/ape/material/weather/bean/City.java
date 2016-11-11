@@ -21,7 +21,7 @@ public class City implements Serializable {
 
     public City(String city, String cnty, String id, String lat, String lon, String prov) {
         this.city = city;
-        this.cnty =cnty;
+        this.cnty = cnty;
         this.id = id;
         this.lat = lat;
         this.lon = lon;

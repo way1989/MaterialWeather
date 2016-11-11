@@ -13,11 +13,9 @@ import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.View;
 
-
 import com.ape.material.weather.App;
 import com.ape.material.weather.bean.entity.DailyForecast;
 import com.ape.material.weather.bean.entity.Weather;
-import com.ape.material.weather.main.MainActivity;
 import com.ape.material.weather.util.FormatUtil;
 
 import java.util.ArrayList;
@@ -39,7 +37,7 @@ public class DailyForecastView extends View {
     private ArrayList<DailyForecast> forecastList;
     private Path tmpMaxPath = new Path();
     private Path tmpMinPath = new Path();
-//	private final float textSize;
+    //	private final float textSize;
     //	private PathMeasure tmpMaxPathMeasure = new PathMeasure(tmpMaxPath, false);
     // private PointF[] points ;
     private Data[] datas;

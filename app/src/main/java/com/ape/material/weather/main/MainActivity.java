@@ -26,7 +26,7 @@ import java.util.List;
 import butterknife.BindView;
 
 public class MainActivity extends BaseActivity<MainPresenter, MainModel>
-        implements MainContract.View, WeatherFragment.OnDrawerTypeChangeListener{
+        implements MainContract.View, WeatherFragment.OnDrawerTypeChangeListener {
     private static final String TAG = "MainActivity";
     @BindView(R.id.dynamic_weather_view)
     DynamicWeatherView mDynamicWeatherView;

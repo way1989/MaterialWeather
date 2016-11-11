@@ -13,11 +13,9 @@ import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.View;
 
-
 import com.ape.material.weather.App;
 import com.ape.material.weather.bean.entity.HourlyForecast;
 import com.ape.material.weather.bean.entity.Weather;
-import com.ape.material.weather.main.MainActivity;
 import com.ape.material.weather.util.FormatUtil;
 
 import java.util.ArrayList;

@@ -1,6 +1,5 @@
 package com.ape.material.weather.fragment;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -103,8 +102,20 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter, WeatherModel
     }
 
     @Override
-    public void fetchData() {
-        postRefresh();
+    public void loadDataFirstTime() {
+        if (mWPullRefreshLayout == null || getActivity() == null) return;
+
+        mWPullRefreshLayout.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mWPullRefreshLayout.setRefreshing(true);
+                getWeather(false);
+            }
+        }, 100);
+    }
+
+    private void getWeather(boolean force) {
+        mPresenter.getWeather(mCity.getId(), "zh-cn", force);
     }
 
     @Override
@@ -122,23 +133,9 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter, WeatherModel
 
     }
 
-    private void postRefresh() {
-        if (mWPullRefreshLayout != null) {
-            Activity activity = getActivity();
-            if (activity != null) {
-                mWPullRefreshLayout.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        mWPullRefreshLayout.setRefreshing(true, true);
-                    }
-                }, 100);
-            }
-        }
-    }
-
     @Override
     public void onRefresh() {
-        mPresenter.getWeather(mCity.getId(), "zh-cn");
+        getWeather(true);
     }
 
     private void updateWeatherUI(Weather weather) {
@@ -231,7 +228,7 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter, WeatherModel
     }
 
     protected void toast(String msg) {
-        Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
     }
 
     public interface OnDrawerTypeChangeListener {

@@ -15,7 +15,6 @@ import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.View;
 
-
 import com.ape.material.weather.App;
 import com.ape.material.weather.bean.entity.DailyForecast;
 import com.ape.material.weather.bean.entity.Now;

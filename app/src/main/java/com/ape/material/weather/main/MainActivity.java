@@ -2,6 +2,7 @@ package com.ape.material.weather.main;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -26,6 +27,7 @@ import com.ape.material.weather.widget.MxxFragmentPagerAdapter;
 import com.ape.material.weather.widget.MxxViewPager;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import butterknife.BindView;
@@ -45,16 +47,27 @@ public class MainActivity extends BaseActivity<MainPresenter, MainModel>
     FrameLayout mNavView;
     @BindView(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
+    @BindView(R.id.app_bar_layout)
+    AppBarLayout mAppBarLayout;
 
     private MainFragmentPagerAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-     /*   if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             mMainViewPager.setPadding(0, UiUtil.getStatusBarHeight(), 0, 0);
-        }*/
+            mAppBarLayout.setPadding(0, UiUtil.getStatusBarHeight(), 0, 0);
+        }
+        final int hourOfDay = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+        BaseDrawer.Type type;
+        if (hourOfDay >= 7 && hourOfDay <= 18) {
+            type = BaseDrawer.Type.UNKNOWN_D;
+        } else {
+            type = BaseDrawer.Type.UNKNOWN_N;
+        }
+        mDynamicWeatherView.setDrawerType(type);
         setSupportActionBar(mToolbar);
         setTitle("");
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(

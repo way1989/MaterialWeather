@@ -7,7 +7,7 @@
     <item android:top="120dp">
         <bitmap
             android:gravity="top|center_horizontal"
-            android:src="@drawable/window_logo"/>
+            android:src="@drawable/weather"/>
     </item>
 
 </layer-list><!--

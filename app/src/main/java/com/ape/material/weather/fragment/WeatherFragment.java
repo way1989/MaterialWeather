@@ -144,6 +144,7 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter, WeatherModel
         }
         try {
             mWeatherType = FormatUtil.convertWeatherType(weather);
+            if(getUserVisibleHint())
             mListener.onDrawerTypeChange(mWeatherType);
 
             HeWeather.HeWeather5Bean w = weather.getWeather();

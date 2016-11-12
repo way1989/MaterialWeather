@@ -5,9 +5,14 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 
 import com.ape.material.weather.R;
 import com.ape.material.weather.base.BaseActivity;
@@ -25,6 +30,8 @@ import java.util.List;
 
 import butterknife.BindView;
 
+import static com.ape.material.weather.R.id.toolbar;
+
 public class MainActivity extends BaseActivity<MainPresenter, MainModel>
         implements MainContract.View, WeatherFragment.OnDrawerTypeChangeListener {
     private static final String TAG = "MainActivity";
@@ -32,17 +39,37 @@ public class MainActivity extends BaseActivity<MainPresenter, MainModel>
     DynamicWeatherView mDynamicWeatherView;
     @BindView(R.id.main_view_pager)
     MxxViewPager mMainViewPager;
+    @BindView(toolbar)
+    Toolbar mToolbar;
+    @BindView(R.id.nav_view)
+    FrameLayout mNavView;
+    @BindView(R.id.drawer_layout)
+    DrawerLayout mDrawerLayout;
 
     private MainFragmentPagerAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+     /*   if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             mMainViewPager.setPadding(0, UiUtil.getStatusBarHeight(), 0, 0);
-        }
+        }*/
+        setSupportActionBar(mToolbar);
+        setTitle("");
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        mDrawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+
         mPresenter.getCities();//加载城市列表
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
     }
 
     @Override

@@ -65,7 +65,7 @@ public class AstroView extends View {
     public void setData(HeWeather weather) {
         try {
             if (weather != null && weather.isOK()) {
-                this.now = weather.get().getNow();
+                this.now = weather.getWeather().getNow();
                 final HeWeather.HeWeather5Bean.DailyForecastBean forecast = weather.getTodayDailyForecast();
                 if (forecast != null) {
                     todayForecast = forecast;

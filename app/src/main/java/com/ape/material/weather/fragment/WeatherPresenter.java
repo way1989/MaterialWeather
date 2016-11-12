@@ -2,7 +2,6 @@ package com.ape.material.weather.fragment;
 
 import android.util.Log;
 
-
 import com.ape.material.weather.bean.HeWeather;
 
 import rx.Observer;

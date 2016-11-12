@@ -427,7 +427,7 @@ public class FormatUtil {
         }
         final boolean isNight = isNight(weather);
         try {
-            final int w = Integer.valueOf(weather.get().getNow().getCond().getCode());
+            final int w = Integer.valueOf(weather.getWeather().getNow().getCond().getCode());
             switch (w) {
                 case 100:
                     return isNight ? BaseDrawer.Type.CLEAR_N : BaseDrawer.Type.CLEAR_D;
@@ -508,7 +508,7 @@ public class FormatUtil {
             String todaydate = (new SimpleDateFormat("yyyy-MM-dd")).format(date);
             String todaydate1 = (new SimpleDateFormat("yyyy-M-d")).format(date);
             HeWeather.HeWeather5Bean.DailyForecastBean todayForecast = null;
-            for (HeWeather.HeWeather5Bean.DailyForecastBean forecast : weather.get().getDaily_forecast()) {
+            for (HeWeather.HeWeather5Bean.DailyForecastBean forecast : weather.getWeather().getDaily_forecast()) {
                 if (TextUtils.equals(todaydate, forecast.getDate()) || TextUtils.equals(todaydate1, forecast.getDate())) {
                     todayForecast = forecast;
                     break;

@@ -3,6 +3,7 @@ package com.ape.material.weather.bean;
 import android.text.TextUtils;
 
 import com.ape.material.weather.util.FormatUtil;
+import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.util.List;
@@ -15,34 +16,39 @@ import java.util.List;
 public class HeWeather implements Serializable {
 
     private static final long serialVersionUID = 8718402607048772317L;
+    protected long updateTime;//不会被gson解析的字段
+    @SerializedName("HeWeather5")
+    private List<HeWeather5Bean> heWeather5List;
 
-    private List<HeWeather5Bean> HeWeather5;
-
-    public List<HeWeather5Bean> getHeWeather5() {
-        return HeWeather5;
+    public long getUpdateTime() {
+        return updateTime;
     }
 
-    public HeWeather5Bean get() {
-        if (getHeWeather5().size() > 0) {
-            return getHeWeather5().get(0);
+    public void setUpdateTime(long updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    public HeWeather5Bean getWeather() {
+        if (heWeather5List.size() > 0) {
+            return heWeather5List.get(0);
         }
         return null;
     }
 
     public boolean isOK() {
-        if (this.getHeWeather5().size() > 0) {
-            final HeWeather5Bean weather5Bean = get();
-            return TextUtils.equals(weather5Bean.status, "ok");
+        if (heWeather5List.size() > 0) {
+            final HeWeather5Bean weather5Bean = heWeather5List.get(0);
+            return TextUtils.equals(weather5Bean.getStatus(), "ok");
         }
         return false;
     }
 
     public boolean hasAqi() {
         if (isOK()) {
-            final HeWeather5Bean h = get();
+            final HeWeather5Bean h = getWeather();
             return h.aqi != null && h.aqi.city != null;
         }
-        return true;
+        return false;
     }
 
     /**
@@ -55,7 +61,7 @@ public class HeWeather implements Serializable {
         if (!isOK()) {
             return todayIndex;
         }
-        final HeWeather5Bean w = get();
+        final HeWeather5Bean w = getWeather();
         for (int i = 0; i < w.getDaily_forecast().size(); i++) {
             if (FormatUtil.isToday(w.getDaily_forecast().get(i).date)) {
                 todayIndex = i;
@@ -73,7 +79,7 @@ public class HeWeather implements Serializable {
     public HeWeather5Bean.DailyForecastBean getTodayDailyForecast() {
         final int todayIndex = getTodayDailyForecastIndex();
         if (todayIndex != -1) {
-            HeWeather5Bean.DailyForecastBean forecast = get().getDaily_forecast().get(todayIndex);
+            HeWeather5Bean.DailyForecastBean forecast = getWeather().getDaily_forecast().get(todayIndex);
             return forecast;
         }
         return null;
@@ -87,13 +93,13 @@ public class HeWeather implements Serializable {
     public String getTodayTempDescription() {
         final int todayIndex = getTodayDailyForecastIndex();
         if (todayIndex != -1) {
-            HeWeather5Bean.DailyForecastBean forecast = get().getDaily_forecast().get(todayIndex);
+            HeWeather5Bean.DailyForecastBean forecast = getWeather().getDaily_forecast().get(todayIndex);
             return forecast.tmp.min + "~" + forecast.tmp.max + "°";
         }
         return "";
     }
 
-    public static class HeWeather5Bean implements Serializable{
+    public static class HeWeather5Bean implements Serializable {
         private static final long serialVersionUID = 4802643270981893098L;
         /**
          * alarms : [{"level":"蓝色","stat":"预警中","title":"山东省青岛市气象台发布大风蓝色预警","txt":"青岛市气象台2016年08月29日15时24分继续发布大风蓝色预警信号：预计今天下午到明天，我市北风风力海上6到7级阵风9级，陆地4到5阵风7级，请注意防范。","type":"大风"}]
@@ -179,7 +185,7 @@ public class HeWeather implements Serializable {
             this.hourly_forecast = hourly_forecast;
         }
 
-        public static class AqiBean implements Serializable{
+        public static class AqiBean implements Serializable {
             private static final long serialVersionUID = -5964836004805124606L;
             /**
              * city : {"aqi":"54","co":"1","no2":"36","o3":"28","pm10":"55","pm25":"32","qlty":"良","so2":"5"}
@@ -195,7 +201,7 @@ public class HeWeather implements Serializable {
                 this.city = city;
             }
 
-            public static class CityBean implements Serializable{
+            public static class CityBean implements Serializable {
                 private static final long serialVersionUID = -2811143428761620271L;
                 /**
                  * aqi : 54
@@ -283,7 +289,7 @@ public class HeWeather implements Serializable {
             }
         }
 
-        public static class BasicBean implements Serializable{
+        public static class BasicBean implements Serializable {
             private static final long serialVersionUID = -5703567936732275283L;
             /**
              * city : 深圳
@@ -349,7 +355,7 @@ public class HeWeather implements Serializable {
                 this.update = update;
             }
 
-            public static class UpdateBean implements Serializable{
+            public static class UpdateBean implements Serializable {
                 private static final long serialVersionUID = -7867087729972388060L;
                 /**
                  * loc : 2016-11-09 21:56
@@ -377,7 +383,7 @@ public class HeWeather implements Serializable {
             }
         }
 
-        public static class NowBean implements Serializable{
+        public static class NowBean implements Serializable {
             private static final long serialVersionUID = 1537448213382014178L;
             /**
              * cond : {"code":"104","txt":"阴"}
@@ -463,7 +469,7 @@ public class HeWeather implements Serializable {
                 this.wind = wind;
             }
 
-            public static class CondBean implements Serializable{
+            public static class CondBean implements Serializable {
                 private static final long serialVersionUID = 4048084230537287476L;
                 /**
                  * code : 104
@@ -490,7 +496,7 @@ public class HeWeather implements Serializable {
                 }
             }
 
-            public static class WindBean implements Serializable{
+            public static class WindBean implements Serializable {
                 private static final long serialVersionUID = 999547904951255849L;
                 /**
                  * deg : 20
@@ -538,7 +544,7 @@ public class HeWeather implements Serializable {
             }
         }
 
-        public static class SuggestionBean implements Serializable{
+        public static class SuggestionBean implements Serializable {
             private static final long serialVersionUID = 7109042187891099867L;
             /**
              * air : {"brf":"中","txt":"气象条件对空气污染物稀释、扩散和清除无明显影响，易感人群应适当减少室外活动时间。"}
@@ -624,7 +630,7 @@ public class HeWeather implements Serializable {
                 this.uv = uv;
             }
 
-            public static class AirBean implements Serializable{
+            public static class AirBean implements Serializable {
                 private static final long serialVersionUID = -5949291669372902632L;
                 /**
                  * brf : 中
@@ -651,7 +657,7 @@ public class HeWeather implements Serializable {
                 }
             }
 
-            public static class ComfBean implements Serializable{
+            public static class ComfBean implements Serializable {
                 private static final long serialVersionUID = 7392161898818639676L;
                 /**
                  * brf : 舒适
@@ -678,7 +684,7 @@ public class HeWeather implements Serializable {
                 }
             }
 
-            public static class CwBean implements Serializable{
+            public static class CwBean implements Serializable {
                 private static final long serialVersionUID = 5821065975275891165L;
                 /**
                  * brf : 不宜
@@ -705,7 +711,7 @@ public class HeWeather implements Serializable {
                 }
             }
 
-            public static class DrsgBean implements Serializable{
+            public static class DrsgBean implements Serializable {
                 private static final long serialVersionUID = 8274317947560570867L;
                 /**
                  * brf : 较舒适
@@ -732,7 +738,7 @@ public class HeWeather implements Serializable {
                 }
             }
 
-            public static class FluBean implements Serializable{
+            public static class FluBean implements Serializable {
                 private static final long serialVersionUID = -5098212090166554875L;
                 /**
                  * brf : 较易发
@@ -759,7 +765,7 @@ public class HeWeather implements Serializable {
                 }
             }
 
-            public static class SportBean implements Serializable{
+            public static class SportBean implements Serializable {
                 private static final long serialVersionUID = -6959848390197920565L;
                 /**
                  * brf : 较适宜
@@ -786,7 +792,7 @@ public class HeWeather implements Serializable {
                 }
             }
 
-            public static class TravBean implements Serializable{
+            public static class TravBean implements Serializable {
                 private static final long serialVersionUID = -6921325207578532910L;
                 /**
                  * brf : 适宜
@@ -813,7 +819,7 @@ public class HeWeather implements Serializable {
                 }
             }
 
-            public static class UvBean implements Serializable{
+            public static class UvBean implements Serializable {
                 private static final long serialVersionUID = 1805156332079370824L;
                 /**
                  * brf : 最弱
@@ -841,7 +847,7 @@ public class HeWeather implements Serializable {
             }
         }
 
-        public static class AlarmsBean implements Serializable{
+        public static class AlarmsBean implements Serializable {
             private static final long serialVersionUID = 9165771083960176140L;
             /**
              * level : 蓝色
@@ -898,7 +904,7 @@ public class HeWeather implements Serializable {
             }
         }
 
-        public static class DailyForecastBean implements Serializable{
+        public static class DailyForecastBean implements Serializable {
             private static final long serialVersionUID = -7405274118143553755L;
             /**
              * astro : {"mr":"13:49","ms":"00:47","sr":"06:32","ss":"17:42"}
@@ -1014,7 +1020,7 @@ public class HeWeather implements Serializable {
                 this.wind = wind;
             }
 
-            public static class AstroBean implements Serializable{
+            public static class AstroBean implements Serializable {
                 private static final long serialVersionUID = 4612235552830521062L;
                 /**
                  * mr : 13:49
@@ -1061,7 +1067,7 @@ public class HeWeather implements Serializable {
                 }
             }
 
-            public static class CondBeanX implements Serializable{
+            public static class CondBeanX implements Serializable {
                 private static final long serialVersionUID = -8102920287943124036L;
                 /**
                  * code_d : 101
@@ -1108,7 +1114,7 @@ public class HeWeather implements Serializable {
                 }
             }
 
-            public static class TmpBean implements Serializable{
+            public static class TmpBean implements Serializable {
                 private static final long serialVersionUID = 5875029753830019814L;
                 /**
                  * max : 20
@@ -1135,7 +1141,7 @@ public class HeWeather implements Serializable {
                 }
             }
 
-            public static class WindBeanX implements Serializable{
+            public static class WindBeanX implements Serializable {
                 private static final long serialVersionUID = -1476702449825412620L;
                 /**
                  * deg : 32
@@ -1183,7 +1189,7 @@ public class HeWeather implements Serializable {
             }
         }
 
-        public static class HourlyForecastBean implements Serializable{
+        public static class HourlyForecastBean implements Serializable {
             private static final long serialVersionUID = 6090339610498200124L;
             /**
              * cond : {"code":"305","txt":"小雨"}
@@ -1259,7 +1265,7 @@ public class HeWeather implements Serializable {
                 this.wind = wind;
             }
 
-            public static class CondBeanXX implements Serializable{
+            public static class CondBeanXX implements Serializable {
                 private static final long serialVersionUID = -7270642462900165772L;
                 /**
                  * code : 305
@@ -1286,7 +1292,7 @@ public class HeWeather implements Serializable {
                 }
             }
 
-            public static class WindBeanXX implements Serializable{
+            public static class WindBeanXX implements Serializable {
                 private static final long serialVersionUID = -6184267326059460941L;
                 /**
                  * deg : 21

@@ -181,12 +181,12 @@ public class DailyForecastView extends View {
             return;
         }
 
-        if (this.forecastList == weather.get().getDaily_forecast()) {
+        if (this.forecastList == weather.getWeather().getDaily_forecast()) {
             percent = 0f;
             invalidate();
             return;
         }
-        this.forecastList = weather.get().getDaily_forecast();
+        this.forecastList = weather.getWeather().getDaily_forecast();
         if (forecastList == null && forecastList.size() == 0) {
             return;
         }

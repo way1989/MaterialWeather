@@ -166,13 +166,13 @@ public class HourlyForecastView extends View {
             return;
         }
 
-        if (this.forecastList == weather.get().getHourly_forecast()) {
+        if (this.forecastList == weather.getWeather().getHourly_forecast()) {
 //			percent = 0f;
             invalidate();
             return;
         }
         try {
-            final List<HeWeather.HeWeather5Bean.HourlyForecastBean> w_hourlyForecast = weather.get().getHourly_forecast();
+            final List<HeWeather.HeWeather5Bean.HourlyForecastBean> w_hourlyForecast = weather.getWeather().getHourly_forecast();
             if (w_hourlyForecast.size() == 0) {// 有可能为空
                 return;
             }

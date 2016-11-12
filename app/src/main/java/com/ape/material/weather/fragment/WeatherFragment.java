@@ -104,13 +104,13 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter, WeatherModel
     public void loadDataFirstTime() {
         if (mWPullRefreshLayout == null || getActivity() == null) return;
 
-        mWPullRefreshLayout.postDelayed(new Runnable() {
+        mWPullRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
                 mWPullRefreshLayout.setRefreshing(true);
                 getWeather(false);
             }
-        }, 100);
+        });
     }
 
     private void getWeather(boolean force) {
@@ -146,7 +146,7 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter, WeatherModel
             mWeatherType = FormatUtil.convertWeatherType(weather);
             mListener.onDrawerTypeChange(mWeatherType);
 
-            HeWeather.HeWeather5Bean w = weather.get();
+            HeWeather.HeWeather5Bean w = weather.getWeather();
             mWDailyForecastView.setData(weather);
             mWHourlyForecastView.setData(weather);
             mWAqiView.setData(w.getAqi());

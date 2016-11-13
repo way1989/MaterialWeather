@@ -1,19 +1,18 @@
 package com.ape.material.weather.main;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
 
 import com.ape.material.weather.R;
 import com.ape.material.weather.base.BaseActivity;
@@ -22,6 +21,7 @@ import com.ape.material.weather.bean.City;
 import com.ape.material.weather.dynamicweather.BaseDrawer;
 import com.ape.material.weather.dynamicweather.DynamicWeatherView;
 import com.ape.material.weather.fragment.WeatherFragment;
+import com.ape.material.weather.manage.ManageLocationActivity;
 import com.ape.material.weather.util.UiUtil;
 import com.ape.material.weather.widget.MxxFragmentPagerAdapter;
 import com.ape.material.weather.widget.MxxViewPager;
@@ -43,10 +43,6 @@ public class MainActivity extends BaseActivity<MainPresenter, MainModel>
     MxxViewPager mMainViewPager;
     @BindView(toolbar)
     Toolbar mToolbar;
-    @BindView(R.id.nav_view)
-    FrameLayout mNavView;
-    @BindView(R.id.drawer_layout)
-    DrawerLayout mDrawerLayout;
     @BindView(R.id.app_bar_layout)
     AppBarLayout mAppBarLayout;
 
@@ -70,10 +66,6 @@ public class MainActivity extends BaseActivity<MainPresenter, MainModel>
         mDynamicWeatherView.setDrawerType(type);
         setSupportActionBar(mToolbar);
         setTitle("");
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        mDrawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
 
         mPresenter.getCities();//加载城市列表
     }
@@ -83,6 +75,20 @@ public class MainActivity extends BaseActivity<MainPresenter, MainModel>
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_manage:
+                startActivity(new Intent(this, ManageLocationActivity.class));
+                return true;
+            case R.id.action_share:
+                return true;
+            case R.id.action_settings:
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -105,7 +111,7 @@ public class MainActivity extends BaseActivity<MainPresenter, MainModel>
 
     @Override
     protected int getLayoutId() {
-        return R.layout.activity_main;
+        return R.layout.app_bar_main;
     }
 
     @Override
@@ -117,10 +123,12 @@ public class MainActivity extends BaseActivity<MainPresenter, MainModel>
     @Override
     public void onCityChange(List<City> cities) {
         if (cities != null && !cities.isEmpty()) {
+
             List<BaseFragment> weatherFragmentList = new ArrayList<>();
             for (City city : cities) {
                 Log.i(TAG, "city = " + city.getCity());
                 weatherFragmentList.add(WeatherFragment.makeInstance(city));
+
             }
             if (mAdapter == null) {
                 mAdapter = new MainFragmentPagerAdapter(getSupportFragmentManager(), weatherFragmentList);
@@ -147,42 +155,42 @@ public class MainActivity extends BaseActivity<MainPresenter, MainModel>
 
     public static class MainFragmentPagerAdapter extends MxxFragmentPagerAdapter {
 
-        private List<BaseFragment> fragmentList;
+        private List<BaseFragment> mFragmentList;
 
-        public MainFragmentPagerAdapter(FragmentManager fragmentManager, List<BaseFragment> fragmentList) {
+        MainFragmentPagerAdapter(FragmentManager fragmentManager, List<BaseFragment> fragmentList) {
             super(fragmentManager);
             setFragments(fragmentManager, fragmentList);
         }
 
         //刷新fragment
-        public void setFragments(FragmentManager fm, List<BaseFragment> fragments) {
-            if (this.fragmentList != null) {
+        void setFragments(FragmentManager fm, List<BaseFragment> fragments) {
+            if (this.mFragmentList != null) {
                 FragmentTransaction ft = fm.beginTransaction();
-                for (Fragment f : this.fragmentList) {
+                for (Fragment f : this.mFragmentList) {
                     ft.remove(f);
                 }
                 ft.commitAllowingStateLoss();
                 fm.executePendingTransactions();
             }
-            this.fragmentList = fragments;
+            this.mFragmentList = fragments;
             notifyDataSetChanged();
         }
 
         @Override
         public BaseFragment getItem(int position) {
-            BaseFragment fragment = fragmentList.get(position);
+            BaseFragment fragment = mFragmentList.get(position);
             fragment.setRetainInstance(true);
             return fragment;
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
-            return fragmentList.get(position).getTitle();
+            return mFragmentList.get(position).getTitle();
         }
 
         @Override
         public int getCount() {
-            return fragmentList.size();
+            return mFragmentList.size();
         }
 
         @Override

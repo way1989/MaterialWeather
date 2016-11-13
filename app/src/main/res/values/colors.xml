@@ -5,14 +5,10 @@
     <color name="colorAccent">#FF4081</color>
 
     <color name="window_background">#ff131719</color>
-    <!-- ffe3e7e9 -->
 
     <color name="mxx_white_background">#ffefeff4</color>
     <color name="w_divider">#30ffffff</color>
     <color name="w_divider_secondary">#10ffffff</color>
-
-    <dimen name="w_divider_size">0.5dp</dimen>
-    <dimen name="w_divider_size_secondary">0.5dp</dimen>
 
     <color name="mxx_cell_divider">#ffd5d6d9</color>
     <color name="mxx_cell_normal">#ffffffff</color>
@@ -26,11 +22,18 @@
     <color name="mxx_cell_text_title">#ffffffff</color>
     <color name="mxx_theme">#ff007aff</color>
 
-    <dimen name="mxx_dialog_width">300dp</dimen>
-
     <color name="mxx_dialog_text_title">#ff000000</color>
     <color name="mxx_dialog_text_message">#ff060606</color>
     <color name="mxx_dialog_text_button">#ff007aff</color>
     <color name="mxx_view_bg_default_normal">#00000000</color>
     <color name="mxx_view_bg_default_pressed">#a0aaaaaa</color>
+
+    <color name="bg_item_normal_state">#fff0f0f0</color>
+    <color name="bg_swipe_item_neutral">@android:color/transparent</color>
+    <color name="bg_item_dragging_active_state">#ffff9999</color>
+    <color name="bg_item_dragging_state">#ffffdddd</color>
+    <color name="bg_swipe_item_pinned">#fff9930d</color>
+    <color name="bg_swipe_item_dismiss">#ff2f8b2a</color>
+    <color name="bg_item_swiping_active_state">#ff9999ff</color>
+    <color name="bg_item_swiping_state">#ffddddff</color>
 </resources>

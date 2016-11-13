@@ -2,4 +2,5 @@
     <string name="app_name">轻天气</string>
     <string name="action_share">分享</string>
     <string name="action_settings">设置</string>
+    <string name="action_city_manage">城市管理</string>
 </resources>

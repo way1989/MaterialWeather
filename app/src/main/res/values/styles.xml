@@ -8,7 +8,7 @@
         <item name="colorAccent">@color/colorAccent</item>
 
         <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowBackground">@drawable/window_frame</item>
+        <!--<item name="android:windowBackground">@drawable/window_frame</item>-->
     </style>
 
     <style name="AppTheme.NoActionBar">

@@ -114,7 +114,7 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter, WeatherModel
     }
 
     private void getWeather(boolean force) {
-        mPresenter.getWeather(mCity.getId(), "zh-cn", force);
+        mPresenter.getWeather(mCity.getAreaId(), "zh-cn", force);
     }
 
     @Override

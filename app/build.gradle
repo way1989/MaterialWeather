@@ -96,4 +96,8 @@ dependencies {
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
 
     compile 'com.jakewharton:disklrucache:2.0.2'
+
+    compile ('com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.10.0@aar'){
+        transitive=true
+    }
 }

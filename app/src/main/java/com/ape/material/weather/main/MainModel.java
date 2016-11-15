@@ -1,6 +1,11 @@
 package com.ape.material.weather.main;
 
+import android.content.ContentValues;
+
+import com.ape.material.weather.App;
 import com.ape.material.weather.bean.City;
+import com.ape.material.weather.db.CityProvider;
+import com.ape.material.weather.db.DBUtil;
 import com.ape.material.weather.util.RxSchedulers;
 
 import java.util.ArrayList;
@@ -14,22 +19,35 @@ import rx.Subscriber;
  */
 
 public class MainModel implements MainContract.Model {
+    private static final String TAG = "MainModel";
+
     @Override
     public Observable<List<City>> getCities() {
         return Observable.create(new Observable.OnSubscribe<List<City>>() {
             @Override
             public void call(Subscriber<? super List<City>> subscriber) {
-                ArrayList<City> cities = new ArrayList<>();
-                City city = new City();
-                city.setCity("自动定位");
-                city.setLocation(true);
-                cities.add(city);
-                cities.add(new City("长沙", "中国", "CN101250101", "28.197", "112.967", "湖南"));
-                cities.add(new City("深圳", "中国", "CN101280601", "22.544", "114.109", "广东"));
-                cities.add(new City("攸县", "中国", "CN101250302", "27.000", "113.210", "湖南"));
+                ArrayList<City> cities = DBUtil.getCityFromCache();
+                if (cities.isEmpty()) {
+                    City city = new City();
+                    city.setCity("自动定位");
+                    city.setLocation(true);
+                    cities.add(city);
+
+                    insertAutoLocation();
+                }
                 subscriber.onNext(cities);
                 subscriber.onCompleted();
             }
         }).compose(RxSchedulers.<List<City>>io_main());
     }
+
+    private void insertAutoLocation() {
+        ContentValues values = new ContentValues();
+        values.put(CityProvider.CityConstants.CITY, "Auto Location");
+        values.put(CityProvider.CityConstants.IS_LOCATION, 1);
+        values.put(CityProvider.CityConstants.ORDER_INDEX, 0);
+        App.getContext().getContentResolver().insert(CityProvider.CITY_CONTENT_URI, values);
+    }
+
+
 }

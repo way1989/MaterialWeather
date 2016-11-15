@@ -15,18 +15,20 @@ import rx.Observable;
 
 public class MainContract {
 
-    interface View extends BaseView {
-        //返回获取的新闻
-        void onCityChange(List<City> cities);
-    }
-
     interface Model extends BaseModel {
-        //请求获取新闻
+        //请求获取城市列表
         Observable<List<City>> getCities();
     }
 
+    interface View extends BaseView {
+        //返回获取的城市列表
+        void onCityChange(List<City> cities);
+
+        void reloadCity();
+    }
+
     abstract static class Presenter extends BasePresenter<View, Model> {
-        //发起获取新闻请求
+        //发起获取城市列表
         public abstract void getCities();
     }
 

@@ -2,7 +2,6 @@ package com.ape.material.weather.main;
 
 import android.Manifest;
 import android.content.Intent;
-import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -16,7 +15,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import com.ape.material.weather.R;
 import com.ape.material.weather.base.BaseActivity;
@@ -26,7 +24,6 @@ import com.ape.material.weather.dynamicweather.BaseDrawer;
 import com.ape.material.weather.dynamicweather.DynamicWeatherView;
 import com.ape.material.weather.fragment.WeatherFragment;
 import com.ape.material.weather.manage.ManageLocationActivity;
-import com.ape.material.weather.util.CityLocationManager;
 import com.ape.material.weather.util.UiUtil;
 import com.ape.material.weather.widget.MxxFragmentPagerAdapter;
 import com.ape.material.weather.widget.MxxViewPager;
@@ -95,10 +92,10 @@ public class MainActivity extends BaseActivity<MainPresenter, MainModel>
             case R.id.action_manage:
                 startActivity(new Intent(this, ManageLocationActivity.class));
                 return true;
-            case R.id.action_share:
+          /*  case R.id.action_share:
                 return true;
             case R.id.action_settings:
-                return true;
+                return true;*/
         }
         return super.onOptionsItemSelected(item);
     }
@@ -158,6 +155,11 @@ public class MainActivity extends BaseActivity<MainPresenter, MainModel>
                 }
             });
         }
+    }
+
+    @Override
+    public void reloadCity() {
+        MainActivityPermissionsDispatcher.getCityWithCheck(this);
     }
 
     @Override

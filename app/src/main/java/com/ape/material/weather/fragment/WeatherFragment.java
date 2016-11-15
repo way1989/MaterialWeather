@@ -16,7 +16,9 @@ import com.ape.material.weather.base.BaseFragment;
 import com.ape.material.weather.bean.City;
 import com.ape.material.weather.bean.HeWeather;
 import com.ape.material.weather.dynamicweather.BaseDrawer;
+import com.ape.material.weather.util.AppConstant;
 import com.ape.material.weather.util.FormatUtil;
+import com.ape.material.weather.util.RxBus;
 import com.ape.material.weather.widget.AqiView;
 import com.ape.material.weather.widget.AstroView;
 import com.ape.material.weather.widget.DailyForecastView;
@@ -100,6 +102,7 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter, WeatherModel
 
     @Override
     public void onCityChange(City city) {
+        RxBus.getInstance().post(AppConstant.CITY_LIST_CHANGED, null);
         getWeather(city, false);
     }
 

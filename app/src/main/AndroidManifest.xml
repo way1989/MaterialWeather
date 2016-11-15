@@ -34,8 +34,11 @@
             android:screenOrientation="portrait"/>
 
         <provider
-            android:name="com.ape.material.weather.db.CityProvider"
+            android:name=".db.CityProvider"
             android:authorities="com.ape.material.weather.City"/>
+
+        <activity android:name=".search.SearchCityActivity">
+        </activity>
     </application>
 
 </manifest>

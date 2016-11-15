@@ -19,7 +19,7 @@ package com.ape.material.weather.util;
 import android.graphics.drawable.Drawable;
 
 public class DrawableUtils {
-    private static final int[] EMPTY_STATE = new int[] {};
+    private static final int[] EMPTY_STATE = new int[]{};
 
     public static void clearState(Drawable drawable) {
         if (drawable != null) {

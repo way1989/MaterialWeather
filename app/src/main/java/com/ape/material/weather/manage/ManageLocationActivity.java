@@ -1,5 +1,6 @@
 package com.ape.material.weather.manage;
 
+import android.content.Intent;
 import android.graphics.drawable.NinePatchDrawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -8,12 +9,14 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.ape.material.weather.R;
 import com.ape.material.weather.base.BaseActivity;
 import com.ape.material.weather.bean.City;
+import com.ape.material.weather.search.SearchCityActivity;
 import com.h6ah4i.android.widget.advrecyclerview.animator.DraggableItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.decoration.ItemShadowDecorator;
@@ -140,10 +143,17 @@ public class ManageLocationActivity extends BaseActivity<ManageLocationPresenter
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_manager, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
+            case R.id.action_add:
+                startActivity(new Intent(this, SearchCityActivity.class));
                 return true;
             default:
                 break;

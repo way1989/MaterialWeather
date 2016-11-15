@@ -25,14 +25,15 @@ public class WeatherContract {
     interface Model extends BaseModel {
         //请求获取天气
         Observable<HeWeather> getWeather(String city, String lang, boolean force);
-        Observable<City> getCity(double latitude, double longitude);
+
+        Observable<City> getCity();
     }
 
     abstract static class Presenter extends BasePresenter<WeatherContract.View, WeatherContract.Model> {
         //发起获取天气
         public abstract void getWeather(String city, String lang, boolean force);
-        public  abstract void getLocation();
 
-        public abstract void getCity(double latitude, double longitude);
+        public abstract void getLocation();
+
     }
 }

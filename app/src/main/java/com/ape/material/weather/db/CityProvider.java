@@ -104,11 +104,11 @@ public class CityProvider extends ContentProvider {
         ContentValues values = (initialValues != null) ? new ContentValues(
                 initialValues) : new ContentValues();
 
-        for (String colName : CityConstants.getRequiredColumns()) {
+/*        for (String colName : CityConstants.getRequiredColumns()) {
             if (!values.containsKey(colName)) {
                 throw new IllegalArgumentException("Missing column: " + colName);
             }
-        }
+        }*/
 
         long rowId = mOpenHelper.getWritableDatabase().insert(CITY_TABLE_NAME,
                 CityConstants.CITY, values);

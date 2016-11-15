@@ -30,6 +30,14 @@ public class HeCity {
         return HeWeather5 != null && !HeWeather5.isEmpty() && TextUtils.equals("ok", HeWeather5.get(0).getStatus());
     }
 
+    @Override
+    public String
+    toString() {
+        return "HeCity{" +
+                "HeWeather5=" + HeWeather5 +
+                '}';
+    }
+
     public static class HeWeather5Bean {
         /**
          * city : 深圳
@@ -135,13 +143,5 @@ public class HeCity {
                         '}';
             }
         }
-    }
-
-    @Override
-    public String
-    toString() {
-        return "HeCity{" +
-                "HeWeather5=" + HeWeather5 +
-                '}';
     }
 }

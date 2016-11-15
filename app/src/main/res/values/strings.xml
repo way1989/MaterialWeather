@@ -7,5 +7,8 @@
     <string name="action_city_manage">Manage Location</string>
     <string name="snack_bar_text_item_removed">1 item removed</string>
     <string name="snack_bar_action_undo">UNDO</string>
+    <string name="action_add">Add City</string>
+    <string name="search">Search</string>
+    <string name="search_city">Search City</string>
 
 </resources>

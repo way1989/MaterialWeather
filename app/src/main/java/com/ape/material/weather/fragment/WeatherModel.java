@@ -1,8 +1,10 @@
 package com.ape.material.weather.fragment;
 
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.location.Address;
 import android.location.Geocoder;
-import android.support.annotation.NonNull;
+import android.location.Location;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -12,14 +14,22 @@ import com.ape.material.weather.api.Api;
 import com.ape.material.weather.bean.City;
 import com.ape.material.weather.bean.HeCity;
 import com.ape.material.weather.bean.HeWeather;
+import com.ape.material.weather.db.CityProvider;
+import com.ape.material.weather.util.CityLocationManager;
 import com.ape.material.weather.util.DeviceUtil;
 import com.ape.material.weather.util.DiskLruCacheUtil;
 import com.ape.material.weather.util.RxSchedulers;
 
 import java.util.List;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
+import rx.Emitter;
 import rx.Observable;
 import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.Cancellable;
 import rx.functions.Func1;
 
 import static com.ape.material.weather.util.DeviceUtil.hasInternet;
@@ -35,6 +45,7 @@ public class WeatherModel implements WeatherContract.Model {
     private static final long WIFI_CACHE_TIME = 5 * 60 * 1000;
     // 其他网络环境为1小时
     private static final long OTHER_CACHE_TIME = 60 * 60 * 1000;
+    private Semaphore mRequestLocationLock = new Semaphore(1);
 
     @Override
     public Observable<HeWeather> getWeather(String city, String lang, boolean force) {
@@ -48,7 +59,18 @@ public class WeatherModel implements WeatherContract.Model {
         }).first().compose(RxSchedulers.<HeWeather>io_main());
     }
 
-    public Observable<City> getCity(final double lat, final double lon) {
+    @Override
+    public Observable<City> getCity() {
+        return getLocation().flatMap(new Func1<Location, Observable<City>>() {
+            @Override
+            public Observable<City> call(Location location) {
+                Log.i(TAG, "flatMap... lat = " + location.getLatitude() + ", lon = " + location.getLongitude());
+                return getCity(location.getLatitude(), location.getLongitude());
+            }
+        }).observeOn(AndroidSchedulers.mainThread()).subscribeOn(AndroidSchedulers.mainThread());
+    }
+
+    private Observable<City> getCity(final double lat, final double lon) {
         Observable<String> cityName = getCityName(lat, lon);
         return cityName.flatMap(new Func1<String, Observable<City>>() {
             @Override
@@ -68,6 +90,7 @@ public class WeatherModel implements WeatherContract.Model {
                                 City city = new City(basicBean.getCity(), basicBean.getCnty(),
                                         basicBean.getId(), basicBean.getLat(), basicBean.getLon(), basicBean.getProv());
                                 city.setLocation(true);
+                                updateCity(city);
                                 return city;
                             }
                         });
@@ -75,14 +98,81 @@ public class WeatherModel implements WeatherContract.Model {
         }).compose(RxSchedulers.<City>io_main());
     }
 
-    @NonNull
+    private void updateCity(City city) {
+        ContentValues values = new ContentValues();
+        values.put(CityProvider.CityConstants.CITY, city.getCity());
+        values.put(CityProvider.CityConstants.AREA_ID, city.getAreaId());
+        values.put(CityProvider.CityConstants.COUNTRY, city.getCountry());
+        values.put(CityProvider.CityConstants.LATITUDE, city.getLat());
+        values.put(CityProvider.CityConstants.LONGITUDE, city.getLon());
+        values.put(CityProvider.CityConstants.PROVINCE, city.getProv());
+        ContentResolver contentResolver = App.getContext().getContentResolver();
+        int rowsModified = contentResolver.update(CityProvider.CITY_CONTENT_URI,
+                values, CityProvider.CityConstants.IS_LOCATION + "=?", new String[]{"1"});
+        if (rowsModified == 0) {
+            values.put(CityProvider.CityConstants.IS_LOCATION, 1);
+            values.put(CityProvider.CityConstants.ORDER_INDEX, 0);
+            // If no prior row existed, insert a new one
+            contentResolver.insert(CityProvider.CITY_CONTENT_URI, values);
+        } else if (rowsModified != 1) {
+            // This should never happen
+            throw new IllegalStateException("Bad number of rows (" + rowsModified + ") " +
+                    "updated for uri: " + CityProvider.CITY_CONTENT_URI);
+        }
+    }
+
+    /**
+     * get Location: Latitude and Longitude
+     *
+     * @return
+     */
+    private Observable<Location> getLocation() {
+        return Observable.fromEmitter(new Action1<Emitter<Location>>() {
+            @Override
+            public void call(final Emitter<Location> emitter) {
+                final CityLocationManager manager = new CityLocationManager(App.getContext());
+                CityLocationManager.Listener listener = new CityLocationManager.Listener() {
+                    @Override
+                    public void onLocationSuccess(Location location) {
+                        mRequestLocationLock.release();
+                        emitter.onNext(location);
+                        emitter.onCompleted();
+                    }
+                };
+                emitter.setCancellation(new Cancellable() {
+                    @Override
+                    public void cancel() throws Exception {
+                        manager.setListener(null);
+                    }
+                });
+                manager.setListener(listener);
+                try {
+                    if (!mRequestLocationLock.tryAcquire(5000L, TimeUnit.MILLISECONDS)) {
+                        Log.d(TAG, "Time out waiting to get location");
+                        throw new RuntimeException("Time out waiting to get location");
+                    }
+                    manager.startReceivingLocationUpdates();
+                } catch (Exception e) {
+                    emitter.onError(e);
+                }
+            }
+        }, Emitter.BackpressureMode.BUFFER);
+    }
+
+    /**
+     * get city name by Geocoder
+     *
+     * @param lat Latitude
+     * @param lon Longitude
+     * @return
+     */
     private Observable<String> getCityName(final double lat, final double lon) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
-                Geocoder gc = new Geocoder(App.getContext());
+                Geocoder geocoder = new Geocoder(App.getContext());
                 try {
-                    List<Address> addresses = gc.getFromLocation(lat, lon, 1);
+                    List<Address> addresses = geocoder.getFromLocation(lat, lon, 1);
                     if (addresses != null && !addresses.isEmpty()) {
                         subscriber.onNext(addresses.get(0).getLocality());
                         subscriber.onCompleted();

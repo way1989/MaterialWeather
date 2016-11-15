@@ -33,7 +33,8 @@
     <color name="bg_item_dragging_active_state">#ffff9999</color>
     <color name="bg_item_dragging_state">#ffffdddd</color>
     <color name="bg_swipe_item_pinned">#fff9930d</color>
-    <color name="bg_swipe_item_dismiss">#ff2f8b2a</color>
+    <color name="bg_swipe_item_dismiss">#ffD50000</color>
     <color name="bg_item_swiping_active_state">#ff9999ff</color>
     <color name="bg_item_swiping_state">#ffddddff</color>
+    <color name="snackbar_action_color_done">#ffccccff</color>
 </resources>

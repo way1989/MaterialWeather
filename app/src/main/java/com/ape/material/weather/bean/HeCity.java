@@ -1,5 +1,7 @@
 package com.ape.material.weather.bean;
 
+import android.text.TextUtils;
+
 import java.util.List;
 
 /**
@@ -22,6 +24,10 @@ public class HeCity {
 
     public void setHeWeather5(List<HeWeather5Bean> HeWeather5) {
         this.HeWeather5 = HeWeather5;
+    }
+
+    public boolean isOK() {
+        return HeWeather5 != null && !HeWeather5.isEmpty() && TextUtils.equals("ok", HeWeather5.get(0).getStatus());
     }
 
     public static class HeWeather5Bean {
@@ -51,6 +57,14 @@ public class HeCity {
 
         public void setStatus(String status) {
             this.status = status;
+        }
+
+        @Override
+        public String toString() {
+            return "HeWeather5Bean{" +
+                    "basic=" + basic +
+                    ", status='" + status + '\'' +
+                    '}';
         }
 
         public static class BasicBean {
@@ -108,6 +122,26 @@ public class HeCity {
             public void setProv(String prov) {
                 this.prov = prov;
             }
+
+            @Override
+            public String toString() {
+                return "BasicBean{" +
+                        "city='" + city + '\'' +
+                        ", cnty='" + cnty + '\'' +
+                        ", id='" + id + '\'' +
+                        ", lat='" + lat + '\'' +
+                        ", lon='" + lon + '\'' +
+                        ", prov='" + prov + '\'' +
+                        '}';
+            }
         }
+    }
+
+    @Override
+    public String
+    toString() {
+        return "HeCity{" +
+                "HeWeather5=" + HeWeather5 +
+                '}';
     }
 }

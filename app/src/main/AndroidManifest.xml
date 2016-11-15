@@ -29,8 +29,13 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".manage.ManageLocationActivity">
-        </activity>
+        <activity
+            android:name=".manage.ManageLocationActivity"
+            android:screenOrientation="portrait"/>
+
+        <provider
+            android:name="com.ape.material.weather.db.CityProvider"
+            android:authorities="com.ape.material.weather.City"/>
     </application>
 
 </manifest>

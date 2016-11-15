@@ -3,11 +3,14 @@ package com.ape.material.weather.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ape.material.weather.BuildConfig;
 import com.ape.material.weather.R;
 import com.ape.material.weather.base.BaseFragment;
 import com.ape.material.weather.bean.City;
@@ -28,6 +31,7 @@ import butterknife.BindView;
 
 public class WeatherFragment extends BaseFragment<WeatherPresenter, WeatherModel>
         implements WeatherContract.View, PullRefreshLayout.OnRefreshListener {
+    private static final String TAG = "WeatherFragment";
     private static final String ARG_KEY = "city";
     @BindView(R.id.w_dailyForecastView)
     DailyForecastView mWDailyForecastView;
@@ -95,9 +99,15 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter, WeatherModel
     }
 
     @Override
+    public void onCityChange(City city) {
+        getWeather(city, false);
+    }
+
+    @Override
     public void showErrorTip(String msg) {
         mWPullRefreshLayout.setRefreshing(false);
-        toast(msg);
+        if (BuildConfig.LOG_DEBUG)
+            toast(msg);
     }
 
     @Override
@@ -108,13 +118,21 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter, WeatherModel
             @Override
             public void run() {
                 mWPullRefreshLayout.setRefreshing(true);
-                getWeather(false);
+                getWeather(mCity, false);
             }
         });
     }
 
-    private void getWeather(boolean force) {
-        mPresenter.getWeather(mCity.getAreaId(), "zh-cn", force);
+    private void getWeather(City city, boolean force) {
+        Log.i(TAG, "getWeather... city = " + city
+                + ", areaId = " + city.getAreaId()
+                + ", request location = "
+                + (city.isLocation() && TextUtils.isEmpty(city.getAreaId())));
+        if (city.isLocation() && TextUtils.isEmpty(city.getAreaId())) {
+            mPresenter.getLocation();
+        } else {
+            mPresenter.getWeather(city.getAreaId(), "zh-cn", force);
+        }
     }
 
     @Override
@@ -134,7 +152,7 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter, WeatherModel
 
     @Override
     public void onRefresh() {
-        getWeather(true);
+        getWeather(mCity, true);
     }
 
     private void updateWeatherUI(HeWeather weather) {
@@ -144,8 +162,7 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter, WeatherModel
         }
         try {
             mWeatherType = FormatUtil.convertWeatherType(weather);
-            if(getUserVisibleHint())
-            mListener.onDrawerTypeChange(mWeatherType);
+            if (getUserVisibleHint()) mListener.onDrawerTypeChange(mWeatherType);
 
             HeWeather.HeWeather5Bean w = weather.getWeather();
             mWDailyForecastView.setData(weather);

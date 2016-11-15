@@ -11,19 +11,20 @@ import java.io.Serializable;
 public class City extends AbstractDataProvider.Data implements Serializable {
     private static final long serialVersionUID = -1233425412975945445L;
     private String city;
-    private String cnty;
+    private String country;
     private String areaId;
     private String lat;
     private String lon;
     private String prov;
+    private boolean isLocation;
 
     public City() {
 
     }
 
-    public City(String city, String cnty, String id, String lat, String lon, String prov) {
+    public City(String city, String country, String id, String lat, String lon, String prov) {
         this.city = city;
-        this.cnty = cnty;
+        this.country = country;
         this.areaId = id;
         this.lat = lat;
         this.lon = lon;
@@ -38,12 +39,12 @@ public class City extends AbstractDataProvider.Data implements Serializable {
         this.city = city;
     }
 
-    public String getCnty() {
-        return cnty;
+    public String getCountry() {
+        return country;
     }
 
-    public void setCnty(String cnty) {
-        this.cnty = cnty;
+    public void setCountry(String country) {
+        this.country = country;
     }
 
     public String getAreaId() {
@@ -76,6 +77,27 @@ public class City extends AbstractDataProvider.Data implements Serializable {
 
     public void setProv(String prov) {
         this.prov = prov;
+    }
+
+    public boolean isLocation() {
+        return isLocation;
+    }
+
+    public void setLocation(boolean location) {
+        isLocation = location;
+    }
+
+    @Override
+    public String toString() {
+        return "City{" +
+                "city='" + city + '\'' +
+                ", country='" + country + '\'' +
+                ", areaId='" + areaId + '\'' +
+                ", lat='" + lat + '\'' +
+                ", lon='" + lon + '\'' +
+                ", prov='" + prov + '\'' +
+                ", isLocation=" + isLocation +
+                '}';
     }
 
     @Override

@@ -20,6 +20,10 @@ public class MainModel implements MainContract.Model {
             @Override
             public void call(Subscriber<? super List<City>> subscriber) {
                 ArrayList<City> cities = new ArrayList<>();
+                City city = new City();
+                city.setCity("自动定位");
+                city.setLocation(true);
+                cities.add(city);
                 cities.add(new City("长沙", "中国", "CN101250101", "28.197", "112.967", "湖南"));
                 cities.add(new City("深圳", "中国", "CN101280601", "22.544", "114.109", "广东"));
                 cities.add(new City("攸县", "中国", "CN101250302", "27.000", "113.210", "湖南"));

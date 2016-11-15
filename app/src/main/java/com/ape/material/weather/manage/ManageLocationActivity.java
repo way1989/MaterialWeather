@@ -3,9 +3,11 @@ package com.ape.material.weather.manage;
 import android.graphics.drawable.NinePatchDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -27,7 +29,7 @@ import butterknife.BindView;
 
 public class ManageLocationActivity extends BaseActivity<ManageLocationPresenter, ManageLocationModel>
         implements ManageLocationContract.View {
-
+    private static final String TAG = "ManageLocationActivity";
     @BindView(R.id.recycler_view)
     RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -55,6 +57,28 @@ public class ManageLocationActivity extends BaseActivity<ManageLocationPresenter
                 (NinePatchDrawable) ContextCompat.getDrawable(getApplicationContext(),
                         R.drawable.material_shadow_z3));
 
+        mRecyclerViewDragDropManager.setOnItemDragEventListener(new RecyclerViewDragDropManager.OnItemDragEventListener() {
+            @Override
+            public void onItemDragStarted(int position) {
+                Log.i(TAG, "onItemDragStarted... position = " + position);
+            }
+
+            @Override
+            public void onItemDragPositionChanged(int fromPosition, int toPosition) {
+                Log.i(TAG, "onItemDragPositionChanged... fromPosition = " + fromPosition + ", toPosition = " + toPosition);
+            }
+
+            @Override
+            public void onItemDragFinished(int fromPosition, int toPosition, boolean result) {
+                Log.i(TAG, "onItemDragFinished... fromPosition = " + fromPosition + ", toPosition = " + toPosition + ", result = " + result);
+            }
+
+            @Override
+            public void onItemDragMoveDistanceUpdated(int offsetX, int offsetY) {
+                Log.i(TAG, "onItemDragMoveDistanceUpdated... offsetX = " + offsetX + ", offsetY = " + offsetY);
+            }
+        });
+
         // swipe manager
         mRecyclerViewSwipeManager = new RecyclerViewSwipeManager();
 
@@ -67,13 +91,8 @@ public class ManageLocationActivity extends BaseActivity<ManageLocationPresenter
             }
 
             @Override
-            public void onItemPinned(int position) {
-                ManageLocationActivity.this.onItemPinned(position);
-            }
-
-            @Override
-            public void onItemViewClicked(View v, boolean pinned) {
-                ManageLocationActivity.this.onItemViewClick(v, pinned);
+            public void onItemViewClicked(View v) {
+                ManageLocationActivity.this.onItemViewClick(v);
             }
         });
 
@@ -176,7 +195,7 @@ public class ManageLocationActivity extends BaseActivity<ManageLocationPresenter
         mLayoutManager = null;
     }
 
-    private void onItemViewClick(View v, boolean pinned) {
+    private void onItemViewClick(View v) {
         int position = mRecyclerView.getChildAdapterPosition(v);
         if (position != RecyclerView.NO_POSITION) {
             onItemClicked(position);
@@ -189,27 +208,26 @@ public class ManageLocationActivity extends BaseActivity<ManageLocationPresenter
      * @param position The position of the item within data set
      */
     public void onItemRemoved(int position) {
-//        Snackbar snackbar = Snackbar.make(
-//                findViewById(R.id.container),
-//                R.string.snack_bar_text_item_removed,
-//                Snackbar.LENGTH_LONG);
-//
-//        snackbar.setAction(R.string.snack_bar_action_undo, new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                onItemUndoActionClicked();
-//            }
-//        });
-//        snackbar.setActionTextColor(ContextCompat.getColor(this, R.color.snackbar_action_color_done));
-//        snackbar.show();
+        Snackbar snackbar = Snackbar.make(
+                findViewById(R.id.container),
+                R.string.snack_bar_text_item_removed,
+                Snackbar.LENGTH_LONG);
+
+        snackbar.setAction(R.string.snack_bar_action_undo, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onItemUndoActionClicked();
+            }
+        });
+        snackbar.setActionTextColor(ContextCompat.getColor(this, R.color.snackbar_action_color_done));
+        snackbar.show();
     }
 
-    /**
-     * This method will be called when a list item is pinned
-     *
-     * @param position The position of the item within data set
-     */
-    public void onItemPinned(int position) {
+    private void onItemUndoActionClicked() {
+        int position = mProvider.undoLastRemoval();
+        if (position >= 0) {
+            mAdapter.notifyItemInserted(position);
+        }
     }
 
     /**

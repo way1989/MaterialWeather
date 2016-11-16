@@ -1,23 +1,35 @@
 package com.ape.material.weather.search;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
 
 import com.ape.material.weather.R;
 import com.ape.material.weather.base.BaseActivity;
+import com.ape.material.weather.bean.City;
+import com.ape.material.weather.db.SearchHistory;
+import com.ape.material.weather.util.AppConstant;
+import com.h6ah4i.android.widget.advrecyclerview.decoration.SimpleListDividerDecorator;
+
+import java.util.List;
 
 import butterknife.BindView;
 
-public class SearchCityActivity extends BaseActivity implements SearchView.OnQueryTextListener, View.OnTouchListener {
+public class SearchCityActivity extends BaseActivity<SearchPresenter, SearchModel> implements SearchContract.View,
+        SearchView.OnQueryTextListener, View.OnTouchListener, SearchAdapter.OnItemClickListener {
+    private static final String TAG = "SearchCityActivity";
     @BindView(R.id.recyclerview)
     RecyclerView mRecyclerview;
     private SearchAdapter adapter;
@@ -33,6 +45,14 @@ public class SearchCityActivity extends BaseActivity implements SearchView.OnQue
         mRecyclerview.setLayoutManager(new LinearLayoutManager(this));
         adapter = new SearchAdapter(this);
         mRecyclerview.setAdapter(adapter);
+        mRecyclerview.addItemDecoration(new SimpleListDividerDecorator(ContextCompat
+                .getDrawable(getApplicationContext(), R.drawable.list_divider_h), true));
+    }
+
+    @Override
+    protected void initPresenter() {
+        super.initPresenter();
+        mPresenter.setVM(this, mModel);
     }
 
     @Override
@@ -42,7 +62,6 @@ public class SearchCityActivity extends BaseActivity implements SearchView.OnQue
 
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
-
         getMenuInflater().inflate(R.menu.menu_search, menu);
 
         mSearchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.menu_search));
@@ -77,22 +96,17 @@ public class SearchCityActivity extends BaseActivity implements SearchView.OnQue
 
     @Override
     public boolean onQueryTextSubmit(String query) {
+        Log.d(TAG, "onQueryTextSubmit... query = " + query);
         hideInputManager();
         if (query.equals(queryString)) {
             return true;
         }
-//        if (mSearchTask != null) {
-//            mSearchTask.cancel(false);
-//            mSearchTask = null;
-//        }
-//        queryString = query;
-//        if (queryString.trim().equals("")) {
-//            searchResults.clear();
-//            adapter.updateSearchResults(searchResults);
-//            adapter.notifyDataSetChanged();
-//        } else {
-//            mSearchTask = new SearchTask().executeOnExecutor(mSearchExecutor, queryString);
-//        }
+        queryString = query;
+        if (queryString.trim().equals("")) {
+            adapter.clear();
+        } else {
+            mPresenter.search(queryString);
+        }
         return true;
     }
 
@@ -113,9 +127,39 @@ public class SearchCityActivity extends BaseActivity implements SearchView.OnQue
                 mImm.hideSoftInputFromWindow(mSearchView.getWindowToken(), 0);
             }
             mSearchView.clearFocus();
-
-            //SearchHistory.getInstance(this).addSearchString(queryString);
+            SearchHistory.getInstance(this).addSearchString(queryString);
         }
     }
 
+    @Override
+    public void onSearchResult(List<City> cities) {
+        Log.d(TAG, "onSearchResult... city size = " + cities.size());
+        if (cities.isEmpty()) {
+            adapter.clear();
+        } else {
+            adapter.updateSearchResults(cities);
+        }
+    }
+
+    @Override
+    public void onSearchError(Throwable e) {
+        Log.d(TAG, "onSearchError... e = " + e.getMessage());
+        adapter.clear();
+        Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onSaveCitySucceed(City city) {
+        Log.d(TAG, "onSaveCitySucceed city");
+        Intent intent = new Intent();
+        intent.putExtra(AppConstant.ARG_CITY_KEY, city);
+        setResult(RESULT_OK, intent);
+        finish();
+    }
+
+    @Override
+    public void onItemClick(City city) {
+        Log.d(TAG, "onItemClick city = " + city.getCity());
+        mPresenter.addOrUpdateCity(city);
+    }
 }

@@ -17,6 +17,7 @@ import com.ape.material.weather.R;
 import com.ape.material.weather.base.BaseActivity;
 import com.ape.material.weather.bean.City;
 import com.ape.material.weather.search.SearchCityActivity;
+import com.ape.material.weather.util.AppConstant;
 import com.h6ah4i.android.widget.advrecyclerview.animator.DraggableItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.decoration.ItemShadowDecorator;
@@ -33,6 +34,7 @@ import butterknife.BindView;
 public class ManageLocationActivity extends BaseActivity<ManageLocationPresenter, ManageLocationModel>
         implements ManageLocationContract.View {
     private static final String TAG = "ManageLocationActivity";
+    private static final int REQUEST_CODE_CITY = 0;
     @BindView(R.id.recycler_view)
     RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -42,6 +44,7 @@ public class ManageLocationActivity extends BaseActivity<ManageLocationPresenter
     private RecyclerViewSwipeManager mRecyclerViewSwipeManager;
     private RecyclerViewTouchActionGuardManager mRecyclerViewTouchActionGuardManager;
     private LocationProvider mProvider = new LocationProvider();
+    private boolean isCityChaned;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,12 +137,6 @@ public class ManageLocationActivity extends BaseActivity<ManageLocationPresenter
         mRecyclerViewSwipeManager.attachRecyclerView(mRecyclerView);
         mRecyclerViewDragDropManager.attachRecyclerView(mRecyclerView);
 
-        // for debugging
-//        animator.setDebug(true);
-//        animator.setMoveDuration(2000);
-//        animator.setRemoveDuration(2000);
-//        mRecyclerViewSwipeManager.setMoveToOutsideWindowAnimationDuration(2000);
-//        mRecyclerViewSwipeManager.setReturnToDefaultPositionAnimationDuration(2000);
     }
 
     @Override
@@ -153,12 +150,31 @@ public class ManageLocationActivity extends BaseActivity<ManageLocationPresenter
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_add:
-                startActivity(new Intent(this, SearchCityActivity.class));
+                startActivityForResult(new Intent(this, SearchCityActivity.class), REQUEST_CODE_CITY);
                 return true;
             default:
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_CITY && resultCode == RESULT_OK) {
+            City city = (City) data.getSerializableExtra(AppConstant.ARG_CITY_KEY);
+            if (city != null) {
+                isCityChaned = true;
+                mPresenter.getCities();
+            }
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        setResult(isCityChaned ? RESULT_OK : RESULT_CANCELED);
+        finish();
     }
 
     @Override

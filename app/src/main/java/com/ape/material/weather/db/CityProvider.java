@@ -194,7 +194,7 @@ public class CityProvider extends ContentProvider {
                     + CityConstants.LONGITUDE + " TEXT, "
                     + CityConstants.PROVINCE + " TEXT, "
                     + CityConstants.IS_LOCATION + " TEXT, "
-                    + CityConstants.ORDER_INDEX + " INTEGER)");
+                    + CityConstants.ORDER_INDEX + " INTEGER AUTOINCREMENT)");
         }
 
         @Override
@@ -217,7 +217,7 @@ public class CityProvider extends ContentProvider {
         public static final String PROVINCE = "province";
         public static final String IS_LOCATION = "isLocation";
         public static final String ORDER_INDEX = "orderIndex";
-        public static final String DEFAULT_SORT_ORDER = ORDER_INDEX + " ASC"; // 默认按照_id排序
+        public static final String DEFAULT_SORT_ORDER = ORDER_INDEX + " ASC"; // 默认按照orderIndex排序
         private static final String CONTENT_TYPE = "vnd.android.cursor.dir/city";
         private static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/city";
 

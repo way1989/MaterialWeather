@@ -46,6 +46,7 @@ import static com.ape.material.weather.R.id.toolbar;
 public class MainActivity extends BaseActivity<MainPresenter, MainModel>
         implements MainContract.View, WeatherFragment.OnDrawerTypeChangeListener {
     private static final String TAG = "MainActivity";
+    private static final int REQUEST_CODE_CITY = 1;
     @BindView(R.id.dynamic_weather_view)
     DynamicWeatherView mDynamicWeatherView;
     @BindView(R.id.main_view_pager)
@@ -90,7 +91,7 @@ public class MainActivity extends BaseActivity<MainPresenter, MainModel>
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_manage:
-                startActivity(new Intent(this, ManageLocationActivity.class));
+                startActivityForResult(new Intent(this, ManageLocationActivity.class), REQUEST_CODE_CITY);
                 return true;
           /*  case R.id.action_share:
                 return true;
@@ -98,6 +99,14 @@ public class MainActivity extends BaseActivity<MainPresenter, MainModel>
                 return true;*/
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == REQUEST_CODE_CITY && resultCode == RESULT_OK){
+            MainActivityPermissionsDispatcher.getCityWithCheck(this);
+        }
     }
 
     @Override

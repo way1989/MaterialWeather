@@ -5,4 +5,5 @@ package com.ape.material.weather.util;
  */
 public class AppConstant {
     public static final String CITY_LIST_CHANGED = "city_list_changed";
+    public static final String ARG_CITY_KEY = "city";
 }

@@ -3,4 +3,9 @@
     <string name="action_share">分享</string>
     <string name="action_settings">设置</string>
     <string name="action_city_manage">城市管理</string>
+    <string name="action_add">添加城市</string>
+    <string name="search">搜索</string>
+    <string name="search_city">请输入城市名</string>
+    <string name="snack_bar_action_undo">恢复</string>
+    <string name="snack_bar_text_item_removed">删除了一项</string>
 </resources>

@@ -22,10 +22,6 @@ public class HeCity {
         return HeWeather5;
     }
 
-    public void setHeWeather5(List<HeWeather5Bean> HeWeather5) {
-        this.HeWeather5 = HeWeather5;
-    }
-
     public boolean isOK() {
         return HeWeather5 != null && !HeWeather5.isEmpty() && TextUtils.equals("ok", HeWeather5.get(0).getStatus());
     }

@@ -45,7 +45,6 @@ public class MainModel implements MainContract.Model {
         ContentValues values = new ContentValues();
         values.put(CityProvider.CityConstants.CITY, "Auto Location");
         values.put(CityProvider.CityConstants.IS_LOCATION, 1);
-        values.put(CityProvider.CityConstants.ORDER_INDEX, 0);
         App.getContext().getContentResolver().insert(CityProvider.CITY_CONTENT_URI, values);
     }
 

@@ -111,7 +111,6 @@ public class WeatherModel implements WeatherContract.Model {
                 values, CityProvider.CityConstants.IS_LOCATION + "=?", new String[]{"1"});
         if (rowsModified == 0) {
             values.put(CityProvider.CityConstants.IS_LOCATION, 1);
-            values.put(CityProvider.CityConstants.ORDER_INDEX, 0);
             // If no prior row existed, insert a new one
             contentResolver.insert(CityProvider.CITY_CONTENT_URI, values);
         } else if (rowsModified != 1) {

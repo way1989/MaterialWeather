@@ -16,11 +16,13 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
+import com.ape.material.weather.BuildConfig;
 import com.ape.material.weather.R;
 import com.ape.material.weather.base.BaseActivity;
 import com.ape.material.weather.bean.City;
 import com.ape.material.weather.db.SearchHistory;
 import com.ape.material.weather.util.AppConstant;
+import com.ape.material.weather.widget.LoadingEmptyContainer;
 import com.h6ah4i.android.widget.advrecyclerview.decoration.SimpleListDividerDecorator;
 
 import java.util.List;
@@ -32,6 +34,8 @@ public class SearchCityActivity extends BaseActivity<SearchPresenter, SearchMode
     private static final String TAG = "SearchCityActivity";
     @BindView(R.id.recyclerview)
     RecyclerView mRecyclerview;
+    @BindView(R.id.loading_empty_container)
+    LoadingEmptyContainer mLoadingEmptyContainer;
     private SearchAdapter adapter;
     private SearchView mSearchView;
     private InputMethodManager mImm;
@@ -104,8 +108,10 @@ public class SearchCityActivity extends BaseActivity<SearchPresenter, SearchMode
         queryString = query;
         if (queryString.trim().equals("")) {
             adapter.clear();
+            mLoadingEmptyContainer.showNoResults();
         } else {
             mPresenter.search(queryString);
+            mLoadingEmptyContainer.showLoading();
         }
         return true;
     }
@@ -136,8 +142,10 @@ public class SearchCityActivity extends BaseActivity<SearchPresenter, SearchMode
         Log.d(TAG, "onSearchResult... city size = " + cities.size());
         if (cities.isEmpty()) {
             adapter.clear();
+            mLoadingEmptyContainer.showNoResults();
         } else {
             adapter.updateSearchResults(cities);
+            mLoadingEmptyContainer.hideAll();
         }
     }
 
@@ -145,7 +153,9 @@ public class SearchCityActivity extends BaseActivity<SearchPresenter, SearchMode
     public void onSearchError(Throwable e) {
         Log.d(TAG, "onSearchError... e = " + e.getMessage());
         adapter.clear();
-        Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+        mLoadingEmptyContainer.showNoResults();
+        if (BuildConfig.LOG_DEBUG)
+            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
     }
 
     @Override

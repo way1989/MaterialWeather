@@ -10,6 +10,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.ape.material.weather.R;
+import com.ape.material.weather.bean.City;
 import com.ape.material.weather.util.DrawableUtils;
 import com.ape.material.weather.util.ViewUtils;
 import com.h6ah4i.android.widget.advrecyclerview.draggable.DraggableItemAdapter;
@@ -60,12 +61,7 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.MyView
 
     @Override
     public long getItemId(int position) {
-        return mProvider.getItem(position).getId();
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        return mProvider.getItem(position).getViewType();
+        return mProvider.getItem(position).getAreaId().hashCode();
     }
 
     @Override
@@ -77,14 +73,14 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.MyView
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        final AbstractDataProvider.Data item = mProvider.getItem(position);
+        final City item = mProvider.getItem(position);
 
         // set listeners
         // (if the item is *pinned*, click event comes to the itemView)
         holder.itemView.setOnClickListener(mItemViewOnClickListener);
 
         // set text
-        holder.mTextView.setText(item.getText());
+        holder.mTextView.setText(item.getCity());
 
         // set background resource (target view ID: container)
         final int dragState = holder.getDragStateFlags();
@@ -113,8 +109,7 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.MyView
         }
 
         // set swiping properties
-        holder.setSwipeItemHorizontalSlideAmount(
-                item.isPinned() ? Swipeable.OUTSIDE_OF_THE_WINDOW_LEFT : 0);
+        holder.setSwipeItemHorizontalSlideAmount(0);
     }
 
     @Override

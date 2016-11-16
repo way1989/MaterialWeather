@@ -8,4 +8,5 @@
     <string name="search_city">请输入城市名</string>
     <string name="snack_bar_action_undo">恢复</string>
     <string name="snack_bar_text_item_removed">删除了一项</string>
+    <string name="empty">您搜索的城市可能在火星</string>
 </resources>

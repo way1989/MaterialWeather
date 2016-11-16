@@ -194,7 +194,7 @@ public class CityProvider extends ContentProvider {
                     + CityConstants.LONGITUDE + " TEXT, "
                     + CityConstants.PROVINCE + " TEXT, "
                     + CityConstants.IS_LOCATION + " TEXT, "
-                    + CityConstants.ORDER_INDEX + " INTEGER AUTOINCREMENT)");
+                    + CityConstants.ORDER_INDEX + " INTEGER)");
         }
 
         @Override

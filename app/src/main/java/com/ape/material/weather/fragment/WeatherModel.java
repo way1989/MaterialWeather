@@ -1,7 +1,5 @@
 package com.ape.material.weather.fragment;
 
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -14,7 +12,7 @@ import com.ape.material.weather.api.Api;
 import com.ape.material.weather.bean.City;
 import com.ape.material.weather.bean.HeCity;
 import com.ape.material.weather.bean.HeWeather;
-import com.ape.material.weather.db.CityProvider;
+import com.ape.material.weather.db.DBUtil;
 import com.ape.material.weather.util.CityLocationManager;
 import com.ape.material.weather.util.DeviceUtil;
 import com.ape.material.weather.util.DiskLruCacheUtil;
@@ -90,34 +88,12 @@ public class WeatherModel implements WeatherContract.Model {
                                 City city = new City(basicBean.getCity(), basicBean.getCnty(),
                                         basicBean.getId(), basicBean.getLat(), basicBean.getLon(), basicBean.getProv());
                                 city.setLocation(true);
-                                updateCity(city);
+                                DBUtil.updateCity(city, true);
                                 return city;
                             }
                         });
             }
         }).compose(RxSchedulers.<City>io_main());
-    }
-
-    private void updateCity(City city) {
-        ContentValues values = new ContentValues();
-        values.put(CityProvider.CityConstants.CITY, city.getCity());
-        values.put(CityProvider.CityConstants.AREA_ID, city.getAreaId());
-        values.put(CityProvider.CityConstants.COUNTRY, city.getCountry());
-        values.put(CityProvider.CityConstants.LATITUDE, city.getLat());
-        values.put(CityProvider.CityConstants.LONGITUDE, city.getLon());
-        values.put(CityProvider.CityConstants.PROVINCE, city.getProv());
-        ContentResolver contentResolver = App.getContext().getContentResolver();
-        int rowsModified = contentResolver.update(CityProvider.CITY_CONTENT_URI,
-                values, CityProvider.CityConstants.IS_LOCATION + "=?", new String[]{"1"});
-        if (rowsModified == 0) {
-            values.put(CityProvider.CityConstants.IS_LOCATION, 1);
-            // If no prior row existed, insert a new one
-            contentResolver.insert(CityProvider.CITY_CONTENT_URI, values);
-        } else if (rowsModified != 1) {
-            // This should never happen
-            throw new IllegalStateException("Bad number of rows (" + rowsModified + ") " +
-                    "updated for uri: " + CityProvider.CITY_CONTENT_URI);
-        }
     }
 
     /**

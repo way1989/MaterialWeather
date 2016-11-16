@@ -3,6 +3,7 @@ package com.ape.material.weather.manage;
 import com.ape.material.weather.bean.City;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -11,13 +12,11 @@ import java.util.List;
 
 public class LocationProvider extends AbstractDataProvider {
     private ArrayList<City> mData;
-    private ArrayList<City> mDeleteData;
     private City mLastRemovedData;
     private int mLastRemovedPosition = -1;
 
     public LocationProvider() {
         mData = new ArrayList<>();
-        mDeleteData = new ArrayList<>();
     }
 
     public ArrayList<City> getData() {
@@ -30,19 +29,32 @@ public class LocationProvider extends AbstractDataProvider {
         mData.clear();
         mData.addAll(datas);
     }
+    public void addData(City city){
+        mData.add(city);
+    }
 
+    public void clear() {
+        mData.clear();
+    }
+
+    public City getLastRemovedData(){
+        return mLastRemovedData;
+    }
+
+    @Override
     public int getCount() {
         return mData.size();
     }
 
+    @Override
     public City getItem(int index) {
         if (index < 0 || index >= getCount()) {
             throw new IndexOutOfBoundsException("index = " + index);
         }
-
         return mData.get(index);
     }
 
+    @Override
     public int undoLastRemoval() {
         if (mLastRemovedData != null) {
             int insertedPosition;
@@ -53,8 +65,6 @@ public class LocationProvider extends AbstractDataProvider {
             }
 
             mData.add(insertedPosition, mLastRemovedData);
-            if (mDeleteData.contains(mLastRemovedData))
-                mDeleteData.remove(mLastRemovedData);
 
             mLastRemovedData = null;
             mLastRemovedPosition = -1;
@@ -65,17 +75,7 @@ public class LocationProvider extends AbstractDataProvider {
         }
     }
 
-    public boolean deleteLastRemoval() {
-        if (mLastRemovedData != null && !mDeleteData.isEmpty()) {
-            mLastRemovedData = null;
-            mLastRemovedPosition = -1;
-            mDeleteData.clear();
-            return true;
-        } else {
-            return false;
-        }
-    }
-
+    @Override
     public void moveItem(int fromPosition, int toPosition) {
         if (fromPosition == toPosition) {
             return;
@@ -89,18 +89,20 @@ public class LocationProvider extends AbstractDataProvider {
 
     @Override
     public void swapItem(int fromPosition, int toPosition) {
+        if (fromPosition == toPosition) {
+            return;
+        }
 
+        Collections.swap(mData, toPosition, fromPosition);
+        mLastRemovedPosition = -1;
     }
 
+    @Override
     public void removeItem(int position) {
         //noinspection UnnecessaryLocalVariable
         final City removedItem = mData.remove(position);
-        mDeleteData.add(removedItem);
+
         mLastRemovedData = removedItem;
         mLastRemovedPosition = position;
-    }
-
-    public void clear() {
-        mData.clear();
     }
 }

@@ -29,5 +29,45 @@ public class ManageLocationModel implements ManageLocationContract.Model {
         }).compose(RxSchedulers.<List<City>>io_main());
     }
 
+    @Override
+    public Observable<Boolean> swapCity(final ArrayList<City> data) {
+        return Observable.create(new Observable.OnSubscribe<Boolean>() {
+            @Override
+            public void call(Subscriber<? super Boolean> subscriber) {
+                for (int i = 0; i < data.size(); i++) {
+                    City city = data.get(i);
+                    boolean result = DBUtil.updateIndex(city, i);
+                }
+                subscriber.onNext(true);
+                subscriber.onCompleted();
+            }
+        }).compose(RxSchedulers.<Boolean>io_main());
+    }
+
+    @Override
+    public Observable<Boolean> deleteCity(final City city) {
+        return Observable.create(new Observable.OnSubscribe<Boolean>() {
+            @Override
+            public void call(Subscriber<? super Boolean> subscriber) {
+
+                boolean result = DBUtil.deleteCity(city);
+                subscriber.onNext(result);
+                subscriber.onCompleted();
+            }
+        }).compose(RxSchedulers.<Boolean>io_main());
+    }
+
+    @Override
+    public Observable<Boolean> undoCity(final City city) {
+        return Observable.create(new Observable.OnSubscribe<Boolean>() {
+            @Override
+            public void call(Subscriber<? super Boolean> subscriber) {
+                boolean result = DBUtil.undoCity(city);
+                subscriber.onNext(result);
+                subscriber.onCompleted();
+            }
+        }).compose(RxSchedulers.<Boolean>io_main());
+    }
+
 
 }

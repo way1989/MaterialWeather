@@ -10,5 +10,6 @@
     <string name="action_add">Add City</string>
     <string name="search">Search</string>
     <string name="search_city">Search City</string>
+    <string name="empty">No Result</string>
 
 </resources>

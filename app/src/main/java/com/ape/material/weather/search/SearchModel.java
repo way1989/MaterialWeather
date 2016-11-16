@@ -1,17 +1,13 @@
 package com.ape.material.weather.search;
 
-import android.content.ContentResolver;
-import android.content.ContentValues;
-import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.ape.material.weather.App;
 import com.ape.material.weather.BuildConfig;
 import com.ape.material.weather.api.Api;
 import com.ape.material.weather.bean.City;
 import com.ape.material.weather.bean.HeCity;
-import com.ape.material.weather.db.CityProvider;
+import com.ape.material.weather.db.DBUtil;
 import com.ape.material.weather.util.RxSchedulers;
 
 import java.util.ArrayList;
@@ -60,7 +56,7 @@ public class SearchModel implements SearchContract.Model {
         return Observable.create(new Observable.OnSubscribe<Boolean>() {
             @Override
             public void call(Subscriber<? super Boolean> subscriber) {
-                boolean result = updateCity(city);
+                boolean result = DBUtil.updateCity(city, false);
                 Log.d(TAG, "addOrUpdateCity... result = " + result);
                 subscriber.onNext(result);
                 subscriber.onCompleted();
@@ -68,23 +64,5 @@ public class SearchModel implements SearchContract.Model {
         }).compose(RxSchedulers.<Boolean>io_main());
     }
 
-    private boolean updateCity(City city) {
-        ContentValues values = new ContentValues();
-        values.put(CityProvider.CityConstants.CITY, city.getCity());
-        values.put(CityProvider.CityConstants.AREA_ID, city.getAreaId());
-        values.put(CityProvider.CityConstants.COUNTRY, city.getCountry());
-        values.put(CityProvider.CityConstants.LATITUDE, city.getLat());
-        values.put(CityProvider.CityConstants.LONGITUDE, city.getLon());
-        values.put(CityProvider.CityConstants.PROVINCE, city.getProv());
-        ContentResolver contentResolver = App.getContext().getContentResolver();
-        int rowsModified = contentResolver.update(CityProvider.CITY_CONTENT_URI,
-                values, CityProvider.CityConstants.AREA_ID + "=?", new String[]{city.getAreaId()});
-        if (rowsModified == 0) {
-            values.put(CityProvider.CityConstants.IS_LOCATION, 0);
-            // If no prior row existed, insert a new one
-            Uri uri = contentResolver.insert(CityProvider.CITY_CONTENT_URI, values);
-            return uri != null;
-        }
-        return rowsModified > 0;
-    }
+
 }

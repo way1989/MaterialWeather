@@ -1,7 +1,5 @@
 package com.ape.material.weather.search;
 
-import android.app.Activity;
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -82,7 +80,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ItemHolder
         @Override
         public void onClick(View v) {
             City city = (City) v.getTag();
-            if(mListener != null)
+            if (mListener != null)
                 mListener.onItemClick(city);
         }
     }

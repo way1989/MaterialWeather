@@ -1,13 +1,10 @@
 package com.ape.material.weather.base;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
-import com.ape.material.weather.R;
-import com.ape.material.weather.search.SearchCityActivity;
 import com.ape.material.weather.util.TUtil;
 
 import butterknife.ButterKnife;
@@ -29,6 +26,7 @@ public abstract class BaseActivity<T extends BasePresenter, E extends BaseModel>
         mModel = TUtil.getT(this, 1);
         initPresenter();
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -40,6 +38,7 @@ public abstract class BaseActivity<T extends BasePresenter, E extends BaseModel>
         }
         return super.onOptionsItemSelected(item);
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();

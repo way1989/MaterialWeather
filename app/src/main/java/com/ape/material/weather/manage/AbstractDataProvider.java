@@ -1,5 +1,7 @@
 package com.ape.material.weather.manage;
 
+import com.ape.material.weather.bean.City;
+
 /**
  * Created by way on 2016/11/13.
  */
@@ -7,7 +9,7 @@ package com.ape.material.weather.manage;
 public abstract class AbstractDataProvider {
     public abstract int getCount();
 
-    public abstract Data getItem(int index);
+    public abstract City getItem(int index);
 
     public abstract void removeItem(int position);
 
@@ -17,17 +19,5 @@ public abstract class AbstractDataProvider {
 
     public abstract int undoLastRemoval();
 
-    public static abstract class Data {
-        public abstract long getId();
 
-        public abstract boolean isSectionHeader();
-
-        public abstract int getViewType();
-
-        public abstract String getText();
-
-        public abstract boolean isPinned();
-
-        public abstract void setPinned(boolean pinned);
-    }
 }

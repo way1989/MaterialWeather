@@ -1,14 +1,12 @@
 package com.ape.material.weather.bean;
 
-import com.ape.material.weather.manage.AbstractDataProvider;
-
 import java.io.Serializable;
 
 /**
  * Created by android on 16-11-10.
  */
 
-public class City extends AbstractDataProvider.Data implements Serializable {
+public class City implements Serializable {
     private static final long serialVersionUID = -1233425412975945445L;
     private String city;
     private String country;
@@ -17,6 +15,7 @@ public class City extends AbstractDataProvider.Data implements Serializable {
     private String lon;
     private String prov;
     private boolean isLocation;
+    private int index;
 
     public City() {
 
@@ -87,6 +86,14 @@ public class City extends AbstractDataProvider.Data implements Serializable {
         isLocation = location;
     }
 
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
     @Override
     public String toString() {
         return "City{" +
@@ -97,36 +104,8 @@ public class City extends AbstractDataProvider.Data implements Serializable {
                 ", lon='" + lon + '\'' +
                 ", prov='" + prov + '\'' +
                 ", isLocation=" + isLocation +
+                ", index=" + index +
                 '}';
     }
 
-    @Override
-    public long getId() {
-        return areaId.hashCode();
-    }
-
-    @Override
-    public boolean isSectionHeader() {
-        return false;
-    }
-
-    @Override
-    public int getViewType() {
-        return 0;
-    }
-
-    @Override
-    public String getText() {
-        return city;
-    }
-
-    @Override
-    public boolean isPinned() {
-        return false;
-    }
-
-    @Override
-    public void setPinned(boolean pinned) {
-
-    }
 }

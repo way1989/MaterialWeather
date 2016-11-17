@@ -24,7 +24,7 @@ import java.util.List;
  * 按文字算高度18行
  * 文字设置为12，高度是216dp
  *
- * @author Mixiaoxiao
+ * @author way
  */
 public class DailyForecastView extends View {
 

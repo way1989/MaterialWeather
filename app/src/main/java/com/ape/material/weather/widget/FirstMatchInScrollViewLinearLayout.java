@@ -11,9 +11,10 @@ import android.widget.ScrollView;
 /***
  * 第一个child高度为ScrollView的高度
  *
- * @author Mixiaoxiao
+ * @author way
  */
 public class FirstMatchInScrollViewLinearLayout extends LinearLayout {
+    private static final String TAG = "FirstMatchInScrollViewL";
 
     public FirstMatchInScrollViewLinearLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
@@ -34,7 +35,7 @@ public class FirstMatchInScrollViewLinearLayout extends LinearLayout {
             if (parent != null && parent instanceof ScrollView) {
                 final int height = ((ScrollView) parent).getMeasuredHeight();
                 if (height > 0) {
-                    Log.d("FUCK", "ScrollView.height->" + height);
+                    Log.d(TAG, "ScrollView.height->" + height);
                     final View firstChild = getChildAt(0);
                     LayoutParams layoutParams = (LayoutParams) firstChild.getLayoutParams();
                     layoutParams.height = height;

@@ -1,7 +1,11 @@
 package com.ape.material.weather.manage;
 
+import android.graphics.drawable.Drawable;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ImageSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.ape.material.weather.App;
 import com.ape.material.weather.R;
 import com.ape.material.weather.bean.City;
 import com.ape.material.weather.util.DrawableUtils;
@@ -80,26 +85,26 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.MyView
         holder.itemView.setOnClickListener(mItemViewOnClickListener);
 
         // set text
-        holder.mTextView.setText(item.getCity());
+        holder.mTextView.setText(item.isLocation() ? getSpannable(item.getCity()) : item.getCity());
 
         // set background resource (target view ID: container)
         final int dragState = holder.getDragStateFlags();
         final int swipeState = holder.getSwipeStateFlags();
 
-        if (((dragState & Draggable.STATE_FLAG_IS_UPDATED) != 0) ||
-                ((swipeState & Swipeable.STATE_FLAG_IS_UPDATED) != 0)) {
+        if (((dragState & DraggableItemConstants.STATE_FLAG_IS_UPDATED) != 0) ||
+                ((swipeState & SwipeableItemConstants.STATE_FLAG_IS_UPDATED) != 0)) {
             int bgResId;
 
-            if ((dragState & Draggable.STATE_FLAG_IS_ACTIVE) != 0) {
+            if ((dragState & DraggableItemConstants.STATE_FLAG_IS_ACTIVE) != 0) {
                 bgResId = R.drawable.bg_item_dragging_active_state;
 
                 // need to clear drawable state here to get correct appearance of the dragging item.
                 DrawableUtils.clearState(holder.mContainer.getForeground());
-            } else if ((dragState & Draggable.STATE_FLAG_DRAGGING) != 0) {
+            } else if ((dragState & DraggableItemConstants.STATE_FLAG_DRAGGING) != 0) {
                 bgResId = R.drawable.bg_item_dragging_state;
-            } else if ((swipeState & Swipeable.STATE_FLAG_IS_ACTIVE) != 0) {
+            } else if ((swipeState & SwipeableItemConstants.STATE_FLAG_IS_ACTIVE) != 0) {
                 bgResId = R.drawable.bg_item_swiping_active_state;
-            } else if ((swipeState & Swipeable.STATE_FLAG_SWIPING) != 0) {
+            } else if ((swipeState & SwipeableItemConstants.STATE_FLAG_SWIPING) != 0) {
                 bgResId = R.drawable.bg_item_swiping_state;
             } else {
                 bgResId = R.drawable.bg_item_normal_state;
@@ -110,6 +115,15 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.MyView
 
         // set swiping properties
         holder.setSwipeItemHorizontalSlideAmount(0);
+    }
+
+    private SpannableString getSpannable(String name) {
+        SpannableString ss = new SpannableString(" " + name);
+        Drawable drawable = App.getContext().getResources()
+                .getDrawable(R.drawable.ic_location_on_black_18dp);
+        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+        ss.setSpan(new ImageSpan(drawable), 0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return ss;
     }
 
     @Override
@@ -156,10 +170,10 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.MyView
     @Override
     public int onGetSwipeReactionType(MyViewHolder holder, int position, int x, int y) {
         if (onCheckCanStartDrag(holder, position, x, y)) {
-            return Swipeable.REACTION_CAN_NOT_SWIPE_BOTH_H;
+            return SwipeableItemConstants.REACTION_CAN_NOT_SWIPE_BOTH_H;
         } else {
-            return Swipeable.REACTION_CAN_SWIPE_BOTH_H;
-            //return Swipeable.REACTION_CAN_SWIPE_RIGHT;
+            return SwipeableItemConstants.REACTION_CAN_SWIPE_BOTH_H;
+            //return SwipeableItemConstants.REACTION_CAN_SWIPE_RIGHT;
         }
     }
 
@@ -167,13 +181,13 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.MyView
     public void onSetSwipeBackground(MyViewHolder holder, int position, int type) {
         int bgRes = 0;
         switch (type) {
-            case Swipeable.DRAWABLE_SWIPE_NEUTRAL_BACKGROUND:
+            case SwipeableItemConstants.DRAWABLE_SWIPE_NEUTRAL_BACKGROUND:
                 bgRes = R.drawable.bg_swipe_item_neutral;
                 break;
-            case Swipeable.DRAWABLE_SWIPE_LEFT_BACKGROUND:
+            case SwipeableItemConstants.DRAWABLE_SWIPE_LEFT_BACKGROUND:
                 bgRes = R.drawable.bg_swipe_item_left;
                 break;
-            case Swipeable.DRAWABLE_SWIPE_RIGHT_BACKGROUND:
+            case SwipeableItemConstants.DRAWABLE_SWIPE_RIGHT_BACKGROUND:
                 bgRes = R.drawable.bg_swipe_item_right;
                 break;
         }
@@ -187,11 +201,11 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.MyView
 
         switch (result) {
             // swipe left or right to delete
-            case Swipeable.RESULT_SWIPED_RIGHT:
-            case Swipeable.RESULT_SWIPED_LEFT:
+            case SwipeableItemConstants.RESULT_SWIPED_RIGHT:
+            case SwipeableItemConstants.RESULT_SWIPED_LEFT:
                 return new SwipeLeftResultAction(this, position);
             // other --- do nothing
-            case Swipeable.RESULT_CANCELED:
+            case SwipeableItemConstants.RESULT_CANCELED:
             default:
                 return null;
 
@@ -200,13 +214,6 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.MyView
 
     public void setEventListener(EventListener eventListener) {
         mEventListener = eventListener;
-    }
-
-    // NOTE: Make accessible with short name
-    private interface Draggable extends DraggableItemConstants {
-    }
-
-    private interface Swipeable extends SwipeableItemConstants {
     }
 
     public interface EventListener {

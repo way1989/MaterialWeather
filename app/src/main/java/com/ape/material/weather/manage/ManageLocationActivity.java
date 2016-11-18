@@ -44,7 +44,6 @@ public class ManageLocationActivity extends BaseActivity<ManageLocationPresenter
     private RecyclerViewDragDropManager mRecyclerViewDragDropManager;
     private RecyclerViewSwipeManager mRecyclerViewSwipeManager;
     private RecyclerViewTouchActionGuardManager mRecyclerViewTouchActionGuardManager;
-    private LocationProvider mProvider = new LocationProvider();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +76,7 @@ public class ManageLocationActivity extends BaseActivity<ManageLocationPresenter
             @Override
             public void onItemDragFinished(int fromPosition, int toPosition, boolean result) {
                 Log.i(TAG, "onItemDragFinished... fromPosition = " + fromPosition + ", toPosition = " + toPosition + ", result = " + result);
-                mPresenter.swapCity(mProvider.getData());
+                mPresenter.swapCity(mAdapter.getData());
             }
 
             @Override
@@ -90,7 +89,7 @@ public class ManageLocationActivity extends BaseActivity<ManageLocationPresenter
         mRecyclerViewSwipeManager = new RecyclerViewSwipeManager();
 
         //adapter
-        final LocationAdapter myItemAdapter = new LocationAdapter(mProvider);
+        final LocationAdapter myItemAdapter = new LocationAdapter();
         myItemAdapter.setEventListener(new LocationAdapter.EventListener() {
             @Override
             public void onItemRemoved(int position) {
@@ -165,9 +164,8 @@ public class ManageLocationActivity extends BaseActivity<ManageLocationPresenter
         if (requestCode == REQUEST_CODE_CITY && resultCode == RESULT_OK) {
             City city = (City) data.getSerializableExtra(AppConstant.ARG_CITY_KEY);
             if (city != null) {
-                mProvider.addData(city);
-                mAdapter.setDatas(mProvider);
-                RxBus.getInstance().post(AppConstant.CITY_LIST_CHANGED, mProvider.getData());
+                mAdapter.addData(city);
+                RxBus.getInstance().post(AppConstant.CITY_LIST_CHANGED, mAdapter.getData());
             }
         }
     }
@@ -230,7 +228,7 @@ public class ManageLocationActivity extends BaseActivity<ManageLocationPresenter
      * @param position The position of the item within data set
      */
     public void onItemRemoved(int position) {
-        final City city = mProvider.getLastRemovedData();//ready to delete
+        final City city = mAdapter.getLastRemovedData();//ready to delete
         if (city == null) return;
         mPresenter.deleteCity(city);
         Snackbar snackbar = Snackbar.make(
@@ -250,7 +248,7 @@ public class ManageLocationActivity extends BaseActivity<ManageLocationPresenter
 
     private void onItemUndoActionClicked(City city) {
         mPresenter.undoCity(city);
-        int position = mProvider.undoLastRemoval();
+        int position = mAdapter.undoLastRemoval();
         if (position >= 0) {
             mAdapter.notifyItemInserted(position);
         }
@@ -262,7 +260,7 @@ public class ManageLocationActivity extends BaseActivity<ManageLocationPresenter
      * @param position The position of the item within data set
      */
     public void onItemClicked(int position) {
-        City data = mProvider.getItem(position);
+        City data = mAdapter.getItem(position);
         // TODO: 16-11-16 update viewpager index
     }
 
@@ -293,12 +291,11 @@ public class ManageLocationActivity extends BaseActivity<ManageLocationPresenter
 
     @Override
     public void onCityChange(List<City> cities) {
-        mProvider.setData(cities);
-        mAdapter.setDatas(mProvider);
+        mAdapter.setDatas(cities);
     }
 
     @Override
     public void onCityModify() {
-        RxBus.getInstance().post(AppConstant.CITY_LIST_CHANGED, mProvider.getData());
+        RxBus.getInstance().post(AppConstant.CITY_LIST_CHANGED, mAdapter.getData());
     }
 }

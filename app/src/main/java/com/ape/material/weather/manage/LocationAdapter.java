@@ -27,6 +27,9 @@ import com.h6ah4i.android.widget.advrecyclerview.swipeable.action.SwipeResultAct
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.action.SwipeResultActionRemoveItem;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractDraggableSwipeableItemViewHolder;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by way on 2016/11/13.
  */
@@ -35,12 +38,12 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.MyView
         implements DraggableItemAdapter<LocationAdapter.MyViewHolder>,
         SwipeableItemAdapter<LocationAdapter.MyViewHolder> {
     private static final String TAG = "MyDSItemAdapter";
-    private AbstractDataProvider mProvider;
+    private LocationProvider mProvider;
     private EventListener mEventListener;
     private View.OnClickListener mItemViewOnClickListener;
 
-    public LocationAdapter(AbstractDataProvider dataProvider) {
-        mProvider = dataProvider;
+    public LocationAdapter() {
+        mProvider = new LocationProvider();
         mItemViewOnClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -53,8 +56,8 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.MyView
         setHasStableIds(true);
     }
 
-    public void setDatas(AbstractDataProvider dataProvider) {
-        mProvider = dataProvider;
+    public void setDatas(List<City> datas) {
+        mProvider.setData(datas);
         notifyDataSetChanged();
     }
 
@@ -214,6 +217,27 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.MyView
 
     public void setEventListener(EventListener eventListener) {
         mEventListener = eventListener;
+    }
+
+    public ArrayList<City> getData() {
+        return mProvider.getData();
+    }
+
+    public void addData(City city) {
+        mProvider.addData(city);
+        notifyDataSetChanged();
+    }
+
+    public City getLastRemovedData() {
+        return mProvider.getLastRemovedData();
+    }
+
+    public int undoLastRemoval() {
+        return mProvider.undoLastRemoval();
+    }
+
+    public City getItem(int position) {
+        return mProvider.getItem(position);
     }
 
     public interface EventListener {

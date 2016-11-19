@@ -1,10 +1,8 @@
 package com.ape.material.weather.main;
 
-import android.Manifest;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -33,16 +31,9 @@ import java.util.Calendar;
 import java.util.List;
 
 import butterknife.BindView;
-import permissions.dispatcher.NeedsPermission;
-import permissions.dispatcher.OnNeverAskAgain;
-import permissions.dispatcher.OnPermissionDenied;
-import permissions.dispatcher.OnShowRationale;
-import permissions.dispatcher.PermissionRequest;
-import permissions.dispatcher.RuntimePermissions;
 
 import static com.ape.material.weather.R.id.toolbar;
 
-@RuntimePermissions
 public class MainActivity extends BaseActivity<MainPresenter, MainModel>
         implements MainContract.View, WeatherFragment.OnDrawerTypeChangeListener {
     private static final String TAG = "MainActivity";
@@ -76,7 +67,7 @@ public class MainActivity extends BaseActivity<MainPresenter, MainModel>
         setSupportActionBar(mToolbar);
         setTitle("");
 
-        MainActivityPermissionsDispatcher.getCityWithCheck(this);
+        reloadCity();//加载城市列表
     }
 
     @Override
@@ -160,35 +151,12 @@ public class MainActivity extends BaseActivity<MainPresenter, MainModel>
 
     @Override
     public void reloadCity() {
-        MainActivityPermissionsDispatcher.getCityWithCheck(this);
+        mPresenter.getCities();
     }
 
     @Override
     public void onDrawerTypeChange(BaseDrawer.Type type) {
         mDynamicWeatherView.setDrawerType(type);
-    }
-
-    @NeedsPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-    void getCity() {
-        mPresenter.getCities();//加载城市列表
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        MainActivityPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
-    }
-
-    @OnShowRationale(Manifest.permission.ACCESS_FINE_LOCATION)
-    void onShowRationale(final PermissionRequest request) {
-    }
-
-    @OnPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION)
-    void onPermissionDenied() {
-    }
-
-    @OnNeverAskAgain(Manifest.permission.ACCESS_FINE_LOCATION)
-    void onNeverAskAgain() {
     }
 
     public static class MainFragmentPagerAdapter extends MxxFragmentPagerAdapter {

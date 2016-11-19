@@ -1,8 +1,12 @@
 package com.ape.material.weather.fragment;
 
+import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -26,11 +30,18 @@ import com.ape.material.weather.widget.HourlyForecastView;
 import com.ape.material.weather.widget.PullRefreshLayout;
 
 import butterknife.BindView;
+import permissions.dispatcher.NeedsPermission;
+import permissions.dispatcher.OnNeverAskAgain;
+import permissions.dispatcher.OnPermissionDenied;
+import permissions.dispatcher.OnShowRationale;
+import permissions.dispatcher.PermissionRequest;
+import permissions.dispatcher.RuntimePermissions;
 
 /**
  * Created by android on 16-11-10.
  */
 
+@RuntimePermissions
 public class WeatherFragment extends BaseFragment<WeatherPresenter, WeatherModel>
         implements WeatherContract.View, PullRefreshLayout.OnRefreshListener {
     private static final String TAG = "WeatherFragment";
@@ -132,10 +143,11 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter, WeatherModel
                 + ", request location = "
                 + (city.isLocation() && TextUtils.isEmpty(city.getAreaId())));
         if (city.isLocation() && TextUtils.isEmpty(city.getAreaId())) {
-            mPresenter.getLocation();
-        } else {
-            mPresenter.getWeather(city.getAreaId(), "zh-cn", force);
+            WeatherFragmentPermissionsDispatcher.getLocationWithCheck(this);
+            return;
         }
+
+        mPresenter.getWeather(city.getAreaId(), "zh-cn", force);
     }
 
     @Override
@@ -249,6 +261,44 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter, WeatherModel
 
     protected void toast(String msg) {
         Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
+    }
+
+    @NeedsPermission({Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
+    void getLocation() {
+        mPresenter.getLocation();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        WeatherFragmentPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
+    }
+
+    @OnShowRationale({Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
+    void onShowRational(final PermissionRequest request) {
+        new AlertDialog.Builder(getActivity()).setTitle(R.string.permission_title)
+                .setMessage(R.string.permission_message).setCancelable(false)
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        request.proceed();
+                    }
+                }).setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                request.cancel();
+            }
+        }).show();
+    }
+
+    @OnPermissionDenied({Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
+    void onPermissionDenied() {
+        Snackbar.make(mWWeatherScrollView, R.string.permission_denied, Snackbar.LENGTH_SHORT).show();
+    }
+
+    @OnNeverAskAgain({Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
+    void onNeverAskAgain() {
+        Snackbar.make(mWWeatherScrollView, R.string.permission_never_ask_again, Snackbar.LENGTH_SHORT).show();
     }
 
     public interface OnDrawerTypeChangeListener {

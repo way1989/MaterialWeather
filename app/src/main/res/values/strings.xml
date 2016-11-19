@@ -11,5 +11,9 @@
     <string name="search">Search</string>
     <string name="search_city">Search City</string>
     <string name="empty">No Result</string>
+    <string name="permission_title">Access Permission</string>
+    <string name="permission_message">get location need to access location.</string>
+    <string name="permission_denied">you denied permission request</string>
+    <string name="permission_never_ask_again">can\'t get you location</string>
 
 </resources>

@@ -69,7 +69,8 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.MyView
 
     @Override
     public long getItemId(int position) {
-        return mProvider.getItem(position).getAreaId().hashCode();
+        City city = mProvider.getItem(position);
+        return city.getAreaId() == null ? position : city.getAreaId().hashCode();
     }
 
     @Override

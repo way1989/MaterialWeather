@@ -4,6 +4,8 @@ import android.app.Application;
 import android.content.Context;
 import android.graphics.Typeface;
 
+import com.squareup.leakcanary.LeakCanary;
+
 
 /**
  * Created by way on 16/6/10.
@@ -30,7 +32,7 @@ public class App extends Application {
 //        if (BuildConfig.BUGLY_ENABLED) {
 //            CrashReport.initCrashReport(sContext, String.valueOf(BuildConfig.BUGLY_APPID), false);
 //        }
-//        if (BuildConfig.DEBUG)
-//            LeakCanary.install(this);
+        if (BuildConfig.DEBUG)
+            LeakCanary.install(this);
     }
 }

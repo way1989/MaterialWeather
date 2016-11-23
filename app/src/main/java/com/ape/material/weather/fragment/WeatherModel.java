@@ -43,7 +43,7 @@ public class WeatherModel implements WeatherContract.Model {
     private static final long WIFI_CACHE_TIME = 5 * 60 * 1000;
     // 其他网络环境为1小时
     private static final long OTHER_CACHE_TIME = 60 * 60 * 1000;
-    private Semaphore mRequestLocationLock = new Semaphore(1);
+    private static final long LOCATION_OUT_TIME = 10;//10s out time to get location
 
     @Override
     public Observable<HeWeather> getWeather(String city, String lang, boolean force) {
@@ -65,7 +65,7 @@ public class WeatherModel implements WeatherContract.Model {
                 Log.i(TAG, "flatMap... lat = " + location.getLatitude() + ", lon = " + location.getLongitude());
                 return getCity(location.getLatitude(), location.getLongitude());
             }
-        }).observeOn(AndroidSchedulers.mainThread()).subscribeOn(AndroidSchedulers.mainThread());
+        });
     }
 
     private Observable<City> getCity(final double lat, final double lon) {
@@ -109,7 +109,6 @@ public class WeatherModel implements WeatherContract.Model {
                 CityLocationManager.Listener listener = new CityLocationManager.Listener() {
                     @Override
                     public void onLocationSuccess(Location location) {
-                        mRequestLocationLock.release();
                         emitter.onNext(location);
                         emitter.onCompleted();
                     }
@@ -121,17 +120,13 @@ public class WeatherModel implements WeatherContract.Model {
                     }
                 });
                 manager.setListener(listener);
-                try {
-                    if (!mRequestLocationLock.tryAcquire(5000L, TimeUnit.MILLISECONDS)) {
-                        Log.d(TAG, "Time out waiting to get location");
-                        throw new RuntimeException("Time out waiting to get location");
-                    }
-                    manager.startReceivingLocationUpdates();
-                } catch (Exception e) {
-                    emitter.onError(e);
-                }
+
+                manager.startReceivingLocationUpdates();
             }
-        }, Emitter.BackpressureMode.BUFFER);
+        }, Emitter.BackpressureMode.LATEST)
+                .timeout(LOCATION_OUT_TIME, TimeUnit.SECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(AndroidSchedulers.mainThread());
     }
 
     /**

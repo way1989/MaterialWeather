@@ -21,6 +21,7 @@ import com.ape.material.weather.bean.City;
 import com.ape.material.weather.bean.HeWeather;
 import com.ape.material.weather.dynamicweather.BaseDrawer;
 import com.ape.material.weather.util.AppConstant;
+import com.ape.material.weather.util.CityLocationManager;
 import com.ape.material.weather.util.FormatUtil;
 import com.ape.material.weather.util.RxBus;
 import com.ape.material.weather.widget.AqiView;
@@ -138,12 +139,15 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter, WeatherModel
     }
 
     private void getWeather(City city, boolean force) {
-        Log.i(TAG, "getWeather... city = " + city
-                + ", areaId = " + city.getAreaId()
+        Log.i(TAG, "getWeather... city = " + city + ", areaId = " + city.getAreaId()
                 + ", request location = "
                 + (city.isLocation() && TextUtils.isEmpty(city.getAreaId())));
         if (city.isLocation() && TextUtils.isEmpty(city.getAreaId())) {
-            WeatherFragmentPermissionsDispatcher.getLocationWithCheck(this);
+            if(CityLocationManager.isGPSProviderEnabled(getContext())) {
+                WeatherFragmentPermissionsDispatcher.getLocationWithCheck(this);
+            }else {
+                showErrorTip("请打开GPS定位");
+            }
             return;
         }
 
@@ -260,7 +264,7 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter, WeatherModel
     }
 
     protected void toast(String msg) {
-        Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
+        Snackbar.make(mWPullRefreshLayout, msg, Snackbar.LENGTH_SHORT).show();
     }
 
     @NeedsPermission({Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})

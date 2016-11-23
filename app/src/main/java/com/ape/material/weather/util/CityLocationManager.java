@@ -25,6 +25,11 @@ public class CityLocationManager {
         mContext = context.getApplicationContext();
     }
 
+    public static boolean isGPSProviderEnabled(Context context) {
+        LocationManager manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        return manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+    }
+
     public void setListener(Listener listener) {
         Log.e(TAG, "----recordLocation listener = " + listener);
         mListener = listener;

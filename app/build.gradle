@@ -50,6 +50,7 @@ android {
             //是否开启ACRA
             buildConfigField "boolean", "ACRA_ENABLED", "false"
             buildConfigField "String", "HEWEATHER_URL", HEWEATHER_FREE_URL
+            resValue("string", "PORT_NUMBER", "8081")//数据库网络端口号
         }
         release {
             // 不显示Log
@@ -64,7 +65,9 @@ android {
         }
 
     }
-
+    configurations.all {
+        resolutionStrategy.force 'com.google.code.findbugs:jsr305:1.3.9'
+    }
     lintOptions {
         abortOnError false
     }
@@ -90,6 +93,10 @@ dependencies {
     compile 'io.reactivex:rxjava:1.2.2'
     compile 'io.reactivex:rxandroid:1.2.1'
 
+    //rxlife
+    compile 'com.trello:rxlifecycle:0.8.0'
+    compile 'com.trello:rxlifecycle-components:0.8.0'
+
     //retrofit
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
     compile 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
@@ -101,7 +108,14 @@ dependencies {
         transitive=true
     }
 
+    // Dagger dependencies
+    apt "com.google.dagger:dagger-compiler:$rootProject.daggerVersion"
+    provided 'org.glassfish:javax.annotation:10.0-b28'
+    compile "com.google.dagger:dagger:$rootProject.daggerVersion"
+
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
     testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+
+    debugCompile 'com.amitshekhar.android:debug-db:0.3.0'
 }

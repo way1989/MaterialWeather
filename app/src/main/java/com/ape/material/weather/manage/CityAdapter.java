@@ -34,16 +34,16 @@ import java.util.List;
  * Created by way on 2016/11/13.
  */
 
-public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.MyViewHolder>
-        implements DraggableItemAdapter<LocationAdapter.MyViewHolder>,
-        SwipeableItemAdapter<LocationAdapter.MyViewHolder> {
+public class CityAdapter extends RecyclerView.Adapter<CityAdapter.MyViewHolder>
+        implements DraggableItemAdapter<CityAdapter.MyViewHolder>,
+        SwipeableItemAdapter<CityAdapter.MyViewHolder> {
     private static final String TAG = "MyDSItemAdapter";
-    private LocationProvider mProvider;
+    private CityProvider mProvider;
     private EventListener mEventListener;
     private View.OnClickListener mItemViewOnClickListener;
 
-    public LocationAdapter() {
-        mProvider = new LocationProvider();
+    public CityAdapter() {
+        mProvider = new CityProvider();
         mItemViewOnClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -267,9 +267,9 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.MyView
 
     private static class SwipeLeftResultAction extends SwipeResultActionRemoveItem {
         private final int mPosition;
-        private LocationAdapter mAdapter;
+        private CityAdapter mAdapter;
 
-        SwipeLeftResultAction(LocationAdapter adapter, int position) {
+        SwipeLeftResultAction(CityAdapter adapter, int position) {
             mAdapter = adapter;
             mPosition = position;
         }

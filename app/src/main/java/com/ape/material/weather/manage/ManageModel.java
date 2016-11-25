@@ -1,5 +1,7 @@
 package com.ape.material.weather.manage;
 
+import android.content.Context;
+
 import com.ape.material.weather.bean.City;
 import com.ape.material.weather.db.DBUtil;
 import com.ape.material.weather.util.RxSchedulers;
@@ -14,8 +16,12 @@ import rx.Subscriber;
  * Created by way on 2016/11/13.
  */
 
-public class ManageLocationModel implements ManageLocationContract.Model {
-    private static final String TAG = "ManageLocationModel";
+public class ManageModel implements ManageContract.Model {
+    private static final String TAG = "ManageModel";
+    private Context mContext;
+    public ManageModel(Context context) {
+        mContext = context;
+    }
 
     @Override
     public Observable<List<City>> getCities() {

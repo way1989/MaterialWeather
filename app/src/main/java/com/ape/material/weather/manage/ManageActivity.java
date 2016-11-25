@@ -13,12 +13,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.ape.material.weather.AppComponent;
 import com.ape.material.weather.R;
 import com.ape.material.weather.base.BaseActivity;
 import com.ape.material.weather.bean.City;
 import com.ape.material.weather.search.SearchCityActivity;
 import com.ape.material.weather.util.AppConstant;
 import com.ape.material.weather.util.RxBus;
+import com.ape.material.weather.util.RxBusEvent;
 import com.h6ah4i.android.widget.advrecyclerview.animator.DraggableItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.decoration.ItemShadowDecorator;
@@ -30,21 +32,25 @@ import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 
-public class ManageLocationActivity extends BaseActivity<ManageLocationPresenter, ManageLocationModel>
-        implements ManageLocationContract.View {
-    private static final String TAG = "ManageLocationActivity";
+public class ManageActivity extends BaseActivity<ManagePresenter, ManageModel>
+        implements ManageContract.View {
+    private static final String TAG = "ManageActivity";
     private static final int REQUEST_CODE_CITY = 0;
     @BindView(R.id.recycler_view)
     RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
-    private LocationAdapter mAdapter;
+    private CityAdapter mAdapter;
     private RecyclerView.Adapter mWrappedAdapter;
     private RecyclerViewDragDropManager mRecyclerViewDragDropManager;
     private RecyclerViewSwipeManager mRecyclerViewSwipeManager;
     private RecyclerViewTouchActionGuardManager mRecyclerViewTouchActionGuardManager;
 
+    @Inject
+    ManagePresenter mPresenter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,16 +95,16 @@ public class ManageLocationActivity extends BaseActivity<ManageLocationPresenter
         mRecyclerViewSwipeManager = new RecyclerViewSwipeManager();
 
         //adapter
-        final LocationAdapter myItemAdapter = new LocationAdapter();
-        myItemAdapter.setEventListener(new LocationAdapter.EventListener() {
+        final CityAdapter myItemAdapter = new CityAdapter();
+        myItemAdapter.setEventListener(new CityAdapter.EventListener() {
             @Override
             public void onItemRemoved(int position) {
-                ManageLocationActivity.this.onItemRemoved(position);
+                ManageActivity.this.onItemRemoved(position);
             }
 
             @Override
             public void onItemViewClicked(View v) {
-                ManageLocationActivity.this.onItemViewClick(v);
+                ManageActivity.this.onItemViewClick(v);
             }
         });
 
@@ -165,7 +171,9 @@ public class ManageLocationActivity extends BaseActivity<ManageLocationPresenter
             City city = (City) data.getSerializableExtra(AppConstant.ARG_CITY_KEY);
             if (city != null) {
                 mAdapter.addData(city);
-                RxBus.getInstance().post(AppConstant.CITY_LIST_CHANGED, mAdapter.getData());
+                RxBusEvent.MainEvent event =  new RxBusEvent.MainEvent();
+                event.mCities = mAdapter.getData();
+                RxBus.getInstance().post(event);
             }
         }
     }
@@ -279,9 +287,11 @@ public class ManageLocationActivity extends BaseActivity<ManageLocationPresenter
     }
 
     @Override
-    protected void initPresenter() {
-        super.initPresenter();
-        mPresenter.setVM(this, mModel);
+    protected void initPresenter(AppComponent appComponent) {
+        super.initPresenter(appComponent);
+        //mPresenter.setVM(this, mModel);
+        DaggerManageComponent.builder().appComponent(appComponent)
+                .managePresenterModule(new ManagePresenterModule(this)).build().inject(this);
     }
 
     @Override
@@ -296,6 +306,8 @@ public class ManageLocationActivity extends BaseActivity<ManageLocationPresenter
 
     @Override
     public void onCityModify() {
-        RxBus.getInstance().post(AppConstant.CITY_LIST_CHANGED, mAdapter.getData());
+        RxBusEvent.MainEvent event = new RxBusEvent.MainEvent();
+        event.mCities = mAdapter.getData();
+        RxBus.getInstance().post(event);
     }
 }

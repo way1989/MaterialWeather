@@ -12,23 +12,25 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.ape.material.weather.AppComponent;
 import com.ape.material.weather.BuildConfig;
 import com.ape.material.weather.R;
 import com.ape.material.weather.base.BaseFragment;
 import com.ape.material.weather.bean.City;
 import com.ape.material.weather.bean.HeWeather;
 import com.ape.material.weather.dynamicweather.BaseDrawer;
-import com.ape.material.weather.util.AppConstant;
 import com.ape.material.weather.util.CityLocationManager;
 import com.ape.material.weather.util.FormatUtil;
 import com.ape.material.weather.util.RxBus;
+import com.ape.material.weather.util.RxBusEvent;
 import com.ape.material.weather.widget.AqiView;
 import com.ape.material.weather.widget.AstroView;
 import com.ape.material.weather.widget.DailyForecastView;
 import com.ape.material.weather.widget.HourlyForecastView;
 import com.ape.material.weather.widget.PullRefreshLayout;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import permissions.dispatcher.NeedsPermission;
@@ -63,6 +65,8 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter, WeatherModel
     private OnDrawerTypeChangeListener mListener;
     private BaseDrawer.Type mWeatherType;
 
+    @Inject WeatherPresenter mPresenter;
+
     public static WeatherFragment makeInstance(@NonNull City city) {
         WeatherFragment fragment = new WeatherFragment();
         Bundle bundle = new Bundle();
@@ -83,9 +87,10 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter, WeatherModel
     }
 
     @Override
-    protected void initPresenter() {
-        super.initPresenter();
-        mPresenter.setVM(this, mModel);
+    protected void initPresenter(AppComponent appComponent) {
+        super.initPresenter(appComponent);
+        //mPresenter.setVM(this, mModel);
+        DaggerWeatherComponent.builder().appComponent(appComponent).weatherPresenterModule(new WeatherPresenterModule(this)).build().inject(this);
     }
 
     private City getArgCity() {
@@ -114,7 +119,7 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter, WeatherModel
 
     @Override
     public void onCityChange(City city) {
-        RxBus.getInstance().post(AppConstant.CITY_LIST_CHANGED, null);
+        RxBus.getInstance().post(new RxBusEvent.MainEvent());
         getWeather(city, false);
     }
 

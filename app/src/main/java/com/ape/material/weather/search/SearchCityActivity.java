@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
+import com.ape.material.weather.AppComponent;
 import com.ape.material.weather.BuildConfig;
 import com.ape.material.weather.R;
 import com.ape.material.weather.base.BaseActivity;
@@ -28,6 +29,8 @@ import com.h6ah4i.android.widget.advrecyclerview.decoration.SimpleListDividerDec
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 
 public class SearchCityActivity extends BaseActivity<SearchPresenter, SearchModel> implements SearchContract.View,
@@ -37,6 +40,8 @@ public class SearchCityActivity extends BaseActivity<SearchPresenter, SearchMode
     RecyclerView mRecyclerview;
     @BindView(R.id.loading_empty_container)
     LoadingEmptyContainer mLoadingEmptyContainer;
+    @Inject
+    SearchPresenter mPresenter;
     private SearchAdapter adapter;
     private SearchView mSearchView;
     private InputMethodManager mImm;
@@ -55,9 +60,9 @@ public class SearchCityActivity extends BaseActivity<SearchPresenter, SearchMode
     }
 
     @Override
-    protected void initPresenter() {
-        super.initPresenter();
-        mPresenter.setVM(this, mModel);
+    protected void initPresenter(AppComponent appComponent) {
+        super.initPresenter(appComponent);
+        DaggerSearchComponent.builder().appComponent(appComponent).searchPresenterModule(new SearchPresenterModule(this)).build().inject(this);
     }
 
     @Override
@@ -79,17 +84,17 @@ public class SearchCityActivity extends BaseActivity<SearchPresenter, SearchMode
 
         MenuItemCompat.setOnActionExpandListener(searchMenuItem,
                 new MenuItemCompat.OnActionExpandListener() {
-            @Override
-            public boolean onMenuItemActionExpand(MenuItem item) {
-                return true;
-            }
+                    @Override
+                    public boolean onMenuItemActionExpand(MenuItem item) {
+                        return true;
+                    }
 
-            @Override
-            public boolean onMenuItemActionCollapse(MenuItem item) {
-                finish();
-                return false;
-            }
-        });
+                    @Override
+                    public boolean onMenuItemActionCollapse(MenuItem item) {
+                        finish();
+                        return false;
+                    }
+                });
 
         menu.findItem(R.id.menu_search).expandActionView();
         return super.onCreateOptionsMenu(menu);

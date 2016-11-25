@@ -14,7 +14,7 @@ import rx.Observable;
  * Created by way on 2016/11/13.
  */
 
-public class ManageLocationContract {
+public class ManageContract {
     interface Model extends BaseModel {
         Observable<List<City>> getCities();
 
@@ -31,7 +31,7 @@ public class ManageLocationContract {
         void onCityModify();
     }
 
-    abstract static class Presenter extends BasePresenter<ManageLocationContract.View, ManageLocationContract.Model> {
+    abstract static class Presenter extends BasePresenter<ManageContract.View, ManageContract.Model> {
         public abstract void getCities();
 
         public abstract void swapCity(ArrayList<City> data);

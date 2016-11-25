@@ -5,7 +5,9 @@ import android.support.annotation.LayoutRes;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
-import com.ape.material.weather.util.TUtil;
+import com.ape.material.weather.App;
+import com.ape.material.weather.AppComponent;
+import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 
 import butterknife.ButterKnife;
 
@@ -13,18 +15,14 @@ import butterknife.ButterKnife;
  * Created by android on 16-11-10.
  */
 
-public abstract class BaseActivity<T extends BasePresenter, E extends BaseModel> extends AppCompatActivity {
-    protected T mPresenter;
-    protected E mModel;
+public abstract class BaseActivity<T extends BasePresenter, E extends BaseModel> extends RxAppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutId());
         ButterKnife.bind(this);
-        mPresenter = TUtil.getT(this, 0);
-        mModel = TUtil.getT(this, 1);
-        initPresenter();
+        initPresenter(((App)getApplication()).getAppComponent());
     }
 
     @Override
@@ -42,14 +40,13 @@ public abstract class BaseActivity<T extends BasePresenter, E extends BaseModel>
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mPresenter != null)
-            mPresenter.onDestroy();
     }
 
     /**
      * should override this method when use MVP
+     * @param appComponent
      */
-    protected void initPresenter() {
+    protected void initPresenter(AppComponent appComponent) {
     }
 
     /**

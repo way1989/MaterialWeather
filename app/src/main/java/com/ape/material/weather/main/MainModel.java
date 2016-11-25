@@ -1,6 +1,7 @@
 package com.ape.material.weather.main;
 
 import android.content.ContentValues;
+import android.content.Context;
 
 import com.ape.material.weather.App;
 import com.ape.material.weather.bean.City;
@@ -20,6 +21,10 @@ import rx.Subscriber;
 
 public class MainModel implements MainContract.Model {
     private static final String TAG = "MainModel";
+    private Context mContext;
+    MainModel(Context context){
+        mContext = context;
+    }
 
     @Override
     public Observable<List<City>> getCities() {
@@ -45,7 +50,7 @@ public class MainModel implements MainContract.Model {
         ContentValues values = new ContentValues();
         values.put(CityProvider.CityConstants.CITY, "Auto Location");
         values.put(CityProvider.CityConstants.IS_LOCATION, 1);
-        App.getContext().getContentResolver().insert(CityProvider.CITY_CONTENT_URI, values);
+        mContext.getContentResolver().insert(CityProvider.CITY_CONTENT_URI, values);
     }
 
 

@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 
+import com.ape.material.weather.AppComponent;
 import com.ape.material.weather.R;
 import com.ape.material.weather.base.BaseActivity;
 import com.ape.material.weather.base.BaseFragment;
@@ -21,16 +22,23 @@ import com.ape.material.weather.bean.City;
 import com.ape.material.weather.dynamicweather.BaseDrawer;
 import com.ape.material.weather.dynamicweather.DynamicWeatherView;
 import com.ape.material.weather.fragment.WeatherFragment;
-import com.ape.material.weather.manage.ManageLocationActivity;
+import com.ape.material.weather.manage.ManageActivity;
+import com.ape.material.weather.util.RxBus;
+import com.ape.material.weather.util.RxBusEvent;
 import com.ape.material.weather.util.UiUtil;
 import com.ape.material.weather.widget.MxxFragmentPagerAdapter;
 import com.ape.material.weather.widget.MxxViewPager;
+import com.trello.rxlifecycle.android.ActivityEvent;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 
 import static com.ape.material.weather.R.id.toolbar;
 
@@ -45,12 +53,14 @@ public class MainActivity extends BaseActivity<MainPresenter, MainModel>
     Toolbar mToolbar;
     @BindView(R.id.app_bar_layout)
     AppBarLayout mAppBarLayout;
-
+    @Inject
+    MainPresenter mMainPresenter;
     private MainFragmentPagerAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             mMainViewPager.setPadding(0, UiUtil.getStatusBarHeight(), 0, 0);
@@ -68,6 +78,26 @@ public class MainActivity extends BaseActivity<MainPresenter, MainModel>
         setTitle("");
 
         reloadCity();//加载城市列表
+        RxBus.getInstance().toObservable(RxBusEvent.MainEvent.class)
+                .observeOn(AndroidSchedulers.mainThread())
+                .compose(this.<RxBusEvent.MainEvent>bindUntilEvent(ActivityEvent.DESTROY))
+                .subscribe(new Action1<RxBusEvent.MainEvent>() {
+                    @Override
+                    public void call(RxBusEvent.MainEvent event) {
+                        //do some thing
+                        List<City> cities = event.mCities;
+                        if (cities != null) {
+                            onCityChange(cities);
+                        } else {
+                            reloadCity();
+                        }
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        throwable.printStackTrace();
+                    }
+                });
     }
 
     @Override
@@ -81,7 +111,7 @@ public class MainActivity extends BaseActivity<MainPresenter, MainModel>
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_manage:
-                startActivity(new Intent(this, ManageLocationActivity.class));
+                startActivity(new Intent(this, ManageActivity.class));
                 return true;
           /*  case R.id.action_share:
                 return true;
@@ -116,9 +146,10 @@ public class MainActivity extends BaseActivity<MainPresenter, MainModel>
     }
 
     @Override
-    protected void initPresenter() {
-        super.initPresenter();
-        mPresenter.setVM(this, mModel);
+    protected void initPresenter(AppComponent appComponent) {
+        super.initPresenter(appComponent);
+        DaggerMainComponent.builder().appComponent(appComponent)
+                .mainPresenterModule(new MainPresenterModule(this)).build().inject(this);
     }
 
     @Override
@@ -151,7 +182,7 @@ public class MainActivity extends BaseActivity<MainPresenter, MainModel>
 
     @Override
     public void reloadCity() {
-        mPresenter.getCities();
+        mMainPresenter.getCities();
     }
 
     @Override

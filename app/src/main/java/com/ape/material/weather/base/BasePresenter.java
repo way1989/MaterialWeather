@@ -2,8 +2,6 @@ package com.ape.material.weather.base;
 
 import android.content.Context;
 
-import com.ape.material.weather.util.RxManager;
-
 /**
  * ************************************************************************
  * **                              _oo0oo_                               **
@@ -29,21 +27,8 @@ import com.ape.material.weather.util.RxManager;
  * ************************************************************************
  */
 public abstract class BasePresenter<T, E> {
-    public Context mContext;
-    public E mModel;
-    public T mView;
-    public RxManager mRxManage = new RxManager();
+    protected Context mContext;
+    protected E mModel;
+    protected T mView;
 
-    public void setVM(T v, E m) {
-        this.mView = v;
-        this.mModel = m;
-        this.onStart();
-    }
-
-    public void onStart() {
-    }
-
-    public void onDestroy() {
-        mRxManage.clear();
-    }
 }

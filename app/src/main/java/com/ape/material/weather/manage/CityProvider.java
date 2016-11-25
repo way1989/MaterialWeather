@@ -10,12 +10,12 @@ import java.util.List;
  * Created by way on 2016/11/13.
  */
 
-public class LocationProvider extends AbstractDataProvider {
+public class CityProvider extends AbstractDataProvider {
     private ArrayList<City> mData;
     private City mLastRemovedData;
     private int mLastRemovedPosition = -1;
 
-    public LocationProvider() {
+    public CityProvider() {
         mData = new ArrayList<>();
     }
 

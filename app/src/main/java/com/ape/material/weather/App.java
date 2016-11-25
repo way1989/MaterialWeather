@@ -13,6 +13,7 @@ import com.squareup.leakcanary.LeakCanary;
 public class App extends Application {
     private volatile static Context sContext;
     private volatile static Typeface sTypeface;
+    private AppComponent mAppComponent;
 
     public static Context getContext() {
         return sContext;
@@ -34,5 +35,12 @@ public class App extends Application {
 //        }
         if (BuildConfig.DEBUG)
             LeakCanary.install(this);
+
+        mAppComponent = DaggerAppComponent.builder()
+                .appModule(new AppModule(getApplicationContext())).build();
+    }
+
+    public AppComponent getAppComponent() {
+        return mAppComponent;
     }
 }

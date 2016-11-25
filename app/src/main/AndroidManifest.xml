@@ -30,7 +30,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".manage.ManageLocationActivity"
+            android:name=".manage.ManageActivity"
             android:screenOrientation="portrait"/>
 
         <provider

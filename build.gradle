@@ -41,4 +41,5 @@ ext {
     glideVersion = '3.7.0'
     circleimageviewVersion = '2.1.0'
     permissionsdispatcherVersion = '2.1.3'
+    daggerVersion = '2.2'
 }

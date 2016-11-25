@@ -3,13 +3,14 @@ package com.ape.material.weather.base;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.ape.material.weather.App;
+import com.ape.material.weather.AppComponent;
 import com.ape.material.weather.dynamicweather.BaseDrawer;
-import com.ape.material.weather.util.TUtil;
+import com.trello.rxlifecycle.components.support.RxFragment;
 
 import butterknife.ButterKnife;
 
@@ -17,10 +18,8 @@ import butterknife.ButterKnife;
  * Created by android on 16-11-10.
  */
 
-public abstract class BaseFragment<T extends BasePresenter, E extends BaseModel> extends Fragment {
+public abstract class BaseFragment<T extends BasePresenter, E extends BaseModel> extends RxFragment {
     protected View rootView;
-    protected T mPresenter;
-    protected E mModel;
     protected boolean isViewInitiated;
     protected boolean isDataInitiated;
 
@@ -56,12 +55,8 @@ public abstract class BaseFragment<T extends BasePresenter, E extends BaseModel>
         if (rootView == null)
             rootView = inflater.inflate(getLayoutId(), container, false);
         ButterKnife.bind(this, rootView);
-        mPresenter = TUtil.getT(this, 0);
-        mModel = TUtil.getT(this, 1);
-        if (mPresenter != null) {
-            mPresenter.mContext = this.getActivity();
-        }
-        initPresenter();
+
+        initPresenter(((App)getActivity().getApplication()).getAppComponent());
         initView();
         return rootView;
     }
@@ -71,8 +66,6 @@ public abstract class BaseFragment<T extends BasePresenter, E extends BaseModel>
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if (mPresenter != null)
-            mPresenter.onDestroy();
     }
 
     public abstract String getTitle();
@@ -81,8 +74,9 @@ public abstract class BaseFragment<T extends BasePresenter, E extends BaseModel>
 
     /**
      * should override this method when use MVP
+     * @param appComponent
      */
-    protected void initPresenter() {
+    protected void initPresenter(AppComponent appComponent) {
     }
 
     /**

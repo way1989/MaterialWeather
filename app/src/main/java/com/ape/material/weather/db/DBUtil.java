@@ -48,6 +48,37 @@ public class DBUtil {
         return cities;
     }
 
+    public static boolean isExist(City city) {
+        ContentResolver contentResolver = App.getContext().getContentResolver();
+        Cursor cursor = contentResolver.query(CityProvider.CITY_CONTENT_URI,
+                new String[]{CityProvider.CityConstants.CITY},
+                CityProvider.CityConstants.AREA_ID + "=?", new String[]{city.getAreaId()}, null);
+        Log.d(TAG, "getCityFromCache cursor = " + cursor);
+        if (cursor == null) return false;
+        int size = cursor.getCount();
+        Log.d(TAG, "getCityFromCache cursor.size = " + size);
+        if (!cursor.isClosed()) {
+            cursor.close();
+        }
+        return size > 0;
+    }
+
+    public static boolean addCity(City city, boolean autoLocation) {
+        ContentValues values = new ContentValues();
+        values.put(CityProvider.CityConstants.CITY, city.getCity());
+        values.put(CityProvider.CityConstants.AREA_ID, city.getAreaId());
+        values.put(CityProvider.CityConstants.COUNTRY, city.getCountry());
+        values.put(CityProvider.CityConstants.LATITUDE, city.getLat());
+        values.put(CityProvider.CityConstants.LONGITUDE, city.getLon());
+        values.put(CityProvider.CityConstants.PROVINCE, city.getProv());
+        values.put(CityProvider.CityConstants.IS_LOCATION, autoLocation ? 1 : 0);
+        values.put(CityProvider.CityConstants.ORDER_INDEX, getCacheCitySize());
+
+        ContentResolver contentResolver = App.getContext().getContentResolver();
+        Uri uri = contentResolver.insert(CityProvider.CITY_CONTENT_URI, values);
+        return uri != null;
+    }
+
     public static boolean updateCity(City city, boolean autoLocation) {
         ContentValues values = new ContentValues();
         values.put(CityProvider.CityConstants.CITY, city.getCity());

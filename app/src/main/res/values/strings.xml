@@ -43,5 +43,6 @@
     <string name="weather_mm" translatable="false">%1$smm</string>
     <string name="weather_ug_m3" translatable="false">%1$sμg/m³</string>
     <string name="weather_update">%1$s published</string>
+    <string name="city_exist">City is exist</string>
 
 </resources>

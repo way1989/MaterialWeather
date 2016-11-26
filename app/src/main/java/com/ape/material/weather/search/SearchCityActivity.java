@@ -3,6 +3,7 @@ package com.ape.material.weather.search;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.internal.view.SupportMenuItem;
 import android.support.v4.view.MenuItemCompat;
@@ -15,7 +16,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Toast;
 
 import com.ape.material.weather.AppComponent;
 import com.ape.material.weather.BuildConfig;
@@ -160,12 +160,16 @@ public class SearchCityActivity extends BaseActivity<SearchPresenter, SearchMode
         adapter.clear();
         mLoadingEmptyContainer.showNoResults();
         if (BuildConfig.LOG_DEBUG)
-            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+            Snackbar.make(mRecyclerview, e.getMessage(), Snackbar.LENGTH_LONG).show();
     }
 
     @Override
     public void onSaveCitySucceed(City city) {
         Log.d(TAG, "onSaveCitySucceed city");
+        if (city == null) {
+            Snackbar.make(mRecyclerview, R.string.city_exist, Snackbar.LENGTH_LONG).show();
+            return;
+        }
         Intent intent = new Intent();
         intent.putExtra(AppConstant.ARG_CITY_KEY, city);
         setResult(RESULT_OK, intent);

@@ -123,7 +123,7 @@ public class CityAdapter extends RecyclerView.Adapter<CityAdapter.MyViewHolder>
     }
 
     private SpannableString getSpannable(String name) {
-        if(TextUtils.isEmpty(name)){
+        if (TextUtils.isEmpty(name)) {
             return new SpannableString(App.getContext().getString(R.string.auto_location));
         }
         SpannableString ss = new SpannableString(" " + name);

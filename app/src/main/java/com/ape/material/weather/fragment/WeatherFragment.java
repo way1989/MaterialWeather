@@ -151,7 +151,7 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter, WeatherModel
                 + ", request location = "
                 + (city.isLocation() && TextUtils.isEmpty(city.getAreaId())));
         if (city.isLocation() && TextUtils.isEmpty(city.getAreaId())) {
-            if(!DeviceUtil.hasInternet()){
+            if (!DeviceUtil.hasInternet()) {
                 showErrorTip(getString(R.string.no_internet_toast));
                 return;
             }
@@ -167,7 +167,7 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter, WeatherModel
     }
 
     private SpannableString getSpannable(String name) {
-        if(TextUtils.isEmpty(name)){
+        if (TextUtils.isEmpty(name)) {
             return new SpannableString(getString(R.string.auto_location));
         }
         SpannableString ss = new SpannableString("  " + name);
@@ -233,23 +233,23 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter, WeatherModel
             if (weather.hasAqi()) {
                 mWAqiView.setData(w.getAqi());
                 final String qlty = w.getAqi().getCity().getQlty();
-                if(TextUtils.isEmpty(qlty)){
+                if (TextUtils.isEmpty(qlty)) {
                     setTextViewString(R.id.w_now_cond_text, w.getNow().getCond().getTxt());
-                }else {
+                } else {
                     setTextViewString(R.id.w_now_cond_text, w.getNow().getCond().getTxt() + " | " + qlty);
                 }
                 setTextViewString(R.id.w_aqi_detail_text, qlty);
                 final String pm25 = w.getAqi().getCity().getPm25();
                 setTextViewString(R.id.w_aqi_pm25, TextUtils.isEmpty(pm25) ? getString(R.string.nodata)
-                        : getString(R.string.weather_ug_m3,pm25));
+                        : getString(R.string.weather_ug_m3, pm25));
                 final String pm10 = w.getAqi().getCity().getPm10();
-                setTextViewString(R.id.w_aqi_pm10,  TextUtils.isEmpty(pm10) ? getString(R.string.nodata)
+                setTextViewString(R.id.w_aqi_pm10, TextUtils.isEmpty(pm10) ? getString(R.string.nodata)
                         : getString(R.string.weather_ug_m3, pm10));
                 final String so2 = w.getAqi().getCity().getSo2();
-                setTextViewString(R.id.w_aqi_so2,  TextUtils.isEmpty(so2) ? getString(R.string.nodata)
+                setTextViewString(R.id.w_aqi_so2, TextUtils.isEmpty(so2) ? getString(R.string.nodata)
                         : getString(R.string.weather_ug_m3, so2));
                 final String no2 = w.getAqi().getCity().getNo2();
-                setTextViewString(R.id.w_aqi_no2,  TextUtils.isEmpty(no2) ? getString(R.string.nodata)
+                setTextViewString(R.id.w_aqi_no2, TextUtils.isEmpty(no2) ? getString(R.string.nodata)
                         : getString(R.string.weather_ug_m3, no2));
             } else {
                 setTextViewString(R.id.w_now_cond_text, w.getNow().getCond().getTxt());

@@ -56,9 +56,9 @@ public class SearchModel implements SearchContract.Model {
         return Observable.create(new Observable.OnSubscribe<Boolean>() {
             @Override
             public void call(Subscriber<? super Boolean> subscriber) {
-                boolean result = DBUtil.updateCity(city, false);
-                Log.d(TAG, "addOrUpdateCity... result = " + result);
-                subscriber.onNext(result);
+                boolean exist = DBUtil.isExist(city);
+                Log.d(TAG, "addOrUpdateCity... exist = " + exist);
+                subscriber.onNext(!exist && DBUtil.addCity(city, false));
                 subscriber.onCompleted();
             }
         }).compose(RxSchedulers.<Boolean>io_main());

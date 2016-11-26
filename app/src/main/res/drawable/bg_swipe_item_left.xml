@@ -20,7 +20,7 @@
     </item>
     <item android:right="16dp">
         <bitmap
-            android:src="@drawable/ic_delete"
-            android:gravity="right|center_vertical"/>
+            android:gravity="right|center_vertical"
+            android:src="@drawable/ic_delete"/>
     </item>
 </layer-list>

@@ -36,4 +36,5 @@
     <string name="weather_hours_forecast_title">24h預報</string>
     <string name="weather_index_title">生活指數</string>
     <string name="weather_update">%1$s 發佈</string>
+    <string name="city_exist">該城市已經存在</string>
 </resources>

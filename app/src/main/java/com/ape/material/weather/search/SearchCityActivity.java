@@ -22,7 +22,6 @@ import com.ape.material.weather.BuildConfig;
 import com.ape.material.weather.R;
 import com.ape.material.weather.base.BaseActivity;
 import com.ape.material.weather.bean.City;
-import com.ape.material.weather.db.SearchHistory;
 import com.ape.material.weather.util.AppConstant;
 import com.ape.material.weather.widget.LoadingEmptyContainer;
 import com.h6ah4i.android.widget.advrecyclerview.decoration.SimpleListDividerDecorator;
@@ -140,7 +139,6 @@ public class SearchCityActivity extends BaseActivity<SearchPresenter, SearchMode
                 mImm.hideSoftInputFromWindow(mSearchView.getWindowToken(), 0);
             }
             mSearchView.clearFocus();
-            SearchHistory.getInstance(this).addSearchString(queryString);
         }
     }
 

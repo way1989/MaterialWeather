@@ -16,4 +16,5 @@
     <dimen name="white_note_height">60.0dip</dimen>
     <dimen name="no_results_text_padding_bottom">16.0dip</dimen>
     <dimen name="no_results_width">260.0dip</dimen>
+    <dimen name="fab_margin">16dp</dimen>
 </resources>

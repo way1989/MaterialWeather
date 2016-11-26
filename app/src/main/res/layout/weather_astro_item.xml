@@ -2,7 +2,7 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
     <TextView
         style="@style/w_section_title"
-        android:text="太阳和风"/>
+        android:text="@string/sun_and_wind_title"/>
 
     <com.ape.material.weather.widget.AstroView
         android:id="@+id/w_astroView"

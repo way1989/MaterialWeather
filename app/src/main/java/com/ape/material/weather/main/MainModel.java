@@ -34,7 +34,6 @@ public class MainModel implements MainContract.Model {
                 ArrayList<City> cities = DBUtil.getCityFromCache();
                 if (cities.isEmpty()) {
                     City city = new City();
-                    city.setCity("自动定位");
                     city.setLocation(true);
                     cities.add(city);
 
@@ -48,7 +47,6 @@ public class MainModel implements MainContract.Model {
 
     private void insertAutoLocation() {
         ContentValues values = new ContentValues();
-        values.put(CityProvider.CityConstants.CITY, "Auto Location");
         values.put(CityProvider.CityConstants.IS_LOCATION, 1);
         mContext.getContentResolver().insert(CityProvider.CITY_CONTENT_URI, values);
     }

@@ -26,6 +26,7 @@ import com.ape.material.weather.bean.City;
 import com.ape.material.weather.bean.HeWeather;
 import com.ape.material.weather.dynamicweather.BaseDrawer;
 import com.ape.material.weather.util.CityLocationManager;
+import com.ape.material.weather.util.DeviceUtil;
 import com.ape.material.weather.util.FormatUtil;
 import com.ape.material.weather.util.RxBus;
 import com.ape.material.weather.util.RxBusEvent;
@@ -104,11 +105,6 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter, WeatherModel
         return (City) getArguments().getSerializable(ARG_KEY);
     }
 
-//    @Override
-//    public String getTitle() {
-//        return getArgCity().getCity();
-//    }
-
     @Override
     public BaseDrawer.Type getDrawerType() {
         return mWeatherType;
@@ -155,10 +151,14 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter, WeatherModel
                 + ", request location = "
                 + (city.isLocation() && TextUtils.isEmpty(city.getAreaId())));
         if (city.isLocation() && TextUtils.isEmpty(city.getAreaId())) {
+            if(!DeviceUtil.hasInternet()){
+                showErrorTip(getString(R.string.no_internet_toast));
+                return;
+            }
             if (CityLocationManager.isGPSProviderEnabled(getContext())) {
                 WeatherFragmentPermissionsDispatcher.getLocationWithCheck(this);
             } else {
-                showErrorTip("请打开GPS定位");
+                showErrorTip(getString(R.string.gps_disabled_toast));
             }
             return;
         }
@@ -167,6 +167,9 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter, WeatherModel
     }
 
     private SpannableString getSpannable(String name) {
+        if(TextUtils.isEmpty(name)){
+            return new SpannableString(getString(R.string.auto_location));
+        }
         SpannableString ss = new SpannableString("  " + name);
         Drawable drawable = App.getContext().getResources()
                 .getDrawable(R.drawable.ic_location_on_white_18dp);
@@ -208,36 +211,46 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter, WeatherModel
             HeWeather.HeWeather5Bean w = weather.getWeather();
             mWDailyForecastView.setData(weather);
             mWHourlyForecastView.setData(weather);
-            mWAqiView.setData(w.getAqi());
             mWAstroView.setData(weather);
-            final String tmp = w.getNow().getTmp();
-
-            setTextViewString(R.id.w_now_tmp, tmp + "°");
-
-            //setTextViewString(R.id.w_now_cond_text, w.getNow().getCond().getTxt());
+            setTextViewString(R.id.w_now_tmp, getString(R.string.weather_temp, w.getNow().getTmp()));
 
             if (FormatUtil.isToday(w.getBasic().getUpdate().getLoc())) {
-                setTextViewString(R.id.w_basic_update_loc, w.getBasic().getUpdate().getLoc().substring(11) + " 发布");
+                setTextViewString(R.id.w_basic_update_loc,
+                        getString(R.string.weather_update, w.getBasic().getUpdate().getLoc().substring(11)));
             } else {
-                setTextViewString(R.id.w_basic_update_loc, w.getBasic().getUpdate().getLoc().substring(5) + " 发布");
+                setTextViewString(R.id.w_basic_update_loc,
+                        getString(R.string.weather_update, w.getBasic().getUpdate().getLoc().substring(5)));
             }
 
             setTextViewString(R.id.w_todaydetail_bottomline, w.getNow().getCond().getTxt() + "  " + weather.getTodayTempDescription());
-            setTextViewString(R.id.w_todaydetail_temp, w.getNow().getTmp() + "°");
+            setTextViewString(R.id.w_todaydetail_temp, getString(R.string.weather_temp, w.getNow().getTmp()));
 
-            setTextViewString(R.id.w_now_fl, w.getNow().getFl() + "°");
-            setTextViewString(R.id.w_now_hum, w.getNow().getHum() + "%");// 湿度
-            setTextViewString(R.id.w_now_vis, w.getNow().getVis() + "km");// 能见度
-
-            setTextViewString(R.id.w_now_pcpn, w.getNow().getPcpn() + "mm"); // 降雨量
+            setTextViewString(R.id.w_now_fl, getString(R.string.weather_temp, w.getNow().getFl()));
+            setTextViewString(R.id.w_now_hum, getString(R.string.weather_percent, w.getNow().getHum()));// 湿度
+            setTextViewString(R.id.w_now_vis, getString(R.string.weather_km, w.getNow().getVis()));// 能见度
+            setTextViewString(R.id.w_now_pcpn, getString(R.string.weather_mm, w.getNow().getPcpn())); // 降雨量
 
             if (weather.hasAqi()) {
-                setTextViewString(R.id.w_now_cond_text, w.getNow().getCond().getTxt() + "|" + w.getAqi().getCity().getQlty());
-                setTextViewString(R.id.w_aqi_detail_text, w.getAqi().getCity().getQlty());
-                setTextViewString(R.id.w_aqi_pm25, w.getAqi().getCity().getPm25() + "μg/m³");
-                setTextViewString(R.id.w_aqi_pm10, w.getAqi().getCity().getPm10() + "μg/m³");
-                setTextViewString(R.id.w_aqi_so2, w.getAqi().getCity().getSo2() + "μg/m³");
-                setTextViewString(R.id.w_aqi_no2, w.getAqi().getCity().getNo2() + "μg/m³");
+                mWAqiView.setData(w.getAqi());
+                final String qlty = w.getAqi().getCity().getQlty();
+                if(TextUtils.isEmpty(qlty)){
+                    setTextViewString(R.id.w_now_cond_text, w.getNow().getCond().getTxt());
+                }else {
+                    setTextViewString(R.id.w_now_cond_text, w.getNow().getCond().getTxt() + " | " + qlty);
+                }
+                setTextViewString(R.id.w_aqi_detail_text, qlty);
+                final String pm25 = w.getAqi().getCity().getPm25();
+                setTextViewString(R.id.w_aqi_pm25, TextUtils.isEmpty(pm25) ? getString(R.string.nodata)
+                        : getString(R.string.weather_ug_m3,pm25));
+                final String pm10 = w.getAqi().getCity().getPm10();
+                setTextViewString(R.id.w_aqi_pm10,  TextUtils.isEmpty(pm10) ? getString(R.string.nodata)
+                        : getString(R.string.weather_ug_m3, pm10));
+                final String so2 = w.getAqi().getCity().getSo2();
+                setTextViewString(R.id.w_aqi_so2,  TextUtils.isEmpty(so2) ? getString(R.string.nodata)
+                        : getString(R.string.weather_ug_m3, so2));
+                final String no2 = w.getAqi().getCity().getNo2();
+                setTextViewString(R.id.w_aqi_no2,  TextUtils.isEmpty(no2) ? getString(R.string.nodata)
+                        : getString(R.string.weather_ug_m3, no2));
             } else {
                 setTextViewString(R.id.w_now_cond_text, w.getNow().getCond().getTxt());
                 rootView.findViewById(R.id.air_quality_item).setVisibility(View.GONE);

@@ -2,7 +2,7 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
     <TextView
         style="@style/w_section_title"
-        android:text="详细信息"/>
+        android:text="@string/weather_detail_title"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -60,7 +60,7 @@
 
                 <TextView
                     style="@style/todaydetail_info_title"
-                    android:text="体感温度"/>
+                    android:text="@string/feel_temp"/>
 
                 <com.ape.material.weather.widget.FontTextView
                     android:id="@+id/w_now_fl"
@@ -76,7 +76,7 @@
 
                 <TextView
                     style="@style/todaydetail_info_title"
-                    android:text="湿度"/>
+                    android:text="@string/temp"/>
 
                 <com.ape.material.weather.widget.FontTextView
                     android:id="@+id/w_now_hum"
@@ -92,7 +92,7 @@
 
                 <TextView
                     style="@style/todaydetail_info_title"
-                    android:text="能见度"/>
+                    android:text="@string/see_distance"/>
 
                 <com.ape.material.weather.widget.FontTextView
                     android:id="@+id/w_now_vis"
@@ -108,7 +108,7 @@
 
                 <TextView
                     style="@style/todaydetail_info_title"
-                    android:text="降雨量"/>
+                    android:text="@string/rain_size"/>
 
                 <com.ape.material.weather.widget.FontTextView
                     android:id="@+id/w_now_pcpn"

@@ -5,7 +5,7 @@
               android:layout_height="match_parent">
     <TextView
         style="@style/w_section_title"
-        android:text="生活指数"/>
+        android:text="@string/weather_index_title"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -74,7 +74,7 @@
 
         <TextView
             style="@style/suggestion_title"
-            android:text="紫外线"
+            android:text="@string/uv_index_title"
             android:textColor="@color/w_text_primary"
             android:textSize="16dp"/>
 
@@ -102,7 +102,7 @@
 
         <TextView
             style="@style/suggestion_title"
-            android:text="运动"
+            android:text="@string/sport_index_title"
             android:textColor="@color/w_text_primary"
             android:textSize="16dp"/>
 
@@ -130,7 +130,7 @@
 
         <TextView
             style="@style/suggestion_title"
-            android:text="感冒"
+            android:text="@string/flu_index_title"
             android:textColor="@color/w_text_primary"
             android:textSize="16dp"/>
 
@@ -158,7 +158,7 @@
 
         <TextView
             style="@style/suggestion_title"
-            android:text="旅游"
+            android:text="@string/trav_index_title"
             android:textColor="@color/w_text_primary"
             android:textSize="16dp"/>
 
@@ -186,7 +186,7 @@
 
         <TextView
             style="@style/suggestion_title"
-            android:text="洗车"
+            android:text="@string/car_index_title"
             android:textColor="@color/w_text_primary"
             android:textSize="16dp"/>
 

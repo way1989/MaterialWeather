@@ -15,5 +15,33 @@
     <string name="permission_message">get location need to access location.</string>
     <string name="permission_denied">you denied permission request</string>
     <string name="permission_never_ask_again">can\'t get you location</string>
+    <string name="auto_location">Detecting...</string>
+    <string name="nodata">No data</string>
+    <string name="gps_disabled_toast">please enable GPS provider</string>
+    <string name="no_internet_toast">No internet!</string>
+    <string name="sun_and_wind_title">Sun and wind</string>
+    <string name="pm2_5">PM2.5</string>
+    <string name="pm10">PM10</string>
+    <string name="so2">SO₂</string>
+    <string name="no2">NO₂</string>
+    <string name="weather_detail_title">Details</string>
+    <string name="feel_temp">feel temperature</string>
+    <string name="see_distance">visibility</string>
+    <string name="rain_size">rainfall</string>
+    <string name="temp">Temperature</string>
+    <string name="weather_hours_forecast_title">24h forecast</string>
+    <string name="uv_index_title">UV index</string>
+    <string name="sport_index_title">Sport index</string>
+    <string name="trav_index_title">Travel index</string>
+    <string name="car_index_title">Car wash</string>
+    <string name="air_quality_index_title">Air quality index</string>
+    <string name="flu_index_title">frigorism</string>
+    <string name="weather_index_title">Life index</string>
+    <string name="weather_temp" translatable="false">%1$s°</string>
+    <string name="weather_percent" translatable="false">%1$s\%</string>
+    <string name="weather_km" translatable="false">%1$skm</string>
+    <string name="weather_mm" translatable="false">%1$smm</string>
+    <string name="weather_ug_m3" translatable="false">%1$sμg/m³</string>
+    <string name="weather_update">%1$s published</string>
 
 </resources>

@@ -5,6 +5,7 @@ import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableString;
 import android.text.Spanned;
+import android.text.TextUtils;
 import android.text.style.ImageSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -122,6 +123,9 @@ public class CityAdapter extends RecyclerView.Adapter<CityAdapter.MyViewHolder>
     }
 
     private SpannableString getSpannable(String name) {
+        if(TextUtils.isEmpty(name)){
+            return new SpannableString(App.getContext().getString(R.string.auto_location));
+        }
         SpannableString ss = new SpannableString(" " + name);
         Drawable drawable = App.getContext().getResources()
                 .getDrawable(R.drawable.ic_location_on_black_18dp);

@@ -35,6 +35,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 
 public class ManageActivity extends BaseActivity<ManagePresenter, ManageModel>
         implements ManageContract.View {
@@ -146,25 +147,6 @@ public class ManageActivity extends BaseActivity<ManagePresenter, ManageModel>
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_manager, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_add:
-                startActivityForResult(new Intent(this, SearchCityActivity.class), REQUEST_CODE_CITY);
-                return true;
-            default:
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_CITY && resultCode == RESULT_OK) {
@@ -177,7 +159,6 @@ public class ManageActivity extends BaseActivity<ManagePresenter, ManageModel>
             }
         }
     }
-
 
     @Override
     protected void onResume() {
@@ -309,5 +290,10 @@ public class ManageActivity extends BaseActivity<ManagePresenter, ManageModel>
         RxBusEvent.MainEvent event = new RxBusEvent.MainEvent();
         event.mCities = mAdapter.getData();
         RxBus.getInstance().post(event);
+    }
+
+    @OnClick(R.id.fab)
+    public void onClick() {
+        startActivityForResult(new Intent(this, SearchCityActivity.class), REQUEST_CODE_CITY);
     }
 }

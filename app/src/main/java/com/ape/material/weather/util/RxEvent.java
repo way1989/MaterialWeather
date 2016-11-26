@@ -8,7 +8,7 @@ import java.util.List;
  * Created by android on 16-11-25.
  */
 
-public final class RxBusEvent {
+public final class RxEvent {
     public static class MainEvent {
         public List<City> cities;
         public int position;

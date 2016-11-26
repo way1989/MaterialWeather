@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 
 import com.ape.material.weather.bean.City;
 import com.ape.material.weather.util.RxBus;
-import com.ape.material.weather.util.RxBusEvent;
+import com.ape.material.weather.util.RxEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,7 +70,7 @@ public class ManagePresenter extends ManageContract.Presenter {
 
             @Override
             public void onNext(Boolean aBoolean) {
-                RxBusEvent.MainEvent event = new RxBusEvent.MainEvent(data, Integer.MIN_VALUE);
+                RxEvent.MainEvent event = new RxEvent.MainEvent(data, Integer.MIN_VALUE);
                 RxBus.getInstance().post(event);
             }
         });

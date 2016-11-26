@@ -12,7 +12,7 @@ import com.ape.material.weather.api.Api;
 import com.ape.material.weather.bean.City;
 import com.ape.material.weather.bean.HeCity;
 import com.ape.material.weather.bean.HeWeather;
-import com.ape.material.weather.db.DBUtil;
+import com.ape.material.weather.data.DBUtil;
 import com.ape.material.weather.util.CityLocationManager;
 import com.ape.material.weather.util.DeviceUtil;
 import com.ape.material.weather.util.DiskLruCacheUtil;

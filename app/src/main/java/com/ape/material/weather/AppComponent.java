@@ -2,6 +2,8 @@ package com.ape.material.weather;
 
 import android.content.Context;
 
+import com.ape.material.weather.data.WeatherRepository;
+
 import javax.inject.Singleton;
 
 import dagger.Component;
@@ -13,4 +15,5 @@ import dagger.Component;
 @Component(modules = {AppModule.class})
 public interface AppComponent {
     Context getContext();
+    WeatherRepository getWeatherRepository();
 }

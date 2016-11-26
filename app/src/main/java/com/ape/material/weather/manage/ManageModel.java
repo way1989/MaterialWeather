@@ -3,7 +3,7 @@ package com.ape.material.weather.manage;
 import android.content.Context;
 
 import com.ape.material.weather.bean.City;
-import com.ape.material.weather.db.DBUtil;
+import com.ape.material.weather.data.DBUtil;
 import com.ape.material.weather.util.RxSchedulers;
 
 import java.util.ArrayList;

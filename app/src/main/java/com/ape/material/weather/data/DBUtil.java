@@ -1,4 +1,4 @@
-package com.ape.material.weather.db;
+package com.ape.material.weather.data;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.ape.material.weather.App;
 import com.ape.material.weather.bean.City;
+import com.ape.material.weather.db.CityProvider;
 
 import java.util.ArrayList;
 
@@ -148,5 +149,11 @@ public class DBUtil {
         ContentResolver contentResolver = App.getContext().getContentResolver();
         Uri uri = contentResolver.insert(CityProvider.CITY_CONTENT_URI, values);
         return uri != null;
+    }
+
+    public static void insertAutoLocation() {
+        ContentValues values = new ContentValues();
+        values.put(CityProvider.CityConstants.IS_LOCATION, 1);
+        App.getContext().getContentResolver().insert(CityProvider.CITY_CONTENT_URI, values);
     }
 }

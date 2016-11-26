@@ -5,7 +5,7 @@ import android.content.Context;
 
 import com.ape.material.weather.bean.City;
 import com.ape.material.weather.db.CityProvider;
-import com.ape.material.weather.db.DBUtil;
+import com.ape.material.weather.data.DBUtil;
 import com.ape.material.weather.util.RxSchedulers;
 
 import java.util.ArrayList;

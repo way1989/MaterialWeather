@@ -26,7 +26,7 @@ import com.ape.material.weather.dynamicweather.DynamicWeatherView;
 import com.ape.material.weather.fragment.WeatherFragment;
 import com.ape.material.weather.manage.ManageActivity;
 import com.ape.material.weather.util.RxBus;
-import com.ape.material.weather.util.RxBusEvent;
+import com.ape.material.weather.util.RxEvent;
 import com.ape.material.weather.util.UiUtil;
 import com.trello.rxlifecycle.android.ActivityEvent;
 
@@ -78,12 +78,12 @@ public class MainActivity extends BaseActivity<MainPresenter, MainModel>
         setTitle("");
 
         reloadCity();//加载城市列表
-        RxBus.getInstance().toObservable(RxBusEvent.MainEvent.class)
+        RxBus.getInstance().toObservable(RxEvent.MainEvent.class)
                 .observeOn(AndroidSchedulers.mainThread())
-                .compose(this.<RxBusEvent.MainEvent>bindUntilEvent(ActivityEvent.DESTROY))
-                .subscribe(new Action1<RxBusEvent.MainEvent>() {
+                .compose(this.<RxEvent.MainEvent>bindUntilEvent(ActivityEvent.DESTROY))
+                .subscribe(new Action1<RxEvent.MainEvent>() {
                     @Override
-                    public void call(RxBusEvent.MainEvent event) {
+                    public void call(RxEvent.MainEvent event) {
                         //do some thing
                         if (event.position >= 0 && event.position < mAdapter.getCount()) {
                             mMainViewPager.setCurrentItem(event.position);

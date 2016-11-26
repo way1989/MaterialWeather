@@ -18,7 +18,7 @@ import com.ape.material.weather.bean.City;
 import com.ape.material.weather.search.SearchCityActivity;
 import com.ape.material.weather.util.AppConstant;
 import com.ape.material.weather.util.RxBus;
-import com.ape.material.weather.util.RxBusEvent;
+import com.ape.material.weather.util.RxEvent;
 import com.h6ah4i.android.widget.advrecyclerview.animator.DraggableItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.decoration.ItemShadowDecorator;
@@ -156,7 +156,7 @@ public class ManageActivity extends BaseActivity<ManagePresenter, ManageModel>
             City city = (City) data.getSerializableExtra(AppConstant.ARG_CITY_KEY);
             if (city != null) {
                 mAdapter.addData(city);
-                RxBusEvent.MainEvent event = new RxBusEvent.MainEvent(mAdapter.getData(), Integer.MIN_VALUE);
+                RxEvent.MainEvent event = new RxEvent.MainEvent(mAdapter.getData(), Integer.MIN_VALUE);
                 RxBus.getInstance().post(event);
             }
         }
@@ -211,7 +211,7 @@ public class ManageActivity extends BaseActivity<ManagePresenter, ManageModel>
 //                mRecyclerView.getChildAdapterPosition(v);
         if (position != RecyclerView.NO_POSITION) {
             //onItemClicked(position);
-            RxBus.getInstance().post(new RxBusEvent.MainEvent(null, position));
+            RxBus.getInstance().post(new RxEvent.MainEvent(null, position));
             finish();
         }
     }
@@ -280,7 +280,7 @@ public class ManageActivity extends BaseActivity<ManagePresenter, ManageModel>
 
     @Override
     public void onCityModify() {
-        RxBusEvent.MainEvent event = new RxBusEvent.MainEvent(mAdapter.getData(), Integer.MIN_VALUE);
+        RxEvent.MainEvent event = new RxEvent.MainEvent(mAdapter.getData(), Integer.MIN_VALUE);
         RxBus.getInstance().post(event);
     }
 

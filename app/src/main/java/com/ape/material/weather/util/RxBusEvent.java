@@ -10,6 +10,13 @@ import java.util.List;
 
 public final class RxBusEvent {
     public static class MainEvent {
-        public List<City> mCities;
+        public List<City> cities;
+        public int position;
+        public MainEvent(List<City> cities){
+            this.cities = cities;
+        }
+        public MainEvent(int position) {
+            this.position = position;
+        }
     }
 }

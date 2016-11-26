@@ -105,6 +105,11 @@ public class ManageActivity extends BaseActivity<ManagePresenter, ManageModel>
             public void onItemViewClicked(View v) {
                 ManageActivity.this.onItemViewClick(v);
             }
+
+            @Override
+            public void onItemLocation(int position) {
+                Snackbar.make(mRecyclerView, "detecting...", Snackbar.LENGTH_SHORT).show();
+            }
         });
 
         mAdapter = myItemAdapter;
@@ -151,8 +156,7 @@ public class ManageActivity extends BaseActivity<ManagePresenter, ManageModel>
             City city = (City) data.getSerializableExtra(AppConstant.ARG_CITY_KEY);
             if (city != null) {
                 mAdapter.addData(city);
-                RxBusEvent.MainEvent event = new RxBusEvent.MainEvent();
-                event.mCities = mAdapter.getData();
+                RxBusEvent.MainEvent event = new RxBusEvent.MainEvent(mAdapter.getData());
                 RxBus.getInstance().post(event);
             }
         }
@@ -247,8 +251,8 @@ public class ManageActivity extends BaseActivity<ManagePresenter, ManageModel>
      * @param position The position of the item within data set
      */
     public void onItemClicked(int position) {
-        City data = mAdapter.getItem(position);
-        // TODO: 16-11-16 update viewpager index
+        RxBus.getInstance().post(new RxBusEvent.MainEvent(position));
+        finish();
     }
 
     private boolean supportsViewElevation() {
@@ -285,8 +289,7 @@ public class ManageActivity extends BaseActivity<ManagePresenter, ManageModel>
 
     @Override
     public void onCityModify() {
-        RxBusEvent.MainEvent event = new RxBusEvent.MainEvent();
-        event.mCities = mAdapter.getData();
+        RxBusEvent.MainEvent event = new RxBusEvent.MainEvent(mAdapter.getData());
         RxBus.getInstance().post(event);
     }
 

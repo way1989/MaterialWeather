@@ -85,7 +85,11 @@ public class MainActivity extends BaseActivity<MainPresenter, MainModel>
                     @Override
                     public void call(RxBusEvent.MainEvent event) {
                         //do some thing
-                        List<City> cities = event.mCities;
+                        if(event.position >=0 && event.position < mAdapter.getCount()){
+                            mMainViewPager.setCurrentItem(event.position);
+                            return;
+                        }
+                        List<City> cities = event.cities;
                         if (cities != null) {
                             onCityChange(cities);
                         } else {

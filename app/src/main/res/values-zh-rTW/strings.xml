@@ -37,4 +37,5 @@
     <string name="weather_index_title">生活指數</string>
     <string name="weather_update">%1$s 發佈</string>
     <string name="city_exist">該城市已經存在</string>
+    <string name="weather_common_index_title">綜合</string>
 </resources>

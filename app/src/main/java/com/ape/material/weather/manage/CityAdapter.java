@@ -93,7 +93,7 @@ public class CityAdapter extends RecyclerView.Adapter<CityAdapter.MyViewHolder>
         holder.mTextView.setText(item.isLocation() ? getSpannable(item.getCity()) : item.getCity());
 
         // set background resource (target view ID: container)
-        final int dragState = holder.getDragStateFlags();
+        /*final int dragState = holder.getDragStateFlags();
         final int swipeState = holder.getSwipeStateFlags();
 
         if (((dragState & DraggableItemConstants.STATE_FLAG_IS_UPDATED) != 0) ||
@@ -116,7 +116,7 @@ public class CityAdapter extends RecyclerView.Adapter<CityAdapter.MyViewHolder>
             }
 
             holder.mContainer.setBackgroundResource(bgResId);
-        }
+        }*/
 
         // set swiping properties
         holder.setSwipeItemHorizontalSlideAmount(0);
@@ -180,8 +180,8 @@ public class CityAdapter extends RecyclerView.Adapter<CityAdapter.MyViewHolder>
         if (onCheckCanStartDrag(holder, position, x, y)) {
             return SwipeableItemConstants.REACTION_CAN_NOT_SWIPE_BOTH_H;
         } else {
-            return SwipeableItemConstants.REACTION_CAN_SWIPE_BOTH_H;
-            //return SwipeableItemConstants.REACTION_CAN_SWIPE_RIGHT;
+            //return SwipeableItemConstants.REACTION_CAN_SWIPE_BOTH_H;
+            return SwipeableItemConstants.REACTION_CAN_SWIPE_LEFT;
         }
     }
 
@@ -193,7 +193,9 @@ public class CityAdapter extends RecyclerView.Adapter<CityAdapter.MyViewHolder>
                 bgRes = R.drawable.bg_swipe_item_neutral;
                 break;
             case SwipeableItemConstants.DRAWABLE_SWIPE_LEFT_BACKGROUND:
-                bgRes = R.drawable.bg_swipe_item_left;
+                City city = getItem(position);
+                bgRes = city.isLocation() ? R.drawable.bg_swipe_item_left_location
+                        : R.drawable.bg_swipe_item_left;
                 break;
             case SwipeableItemConstants.DRAWABLE_SWIPE_RIGHT_BACKGROUND:
                 bgRes = R.drawable.bg_swipe_item_right;
@@ -249,6 +251,8 @@ public class CityAdapter extends RecyclerView.Adapter<CityAdapter.MyViewHolder>
         void onItemRemoved(int position);
 
         void onItemViewClicked(View v);
+
+        void onItemLocation(int position);
     }
 
     public static class MyViewHolder extends AbstractDraggableSwipeableItemViewHolder {
@@ -272,6 +276,7 @@ public class CityAdapter extends RecyclerView.Adapter<CityAdapter.MyViewHolder>
     private static class SwipeLeftResultAction extends SwipeResultActionRemoveItem {
         private final int mPosition;
         private CityAdapter mAdapter;
+        private boolean isLocation;
 
         SwipeLeftResultAction(CityAdapter adapter, int position) {
             mAdapter = adapter;
@@ -281,17 +286,27 @@ public class CityAdapter extends RecyclerView.Adapter<CityAdapter.MyViewHolder>
         @Override
         protected void onPerformAction() {
             super.onPerformAction();
+            City item = mAdapter.getItem(mPosition);
 
-            mAdapter.mProvider.removeItem(mPosition);
-            mAdapter.notifyItemRemoved(mPosition);
+            if (!item.isLocation()) {
+                item.setCity("");
+                mAdapter.notifyItemChanged(mPosition);
+                isLocation = true;
+            }else {
+                mAdapter.mProvider.removeItem(mPosition);
+                mAdapter.notifyItemRemoved(mPosition);
+            }
         }
 
         @Override
         protected void onSlideAnimationEnd() {
             super.onSlideAnimationEnd();
-
             if (mAdapter.mEventListener != null) {
-                mAdapter.mEventListener.onItemRemoved(mPosition);
+                if(isLocation){
+                    mAdapter.mEventListener.onItemLocation(mPosition);
+                }else {
+                    mAdapter.mEventListener.onItemRemoved(mPosition);
+                }
             }
         }
 

@@ -122,7 +122,7 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter, WeatherModel
 
     @Override
     public void onCityChange(City city) {
-        RxBus.getInstance().post(new RxBusEvent.MainEvent());
+        RxBus.getInstance().post(new RxBusEvent.MainEvent(null));
         getWeather(city, false);
     }
 

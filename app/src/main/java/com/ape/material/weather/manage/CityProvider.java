@@ -29,7 +29,8 @@ public class CityProvider extends AbstractDataProvider {
         mData.clear();
         mData.addAll(datas);
     }
-    public void addData(City city){
+
+    public void addData(City city) {
         mData.add(city);
     }
 
@@ -37,7 +38,7 @@ public class CityProvider extends AbstractDataProvider {
         mData.clear();
     }
 
-    public City getLastRemovedData(){
+    public City getLastRemovedData() {
         return mLastRemovedData;
     }
 

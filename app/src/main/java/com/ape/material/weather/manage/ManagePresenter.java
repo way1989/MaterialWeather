@@ -23,13 +23,15 @@ import rx.subscriptions.CompositeSubscription;
 public class ManagePresenter extends ManageContract.Presenter {
     @NonNull
     private CompositeSubscription mSubscriptions;
+
     @Inject
-    ManagePresenter(Context context, ManageContract.Model model, ManageContract.View view){
+    ManagePresenter(Context context, ManageContract.Model model, ManageContract.View view) {
         mContext = context;
         mModel = model;
         mView = view;
         mSubscriptions = new CompositeSubscription();
     }
+
     @Override
     public void getCities() {
         mSubscriptions.clear();

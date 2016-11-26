@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+    <TextView
+        style="@style/w_section_title"
+        android:text="生活指数"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp">
+
+        <ImageView
+            style="@style/suggestion_image"
+            android:src="@drawable/ic_suggestion_comf"/>
+
+        <TextView
+            style="@style/suggestion_title"
+            android:text="综合"
+            android:textColor="@color/w_text_primary"
+            android:textSize="16dp"/>
+
+        <TextView
+            android:id="@+id/w_suggestion_comf_brf"
+            style="@style/suggestion_brf"
+            android:text=""/>
+
+        <TextView
+            android:id="@+id/w_suggestion_comf"
+            style="@style/suggestion_info_content"
+            android:layout_below="@id/w_suggestion_comf_brf"/>
+    </RelativeLayout>
+
+    <View style="@style/suggestion_divider"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp">
+
+        <ImageView
+            style="@style/suggestion_image"
+            android:src="@drawable/ic_suggestion_drsg"/>
+
+        <TextView
+            style="@style/suggestion_title"
+            android:text="穿衣"
+            android:textColor="@color/w_text_primary"
+            android:textSize="16dp"/>
+
+        <TextView
+            android:id="@+id/w_suggestion_drsg_brf"
+            style="@style/suggestion_brf"
+            android:text=""/>
+
+        <TextView
+            android:id="@+id/w_suggestion_drsg"
+            style="@style/suggestion_info_content"
+            android:layout_below="@+id/w_suggestion_drsg_brf"/>
+    </RelativeLayout>
+
+    <View style="@style/suggestion_divider"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp">
+
+        <ImageView
+            style="@style/suggestion_image"
+            android:src="@drawable/ic_suggestion_uv"/>
+
+        <TextView
+            style="@style/suggestion_title"
+            android:text="紫外线"
+            android:textColor="@color/w_text_primary"
+            android:textSize="16dp"/>
+
+        <TextView
+            android:id="@+id/w_suggestion_uv_brf"
+            style="@style/suggestion_brf"
+            android:text=""/>
+
+        <TextView
+            android:id="@+id/w_suggestion_uv"
+            style="@style/suggestion_info_content"
+            android:layout_below="@+id/w_suggestion_uv_brf"/>
+    </RelativeLayout>
+
+    <View style="@style/suggestion_divider"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp">
+
+        <ImageView
+            style="@style/suggestion_image"
+            android:src="@drawable/ic_suggestion_sport"/>
+
+        <TextView
+            style="@style/suggestion_title"
+            android:text="运动"
+            android:textColor="@color/w_text_primary"
+            android:textSize="16dp"/>
+
+        <TextView
+            android:id="@+id/w_suggestion_sport_brf"
+            style="@style/suggestion_brf"
+            android:text=""/>
+
+        <TextView
+            android:id="@+id/w_suggestion_sport"
+            style="@style/suggestion_info_content"
+            android:layout_below="@+id/w_suggestion_sport_brf"/>
+    </RelativeLayout>
+
+    <View style="@style/suggestion_divider"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp">
+
+        <ImageView
+            style="@style/suggestion_image"
+            android:src="@drawable/ic_suggestion_flu"/>
+
+        <TextView
+            style="@style/suggestion_title"
+            android:text="感冒"
+            android:textColor="@color/w_text_primary"
+            android:textSize="16dp"/>
+
+        <TextView
+            android:id="@+id/w_suggestion_flu_brf"
+            style="@style/suggestion_brf"
+            android:text=""/>
+
+        <TextView
+            android:id="@+id/w_suggestion_flu"
+            style="@style/suggestion_info_content"
+            android:layout_below="@+id/w_suggestion_flu_brf"/>
+    </RelativeLayout>
+
+    <View style="@style/suggestion_divider"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp">
+
+        <ImageView
+            style="@style/suggestion_image"
+            android:src="@drawable/ic_suggestion_trav"/>
+
+        <TextView
+            style="@style/suggestion_title"
+            android:text="旅游"
+            android:textColor="@color/w_text_primary"
+            android:textSize="16dp"/>
+
+        <TextView
+            android:id="@+id/w_suggestion_tarv_brf"
+            style="@style/suggestion_brf"
+            android:text=""/>
+
+        <TextView
+            android:id="@+id/w_suggestion_tarv"
+            style="@style/suggestion_info_content"
+            android:layout_below="@+id/w_suggestion_tarv_brf"/>
+    </RelativeLayout>
+
+    <View style="@style/suggestion_divider"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp">
+
+        <ImageView
+            style="@style/suggestion_image"
+            android:src="@drawable/ic_suggestion_cw"/>
+
+        <TextView
+            style="@style/suggestion_title"
+            android:text="洗车"
+            android:textColor="@color/w_text_primary"
+            android:textSize="16dp"/>
+
+        <TextView
+            android:id="@+id/w_suggestion_cw_brf"
+            style="@style/suggestion_brf"
+            android:text=""/>
+
+        <TextView
+            android:id="@+id/w_suggestion_cw"
+            style="@style/suggestion_info_content"
+            android:layout_below="@+id/w_suggestion_cw_brf"/>
+    </RelativeLayout>
+
+    <View style="@style/suggestion_divider"/>
+</LinearLayout>

@@ -19,7 +19,6 @@ import com.ape.material.weather.util.DiskLruCacheUtil;
 import com.ape.material.weather.util.RxSchedulers;
 
 import java.util.List;
-import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 import rx.Emitter;

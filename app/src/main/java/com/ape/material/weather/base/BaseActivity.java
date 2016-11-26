@@ -2,7 +2,6 @@ package com.ape.material.weather.base;
 
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
-import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import com.ape.material.weather.App;
@@ -22,7 +21,7 @@ public abstract class BaseActivity<T extends BasePresenter, E extends BaseModel>
         super.onCreate(savedInstanceState);
         setContentView(getLayoutId());
         ButterKnife.bind(this);
-        initPresenter(((App)getApplication()).getAppComponent());
+        initPresenter(((App) getApplication()).getAppComponent());
     }
 
     @Override
@@ -44,6 +43,7 @@ public abstract class BaseActivity<T extends BasePresenter, E extends BaseModel>
 
     /**
      * should override this method when use MVP
+     *
      * @param appComponent
      */
     protected void initPresenter(AppComponent appComponent) {

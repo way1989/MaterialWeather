@@ -3,7 +3,6 @@ package com.ape.material.weather.main;
 import android.content.ContentValues;
 import android.content.Context;
 
-import com.ape.material.weather.App;
 import com.ape.material.weather.bean.City;
 import com.ape.material.weather.db.CityProvider;
 import com.ape.material.weather.db.DBUtil;
@@ -22,7 +21,8 @@ import rx.Subscriber;
 public class MainModel implements MainContract.Model {
     private static final String TAG = "MainModel";
     private Context mContext;
-    MainModel(Context context){
+
+    MainModel(Context context) {
         mContext = context;
     }
 

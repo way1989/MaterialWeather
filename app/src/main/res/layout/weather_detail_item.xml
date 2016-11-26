@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+    <TextView
+        style="@style/w_section_title"
+        android:text="详细信息"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:divider="@drawable/divider_linearlayout"
+        android:orientation="horizontal"
+        android:paddingBottom="0dp"
+        android:paddingLeft="0dp"
+        android:paddingRight="16dp"
+        android:showDividers="none">
+
+        <LinearLayout
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <com.ape.material.weather.widget.FontTextView
+                android:id="@+id/w_todaydetail_temp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:maxLines="1"
+                android:text="-°"
+                android:textColor="@color/w_text_primary"
+                android:textSize="52dp"/>
+
+            <ImageView
+                android:id="@+id/w_todaydetail_cond_imageview"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_gravity="center"
+                android:scaleType="center"
+                android:src="@drawable/cond_icon_na"
+                android:visibility="gone"/>
+
+            <com.ape.material.weather.widget.FontTextView
+                android:id="@+id/w_todaydetail_bottomline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:maxLines="1"
+                android:text="-"
+                android:textColor="@color/w_text_primary"
+                android:textSize="14dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout style="@style/todaydetail_info_layout">
+
+                <TextView
+                    style="@style/todaydetail_info_title"
+                    android:text="体感温度"/>
+
+                <com.ape.material.weather.widget.FontTextView
+                    android:id="@+id/w_now_fl"
+                    style="@style/todaydetail_info_content"/>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/w_divider_size_secondary"
+                android:background="@color/w_divider_secondary"/>
+
+            <LinearLayout style="@style/todaydetail_info_layout">
+
+                <TextView
+                    style="@style/todaydetail_info_title"
+                    android:text="湿度"/>
+
+                <com.ape.material.weather.widget.FontTextView
+                    android:id="@+id/w_now_hum"
+                    style="@style/todaydetail_info_content"/>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/w_divider_size_secondary"
+                android:background="@color/w_divider_secondary"/>
+
+            <LinearLayout style="@style/todaydetail_info_layout">
+
+                <TextView
+                    style="@style/todaydetail_info_title"
+                    android:text="能见度"/>
+
+                <com.ape.material.weather.widget.FontTextView
+                    android:id="@+id/w_now_vis"
+                    style="@style/todaydetail_info_content"/>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/w_divider_size_secondary"
+                android:background="@color/w_divider_secondary"/>
+
+            <LinearLayout style="@style/todaydetail_info_layout">
+
+                <TextView
+                    style="@style/todaydetail_info_title"
+                    android:text="降雨量"/>
+
+                <com.ape.material.weather.widget.FontTextView
+                    android:id="@+id/w_now_pcpn"
+                    style="@style/todaydetail_info_content"/>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/w_divider_size"
+        android:background="@color/w_divider"/>
+</merge>

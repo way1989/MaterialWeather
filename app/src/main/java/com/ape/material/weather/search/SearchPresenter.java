@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.ape.material.weather.bean.City;
-import com.ape.material.weather.main.MainContract;
 
 import java.util.List;
 
@@ -23,13 +22,15 @@ public class SearchPresenter extends SearchContract.Presenter {
     private static final String TAG = "SearchPresenter";
     @NonNull
     private final CompositeSubscription mSubscriptions;
+
     @Inject
-    SearchPresenter(Context context, SearchContract.Model model, SearchContract.View view){
+    SearchPresenter(Context context, SearchContract.Model model, SearchContract.View view) {
         mContext = context;
         mModel = model;
         mView = view;
         mSubscriptions = new CompositeSubscription();
     }
+
     @Override
     public void search(String query) {
         Log.d(TAG, "search... query = " + query);

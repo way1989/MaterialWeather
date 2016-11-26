@@ -42,6 +42,8 @@ public class ManageActivity extends BaseActivity<ManagePresenter, ManageModel>
     private static final int REQUEST_CODE_CITY = 0;
     @BindView(R.id.recycler_view)
     RecyclerView mRecyclerView;
+    @Inject
+    ManagePresenter mPresenter;
     private RecyclerView.LayoutManager mLayoutManager;
     private CityAdapter mAdapter;
     private RecyclerView.Adapter mWrappedAdapter;
@@ -49,8 +51,6 @@ public class ManageActivity extends BaseActivity<ManagePresenter, ManageModel>
     private RecyclerViewSwipeManager mRecyclerViewSwipeManager;
     private RecyclerViewTouchActionGuardManager mRecyclerViewTouchActionGuardManager;
 
-    @Inject
-    ManagePresenter mPresenter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -171,7 +171,7 @@ public class ManageActivity extends BaseActivity<ManagePresenter, ManageModel>
             City city = (City) data.getSerializableExtra(AppConstant.ARG_CITY_KEY);
             if (city != null) {
                 mAdapter.addData(city);
-                RxBusEvent.MainEvent event =  new RxBusEvent.MainEvent();
+                RxBusEvent.MainEvent event = new RxBusEvent.MainEvent();
                 event.mCities = mAdapter.getData();
                 RxBus.getInstance().post(event);
             }

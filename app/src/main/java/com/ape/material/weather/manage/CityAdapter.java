@@ -37,7 +37,7 @@ import java.util.List;
 public class CityAdapter extends RecyclerView.Adapter<CityAdapter.MyViewHolder>
         implements DraggableItemAdapter<CityAdapter.MyViewHolder>,
         SwipeableItemAdapter<CityAdapter.MyViewHolder> {
-    private static final String TAG = "MyDSItemAdapter";
+    private static final String TAG = "CityAdapter";
     private CityProvider mProvider;
     private EventListener mEventListener;
     private View.OnClickListener mItemViewOnClickListener;

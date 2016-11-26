@@ -6,7 +6,9 @@ import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -26,8 +28,6 @@ import com.ape.material.weather.manage.ManageActivity;
 import com.ape.material.weather.util.RxBus;
 import com.ape.material.weather.util.RxBusEvent;
 import com.ape.material.weather.util.UiUtil;
-import com.ape.material.weather.widget.MxxFragmentPagerAdapter;
-import com.ape.material.weather.widget.MxxViewPager;
 import com.trello.rxlifecycle.android.ActivityEvent;
 
 import java.util.ArrayList;
@@ -48,7 +48,7 @@ public class MainActivity extends BaseActivity<MainPresenter, MainModel>
     @BindView(R.id.dynamic_weather_view)
     DynamicWeatherView mDynamicWeatherView;
     @BindView(R.id.main_view_pager)
-    MxxViewPager mMainViewPager;
+    ViewPager mMainViewPager;
     @BindView(toolbar)
     Toolbar mToolbar;
     @BindView(R.id.app_bar_layout)
@@ -142,7 +142,7 @@ public class MainActivity extends BaseActivity<MainPresenter, MainModel>
 
     @Override
     protected int getLayoutId() {
-        return R.layout.app_bar_main;
+        return R.layout.activity_main;
     }
 
     @Override
@@ -170,7 +170,7 @@ public class MainActivity extends BaseActivity<MainPresenter, MainModel>
             }
             mMainViewPager.setAdapter(mAdapter);
             //mMainViewPager.setOffscreenPageLimit(weatherFragmentList.size() - 1);
-            mMainViewPager.setOnPageChangeListener(new MxxViewPager.SimpleOnPageChangeListener() {
+            mMainViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
                 @Override
                 public void onPageSelected(int position) {
                     super.onPageSelected(position);
@@ -190,7 +190,7 @@ public class MainActivity extends BaseActivity<MainPresenter, MainModel>
         mDynamicWeatherView.setDrawerType(type);
     }
 
-    public static class MainFragmentPagerAdapter extends MxxFragmentPagerAdapter {
+    public static class MainFragmentPagerAdapter extends FragmentPagerAdapter {
 
         private List<BaseFragment> mFragmentList;
 
@@ -220,10 +220,10 @@ public class MainActivity extends BaseActivity<MainPresenter, MainModel>
             return fragment;
         }
 
-        @Override
+       /* @Override
         public CharSequence getPageTitle(int position) {
             return mFragmentList.get(position).getTitle();
-        }
+        }*/
 
         @Override
         public int getCount() {

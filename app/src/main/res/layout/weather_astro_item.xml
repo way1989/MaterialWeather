@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+    <TextView
+        style="@style/w_section_title"
+        android:text="太阳和风"/>
+
+    <com.ape.material.weather.widget.AstroView
+        android:id="@+id/w_astroView"
+        android:layout_width="match_parent"
+        android:layout_height="144dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/w_divider_size"
+        android:background="@color/w_divider"/>
+</merge>

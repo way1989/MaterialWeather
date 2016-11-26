@@ -9,7 +9,7 @@ import java.util.List;
  */
 
 public final class RxBusEvent {
-    public static class MainEvent{
+    public static class MainEvent {
         public List<City> mCities;
     }
 }

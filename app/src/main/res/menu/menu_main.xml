@@ -7,7 +7,7 @@
         android:orderInCategory="99"
         android:icon="@drawable/ic_location_city"
         android:title="@string/action_city_manage"
-        app:showAsAction="never" />
+        app:showAsAction="ifRoom" />
 <!--    <item
         android:id="@+id/action_share"
         android:orderInCategory="99"

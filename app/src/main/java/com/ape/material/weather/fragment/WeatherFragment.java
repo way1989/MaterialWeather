@@ -4,15 +4,20 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.ImageSpan;
 import android.util.Log;
 import android.view.View;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.ape.material.weather.App;
 import com.ape.material.weather.AppComponent;
 import com.ape.material.weather.BuildConfig;
 import com.ape.material.weather.R;
@@ -61,11 +66,13 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter, WeatherModel
     ScrollView mWWeatherScrollView;
     @BindView(R.id.w_PullRefreshLayout)
     PullRefreshLayout mWPullRefreshLayout;
+    @BindView(R.id.city_title_tv)
+    TextView mCityTitleTv;
+    @Inject
+    WeatherPresenter mPresenter;
     private City mCity;
     private OnDrawerTypeChangeListener mListener;
     private BaseDrawer.Type mWeatherType;
-
-    @Inject WeatherPresenter mPresenter;
 
     public static WeatherFragment makeInstance(@NonNull City city) {
         WeatherFragment fragment = new WeatherFragment();
@@ -97,10 +104,10 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter, WeatherModel
         return (City) getArguments().getSerializable(ARG_KEY);
     }
 
-    @Override
-    public String getTitle() {
-        return getArgCity().getCity();
-    }
+//    @Override
+//    public String getTitle() {
+//        return getArgCity().getCity();
+//    }
 
     @Override
     public BaseDrawer.Type getDrawerType() {
@@ -148,9 +155,9 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter, WeatherModel
                 + ", request location = "
                 + (city.isLocation() && TextUtils.isEmpty(city.getAreaId())));
         if (city.isLocation() && TextUtils.isEmpty(city.getAreaId())) {
-            if(CityLocationManager.isGPSProviderEnabled(getContext())) {
+            if (CityLocationManager.isGPSProviderEnabled(getContext())) {
                 WeatherFragmentPermissionsDispatcher.getLocationWithCheck(this);
-            }else {
+            } else {
                 showErrorTip("请打开GPS定位");
             }
             return;
@@ -159,9 +166,19 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter, WeatherModel
         mPresenter.getWeather(city.getAreaId(), "zh-cn", force);
     }
 
+    private SpannableString getSpannable(String name) {
+        SpannableString ss = new SpannableString("  " + name);
+        Drawable drawable = App.getContext().getResources()
+                .getDrawable(R.drawable.ic_location_on_white_18dp);
+        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+        ss.setSpan(new ImageSpan(drawable), 0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return ss;
+    }
+
     @Override
     protected void initView() {
         mCity = getArgCity();
+        mCityTitleTv.setText(mCity.isLocation() ? getSpannable(mCity.getCity()) : mCity.getCity());
         mWPullRefreshLayout.setOnRefreshListener(this);
 
         if (mWWeatherScrollView != null)
@@ -194,22 +211,10 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter, WeatherModel
             mWAqiView.setData(w.getAqi());
             mWAstroView.setData(weather);
             final String tmp = w.getNow().getTmp();
-            try {
-                final int tmp_int = Integer.valueOf(tmp);
-                if (tmp_int < 0) {
-                    setTextViewString(R.id.w_now_tmp, String.valueOf(-tmp_int));
-                    rootView.findViewById(R.id.w_now_tmp_minus).setVisibility(View.VISIBLE);
-                } else {
-                    setTextViewString(R.id.w_now_tmp, tmp);
-                    rootView.findViewById(R.id.w_now_tmp_minus).setVisibility(View.GONE);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                setTextViewString(R.id.w_now_tmp, tmp);
-                rootView.findViewById(R.id.w_now_tmp_minus).setVisibility(View.GONE);
-            }
 
-            setTextViewString(R.id.w_now_cond_text, w.getNow().getCond().getTxt());
+            setTextViewString(R.id.w_now_tmp, tmp + "°");
+
+            //setTextViewString(R.id.w_now_cond_text, w.getNow().getCond().getTxt());
 
             if (FormatUtil.isToday(w.getBasic().getUpdate().getLoc())) {
                 setTextViewString(R.id.w_basic_update_loc, w.getBasic().getUpdate().getLoc().substring(11) + " 发布");
@@ -227,14 +232,15 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter, WeatherModel
             setTextViewString(R.id.w_now_pcpn, w.getNow().getPcpn() + "mm"); // 降雨量
 
             if (weather.hasAqi()) {
-                setTextViewString(R.id.w_aqi_text, w.getAqi().getCity().getQlty());
+                setTextViewString(R.id.w_now_cond_text, w.getNow().getCond().getTxt() + "|" + w.getAqi().getCity().getQlty());
                 setTextViewString(R.id.w_aqi_detail_text, w.getAqi().getCity().getQlty());
                 setTextViewString(R.id.w_aqi_pm25, w.getAqi().getCity().getPm25() + "μg/m³");
                 setTextViewString(R.id.w_aqi_pm10, w.getAqi().getCity().getPm10() + "μg/m³");
                 setTextViewString(R.id.w_aqi_so2, w.getAqi().getCity().getSo2() + "μg/m³");
                 setTextViewString(R.id.w_aqi_no2, w.getAqi().getCity().getNo2() + "μg/m³");
             } else {
-                setTextViewString(R.id.w_aqi_text, "");
+                setTextViewString(R.id.w_now_cond_text, w.getNow().getCond().getTxt());
+                rootView.findViewById(R.id.air_quality_item).setVisibility(View.GONE);
             }
             if (w.getSuggestion() != null) {
                 setTextViewString(R.id.w_suggestion_comf, w.getSuggestion().getComf().getTxt());
@@ -251,6 +257,8 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter, WeatherModel
                 setTextViewString(R.id.w_suggestion_sport_brf, w.getSuggestion().getSport().getBrf());
                 setTextViewString(R.id.w_suggestion_tarv_brf, w.getSuggestion().getTrav().getBrf());
                 setTextViewString(R.id.w_suggestion_uv_brf, w.getSuggestion().getUv().getBrf());
+            } else {
+                rootView.findViewById(R.id.index_item).setVisibility(View.GONE);
             }
         } catch (Exception e) {
             e.printStackTrace();

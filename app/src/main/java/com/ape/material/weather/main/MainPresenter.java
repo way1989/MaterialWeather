@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.ape.material.weather.bean.City;
-import com.ape.material.weather.util.AppConstant;
 
 import java.util.List;
 
@@ -12,7 +11,6 @@ import javax.inject.Inject;
 
 import rx.Observer;
 import rx.Subscription;
-import rx.functions.Action1;
 import rx.subscriptions.CompositeSubscription;
 
 /**
@@ -22,8 +20,9 @@ import rx.subscriptions.CompositeSubscription;
 public class MainPresenter extends MainContract.Presenter {
     @NonNull
     private CompositeSubscription mSubscriptions;
+
     @Inject
-    MainPresenter(Context context, MainContract.Model model, MainContract.View view){
+    MainPresenter(Context context, MainContract.Model model, MainContract.View view) {
         mContext = context;
         mModel = model;
         mView = view;

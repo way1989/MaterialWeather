@@ -56,7 +56,7 @@ public abstract class BaseFragment<T extends BasePresenter, E extends BaseModel>
             rootView = inflater.inflate(getLayoutId(), container, false);
         ButterKnife.bind(this, rootView);
 
-        initPresenter(((App)getActivity().getApplication()).getAppComponent());
+        initPresenter(((App) getActivity().getApplication()).getAppComponent());
         initView();
         return rootView;
     }
@@ -68,12 +68,13 @@ public abstract class BaseFragment<T extends BasePresenter, E extends BaseModel>
         super.onDestroyView();
     }
 
-    public abstract String getTitle();
+    //public abstract String getTitle();
 
     public abstract BaseDrawer.Type getDrawerType();
 
     /**
      * should override this method when use MVP
+     *
      * @param appComponent
      */
     protected void initPresenter(AppComponent appComponent) {

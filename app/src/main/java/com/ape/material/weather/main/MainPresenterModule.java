@@ -12,15 +12,17 @@ import dagger.Provides;
 public final class MainPresenterModule {
     private MainContract.View mView;
 
-    MainPresenterModule(MainContract.View view){
+    MainPresenterModule(MainContract.View view) {
         mView = view;
     }
+
     @Provides
-    MainContract.Model getModel(Context context){
+    MainContract.Model getModel(Context context) {
         return new MainModel(context);
     }
+
     @Provides
-    MainContract.View getView(){
+    MainContract.View getView() {
         return mView;
     }
 }

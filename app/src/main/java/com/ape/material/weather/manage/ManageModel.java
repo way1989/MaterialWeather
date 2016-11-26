@@ -19,6 +19,7 @@ import rx.Subscriber;
 public class ManageModel implements ManageContract.Model {
     private static final String TAG = "ManageModel";
     private Context mContext;
+
     public ManageModel(Context context) {
         mContext = context;
     }

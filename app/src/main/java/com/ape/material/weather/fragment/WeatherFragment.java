@@ -4,20 +4,15 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
-import android.text.SpannableString;
-import android.text.Spanned;
 import android.text.TextUtils;
-import android.text.style.ImageSpan;
 import android.util.Log;
 import android.view.View;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.ape.material.weather.App;
 import com.ape.material.weather.AppComponent;
 import com.ape.material.weather.BuildConfig;
 import com.ape.material.weather.R;
@@ -28,8 +23,6 @@ import com.ape.material.weather.dynamicweather.BaseDrawer;
 import com.ape.material.weather.util.CityLocationManager;
 import com.ape.material.weather.util.DeviceUtil;
 import com.ape.material.weather.util.FormatUtil;
-import com.ape.material.weather.util.RxBus;
-import com.ape.material.weather.util.RxBusEvent;
 import com.ape.material.weather.widget.AqiView;
 import com.ape.material.weather.widget.AstroView;
 import com.ape.material.weather.widget.DailyForecastView;
@@ -122,7 +115,9 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter, WeatherModel
 
     @Override
     public void onCityChange(City city) {
-        RxBus.getInstance().post(new RxBusEvent.MainEvent(null));
+        mCity = city;
+        //RxBus.getInstance().post(new RxBusEvent.MainEvent(null));
+        setTitle();
         getWeather(city, false);
     }
 
@@ -166,22 +161,10 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter, WeatherModel
         mPresenter.getWeather(city.getAreaId(), "zh-cn", force);
     }
 
-    private SpannableString getSpannable(String name) {
-        if (TextUtils.isEmpty(name)) {
-            return new SpannableString(getString(R.string.auto_location));
-        }
-        SpannableString ss = new SpannableString("  " + name);
-        Drawable drawable = App.getContext().getResources()
-                .getDrawable(R.drawable.ic_location_on_white_18dp);
-        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
-        ss.setSpan(new ImageSpan(drawable), 0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        return ss;
-    }
-
     @Override
     protected void initView() {
         mCity = getArgCity();
-        mCityTitleTv.setText(mCity.isLocation() ? getSpannable(mCity.getCity()) : mCity.getCity());
+        setTitle();
         mWPullRefreshLayout.setOnRefreshListener(this);
 
         if (mWWeatherScrollView != null)
@@ -192,6 +175,12 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter, WeatherModel
                 }
             });
 
+    }
+
+    private void setTitle() {
+        if (!mCity.isLocation())
+            mCityTitleTv.setCompoundDrawables(null, null, null, null);
+        mCityTitleTv.setText(TextUtils.isEmpty(mCity.getCity()) ? getString(R.string.auto_location) : mCity.getCity());
     }
 
     @Override

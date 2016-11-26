@@ -35,9 +35,6 @@ public class FormatUtil {
 
     /**
      * 判断email格式是否正确
-     *
-     * @param email
-     * @return
      */
     public static boolean isEmail(String email) {
         String str = "^([a-zA-Z0-9_\\-\\.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)$";
@@ -49,9 +46,6 @@ public class FormatUtil {
 
     /**
      * 判断是否全是数字
-     *
-     * @param str
-     * @return
      */
     public static boolean isNumeric(String str) {
         Pattern pattern = Pattern.compile("[0-9]*");
@@ -78,9 +72,6 @@ public class FormatUtil {
 
     /**
      * 判定输入汉字
-     *
-     * @param c
-     * @return
      */
     public static boolean isChinese(char c) {
         Character.UnicodeBlock ub = Character.UnicodeBlock.of(c);
@@ -97,9 +88,6 @@ public class FormatUtil {
 
     /**
      * 检测String是否全是中文
-     *
-     * @param name
-     * @return
      */
     public static boolean checkNameChese(String name) {
         boolean res = true;
@@ -115,9 +103,6 @@ public class FormatUtil {
 
     /**
      * 判断是否是银行卡号
-     *
-     * @param cardId
-     * @return
      */
     public static boolean checkBankCard(String cardId) {
         char bit = getBankCardCheckCode(cardId
@@ -153,7 +138,6 @@ public class FormatUtil {
      *
      * @param IDStr 身份证号
      * @return 有效：返回"" 无效：返回String信息
-     * @throws ParseException
      */
     public static boolean IDCardValidate(String IDStr) throws ParseException {
         String errorInfo = "";// 记录错误信息
@@ -300,9 +284,6 @@ public class FormatUtil {
 
     /**
      * 验证日期字符串是否是YYYY-MM-DD格式
-     *
-     * @param str
-     * @return
      */
     private static boolean isDataFormat(String str) {
         boolean flag = false;
@@ -326,9 +307,6 @@ public class FormatUtil {
 
     /**
      * 是否是今天2015-11-05 04:00 合法data格式： 2015-11-05 04:00 或者2015-11-05
-     *
-     * @param date
-     * @return
      */
     public static boolean isToday(String date) {
         if (TextUtils.isEmpty(date) || date.length() < 10) {// 2015-11-05
@@ -349,9 +327,6 @@ public class FormatUtil {
 
     /**
      * 转换日期2015-11-05为今天、明天、昨天，或者是星期几
-     *
-     * @param date
-     * @return
      */
     public static String prettyDate(String date) {
         try {
@@ -417,9 +392,6 @@ public class FormatUtil {
 
     /**
      * 把Weather转换为对应的BaseDrawer.Type
-     *
-     * @param weather
-     * @return
      */
     public static BaseDrawer.Type convertWeatherType(HeWeather weather) {
         if (weather == null || !weather.isOK()) {

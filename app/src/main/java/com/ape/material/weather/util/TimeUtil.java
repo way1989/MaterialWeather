@@ -104,10 +104,6 @@ public class TimeUtil {
 
     /**
      * 时间戳转特定格式时间
-     *
-     * @param dataFormat
-     * @param timeStamp
-     * @return
      */
     public static String formatData(String dataFormat, long timeStamp) {
         if (timeStamp == 0) {
@@ -120,9 +116,6 @@ public class TimeUtil {
 
     /**
      * 将毫秒转换成秒
-     *
-     * @param time
-     * @return
      */
     public static int convertToSecond(Long time) {
         Date date = new Date();
@@ -556,8 +549,7 @@ public class TimeUtil {
     }
 
     /**
-     * 描述：判断是否是闰年()
-     * <p>(year能被4整除 并且 不能被100整除) 或者 year能被400整除,则该年为闰年.
+     * 描述：判断是否是闰年() <p>(year能被4整除 并且 不能被100整除) 或者 year能被400整除,则该年为闰年.
      *
      * @param year 年代（如2012）
      * @return boolean 是否为闰年
@@ -671,9 +663,6 @@ public class TimeUtil {
 
     /**
      * 将字符串转位日期类型
-     *
-     * @param sdate
-     * @return
      */
     private static Date toDate(String sdate) {
         try {
@@ -685,9 +674,6 @@ public class TimeUtil {
 
     /**
      * 以友好的方式显示时间
-     *
-     * @param ms
-     * @return
      */
     public static String getfriendlyTime(Long ms) {
         if (ms == null) return "";
@@ -743,9 +729,6 @@ public class TimeUtil {
 
     /**
      * 距离当前多少个小时
-     *
-     * @param dateStr
-     * @return
      */
     @SuppressLint("SimpleDateFormat")
     public static int getExpiredHour(String dateStr) {
@@ -773,9 +756,6 @@ public class TimeUtil {
 
     /**
      * 过了多少个小时
-     *
-     * @param dateStr
-     * @return
      */
     @SuppressLint("SimpleDateFormat")
     public static int getExpiredHour2(String dateStr) {
@@ -804,7 +784,6 @@ public class TimeUtil {
     /**
      * 判断给定字符串时间是否为今日
      *
-     * @param sdate
      * @return boolean
      */
     public static boolean isToday(String sdate) {
@@ -824,7 +803,6 @@ public class TimeUtil {
     /**
      * 判断给定字符串时间是否为今日
      *
-     * @param sdate
      * @return boolean
      */
     public static boolean isToday(long sdate) {
@@ -881,7 +859,6 @@ public class TimeUtil {
      * 友好显示时间差
      *
      * @param diff 毫秒
-     * @return
      */
     public static String getFriendTimeOffer(long diff) {
         int day = (int) (diff / (24 * 60 * 60 * 1000));
@@ -903,7 +880,6 @@ public class TimeUtil {
      * 友好的时间间隔
      *
      * @param duration 秒
-     * @return
      */
     public static String getFriendlyDuration(long duration) {
         String str = "";
@@ -919,7 +895,6 @@ public class TimeUtil {
      * 友好的时间间隔2
      *
      * @param duration 秒
-     * @return
      */
     public static String getFriendlyDuration2(long duration) {
         String str = "";
@@ -945,10 +920,6 @@ public class TimeUtil {
 
     /**
      * 通过日期来确定星座
-     *
-     * @param mouth
-     * @param day
-     * @return
      */
     public static String getStarSeat(int mouth, int day) {
         String starSeat = null;
@@ -982,8 +953,6 @@ public class TimeUtil {
 
     /**
      * 返回聊天时间
-     *
-     * @return
      */
     public static String getChatTimeForShow(long time) {
         if (TimeUtil.isToday(time)) {
@@ -1010,10 +979,6 @@ public class TimeUtil {
 
     /**
      * 两个日期比较
-     *
-     * @param DATE1
-     * @param DATE2
-     * @return
      */
     public static int compare_date(String DATE1, String DATE2) {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINA);

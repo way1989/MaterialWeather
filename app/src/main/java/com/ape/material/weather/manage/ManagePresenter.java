@@ -70,7 +70,7 @@ public class ManagePresenter extends ManageContract.Presenter {
 
             @Override
             public void onNext(Boolean aBoolean) {
-                RxBusEvent.MainEvent event = new RxBusEvent.MainEvent(data);
+                RxBusEvent.MainEvent event = new RxBusEvent.MainEvent(data, Integer.MIN_VALUE);
                 RxBus.getInstance().post(event);
             }
         });

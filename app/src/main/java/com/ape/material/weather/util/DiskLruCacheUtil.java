@@ -73,10 +73,6 @@ public class DiskLruCacheUtil {
 
     /**
      * 获取相应的缓存目录
-     *
-     * @param context
-     * @param uniqueName
-     * @return
      */
     private static File getDiskCacheDir(Context context, String uniqueName) {
         String cachePath;
@@ -101,9 +97,6 @@ public class DiskLruCacheUtil {
 
     /**
      * 传入缓存的key值，以得到相应的MD5值
-     *
-     * @param key
-     * @return
      */
     public static String hashKeyForDisk(String key) {
         String cacheKey;
@@ -131,8 +124,6 @@ public class DiskLruCacheUtil {
 
     /**
      * 关闭流
-     *
-     * @param closeables
      */
     private static void closeIO(Closeable... closeables) {
         if (null == closeables || closeables.length <= 0) {
@@ -152,9 +143,6 @@ public class DiskLruCacheUtil {
 
     /**
      * 保存对象缓存
-     *
-     * @param key
-     * @param ser
      */
     public void saveObject(String key, Serializable ser) {
         // Add to disk cache
@@ -180,9 +168,6 @@ public class DiskLruCacheUtil {
 
     /**
      * 读取对象缓存
-     *
-     * @param key
-     * @return
      */
     public Serializable readObject(String key) {
         if (mDiskCache != null && !mDiskCache.isClosed()) {

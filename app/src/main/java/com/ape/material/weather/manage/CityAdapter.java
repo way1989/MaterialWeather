@@ -17,10 +17,8 @@ import android.widget.TextView;
 import com.ape.material.weather.App;
 import com.ape.material.weather.R;
 import com.ape.material.weather.bean.City;
-import com.ape.material.weather.util.DrawableUtils;
 import com.ape.material.weather.util.ViewUtils;
 import com.h6ah4i.android.widget.advrecyclerview.draggable.DraggableItemAdapter;
-import com.h6ah4i.android.widget.advrecyclerview.draggable.DraggableItemConstants;
 import com.h6ah4i.android.widget.advrecyclerview.draggable.ItemDraggableRange;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.SwipeableItemAdapter;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.SwipeableItemConstants;
@@ -87,7 +85,8 @@ public class CityAdapter extends RecyclerView.Adapter<CityAdapter.MyViewHolder>
 
         // set listeners
         // (if the item is *pinned*, click event comes to the itemView)
-        holder.itemView.setOnClickListener(mItemViewOnClickListener);
+        holder.mContainer.setTag(position);
+        holder.mContainer.setOnClickListener(mItemViewOnClickListener);
 
         // set text
         holder.mTextView.setText(item.isLocation() ? getSpannable(item.getCity()) : item.getCity());
@@ -288,11 +287,11 @@ public class CityAdapter extends RecyclerView.Adapter<CityAdapter.MyViewHolder>
             super.onPerformAction();
             City item = mAdapter.getItem(mPosition);
 
-            if (!item.isLocation()) {
+            if (item.isLocation()) {
                 item.setCity("");
                 mAdapter.notifyItemChanged(mPosition);
                 isLocation = true;
-            }else {
+            } else {
                 mAdapter.mProvider.removeItem(mPosition);
                 mAdapter.notifyItemRemoved(mPosition);
             }
@@ -302,9 +301,9 @@ public class CityAdapter extends RecyclerView.Adapter<CityAdapter.MyViewHolder>
         protected void onSlideAnimationEnd() {
             super.onSlideAnimationEnd();
             if (mAdapter.mEventListener != null) {
-                if(isLocation){
+                if (isLocation) {
                     mAdapter.mEventListener.onItemLocation(mPosition);
-                }else {
+                } else {
                     mAdapter.mEventListener.onItemRemoved(mPosition);
                 }
             }

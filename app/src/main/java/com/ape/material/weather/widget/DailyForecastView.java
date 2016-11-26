@@ -20,9 +20,7 @@ import com.ape.material.weather.util.FormatUtil;
 import java.util.List;
 
 /**
- * 一周天气预报
- * 按文字算高度18行
- * 文字设置为12，高度是216dp
+ * 一周天气预报 按文字算高度18行 文字设置为12，高度是216dp
  *
  * @author way
  */

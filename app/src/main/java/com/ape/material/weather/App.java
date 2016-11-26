@@ -6,6 +6,8 @@ import android.graphics.Typeface;
 
 import com.squareup.leakcanary.LeakCanary;
 
+import io.github.skyhacker2.sqliteonweb.SQLiteOnWeb;
+
 
 /**
  * Created by way on 16/6/10.
@@ -38,6 +40,7 @@ public class App extends Application {
 
         mAppComponent = DaggerAppComponent.builder()
                 .appModule(new AppModule(getApplicationContext())).build();
+        SQLiteOnWeb.init(this).start();
     }
 
     public AppComponent getAppComponent() {

@@ -20,9 +20,7 @@ import com.ape.material.weather.util.FormatUtil;
 import java.util.List;
 
 /**
- * 一天24h预报
- * 12行
- * 12 * 12 = 144dp
+ * 一天24h预报 12行 12 * 12 = 144dp
  *
  * @author Mixiaoxiao
  */

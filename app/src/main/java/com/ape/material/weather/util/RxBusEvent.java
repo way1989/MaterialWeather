@@ -12,11 +12,11 @@ public final class RxBusEvent {
     public static class MainEvent {
         public List<City> cities;
         public int position;
-        public MainEvent(List<City> cities){
+
+        public MainEvent(List<City> cities, int position) {
             this.cities = cities;
-        }
-        public MainEvent(int position) {
             this.position = position;
         }
+
     }
 }

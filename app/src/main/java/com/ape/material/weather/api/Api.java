@@ -1,8 +1,9 @@
 package com.ape.material.weather.api;
 
-import com.ape.material.weather.BuildConfig;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+import com.ape.material.weather.BuildConfig;
 
 import java.lang.reflect.Modifier;
 import java.util.concurrent.TimeUnit;

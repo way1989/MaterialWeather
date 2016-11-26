@@ -98,12 +98,7 @@ public abstract class BaseDrawer {
     }
 
     /**
-     * 获取[min, max)内的随机数，越大的数概率越小
-     * 参考http://blog.csdn.net/loomman/article/details/3861240
-     *
-     * @param min
-     * @param max
-     * @return
+     * 获取[min, max)内的随机数，越大的数概率越小 参考http://blog.csdn.net/loomman/article/details/3861240
      */
     public static float getDownRandFloat(float min, float max) {
         float bigend = ((min + max) * max) / 2f;
@@ -121,10 +116,6 @@ public abstract class BaseDrawer {
 
     /**
      * [min, max)
-     *
-     * @param min
-     * @param max
-     * @return
      */
     public static float getRandom(float min, float max) {
         if (max < min) {
@@ -136,9 +127,6 @@ public abstract class BaseDrawer {
 
     /**
      * 必须取[0,1]之间的float
-     *
-     * @param alpha
-     * @return
      */
     public static float fixAlpha(float alpha) {
         if (alpha > 1f) {
@@ -168,7 +156,6 @@ public abstract class BaseDrawer {
     }
 
     /**
-     * @param canvas
      * @return needDrawNextFrame
      */
     public boolean draw(Canvas canvas, float alpha) {

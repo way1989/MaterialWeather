@@ -19,7 +19,7 @@
             android:name=".main.MainActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:hardwareAccelerated="true"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden|adjustNothing">
@@ -31,14 +31,15 @@
         </activity>
         <activity
             android:name=".manage.ManageActivity"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustNothing"
+            android:label="@string/action_city_manage"
             android:screenOrientation="portrait"/>
 
         <provider
             android:name=".db.CityProvider"
             android:authorities="com.ape.material.weather.City"/>
 
-        <activity android:name=".search.SearchCityActivity">
-        </activity>
+        <activity android:name=".search.SearchCityActivity"/>
     </application>
 
 </manifest>

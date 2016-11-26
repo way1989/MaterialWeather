@@ -101,11 +101,7 @@ public class CloudyDrawer extends BaseDrawer {
         /**
          * drawableWidth 必须>ScreenWidth
          *
-         * @param drawable
          * @param percentWidthPerframe 相对于drawableWidth每一帧移动的距离,screenWidth*2时大约 0.0002f
-         * @param screenWidth
-         * @param drawableWidth
-         * @param maxAlpha
          * @param canLoop              是否可以循环移动      （如果左边正好接上右边就设置为true)
          */
         public CloudHolder(Drawable drawable, float percentWidthPerframe, float screenWidth, float drawableWidth,

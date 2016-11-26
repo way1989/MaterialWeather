@@ -36,12 +36,7 @@ public class HeCity {
 
     public static class HeWeather5Bean {
         /**
-         * city : 深圳
-         * cnty : 中国
-         * id : CN101280601
-         * lat : 22.544000
-         * lon : 114.109000
-         * prov : 广东
+         * city : 深圳 cnty : 中国 id : CN101280601 lat : 22.544000 lon : 114.109000 prov : 广东
          */
 
         private BasicBean basic;

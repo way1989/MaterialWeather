@@ -85,7 +85,7 @@ public class MainActivity extends BaseActivity<MainPresenter, MainModel>
                     @Override
                     public void call(RxBusEvent.MainEvent event) {
                         //do some thing
-                        if(event.position >=0 && event.position < mAdapter.getCount()){
+                        if (event.position >= 0 && event.position < mAdapter.getCount()) {
                             mMainViewPager.setCurrentItem(event.position);
                             return;
                         }

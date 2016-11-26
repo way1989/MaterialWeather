@@ -74,8 +74,6 @@ public abstract class BaseFragment<T extends BasePresenter, E extends BaseModel>
 
     /**
      * should override this method when use MVP
-     *
-     * @param appComponent
      */
     protected void initPresenter(AppComponent appComponent) {
     }

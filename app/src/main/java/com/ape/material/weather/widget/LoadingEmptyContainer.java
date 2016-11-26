@@ -9,10 +9,9 @@ import com.ape.material.weather.R;
 
 
 /**
- * This class is the default empty state view for most listviews/fragments
- * It allows the ability to set a main text, a main highlight text and a secondary text
- * By default this container has some strings loaded, but other classes can call the apis to change
- * the text
+ * This class is the default empty state view for most listviews/fragments It allows the ability to
+ * set a main text, a main highlight text and a secondary text By default this container has some
+ * strings loaded, but other classes can call the apis to change the text
  */
 public class LoadingEmptyContainer extends FrameLayout {
     private static final long LOADING_DELAY = 50L;

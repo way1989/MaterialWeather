@@ -50,7 +50,6 @@ android {
             //是否开启ACRA
             buildConfigField "boolean", "ACRA_ENABLED", "false"
             buildConfigField "String", "HEWEATHER_URL", HEWEATHER_FREE_URL
-            resValue("string", "PORT_NUMBER", "8081")//数据库网络端口号
         }
         release {
             // 不显示Log
@@ -117,5 +116,6 @@ dependencies {
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
     testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
 
-    debugCompile 'com.amitshekhar.android:debug-db:0.3.0'
+    debugCompile 'io.github.skyhacker2:sqliteonweb:1.0.1'
+    releaseCompile 'io.github.skyhacker2:sqliteonweb-no-op:1.0.2'
 }

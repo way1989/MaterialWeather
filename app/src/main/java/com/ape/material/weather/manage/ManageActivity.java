@@ -156,7 +156,7 @@ public class ManageActivity extends BaseActivity<ManagePresenter, ManageModel>
             City city = (City) data.getSerializableExtra(AppConstant.ARG_CITY_KEY);
             if (city != null) {
                 mAdapter.addData(city);
-                RxBusEvent.MainEvent event = new RxBusEvent.MainEvent(mAdapter.getData());
+                RxBusEvent.MainEvent event = new RxBusEvent.MainEvent(mAdapter.getData(), Integer.MIN_VALUE);
                 RxBus.getInstance().post(event);
             }
         }
@@ -207,9 +207,12 @@ public class ManageActivity extends BaseActivity<ManagePresenter, ManageModel>
     }
 
     private void onItemViewClick(View v) {
-        int position = mRecyclerView.getChildAdapterPosition(v);
+        int position = (int) v.getTag();
+//                mRecyclerView.getChildAdapterPosition(v);
         if (position != RecyclerView.NO_POSITION) {
-            onItemClicked(position);
+            //onItemClicked(position);
+            RxBus.getInstance().post(new RxBusEvent.MainEvent(null, position));
+            finish();
         }
     }
 
@@ -245,20 +248,9 @@ public class ManageActivity extends BaseActivity<ManagePresenter, ManageModel>
         }
     }
 
-    /**
-     * This method will be called when a list item is clicked
-     *
-     * @param position The position of the item within data set
-     */
-    public void onItemClicked(int position) {
-        RxBus.getInstance().post(new RxBusEvent.MainEvent(position));
-        finish();
-    }
-
     private boolean supportsViewElevation() {
         return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP);
     }
-
 
     public void notifyItemChanged(int position) {
         mAdapter.notifyItemChanged(position);
@@ -272,7 +264,6 @@ public class ManageActivity extends BaseActivity<ManagePresenter, ManageModel>
     @Override
     protected void initPresenter(AppComponent appComponent) {
         super.initPresenter(appComponent);
-        //mPresenter.setVM(this, mModel);
         DaggerManageComponent.builder().appComponent(appComponent)
                 .managePresenterModule(new ManagePresenterModule(this)).build().inject(this);
     }
@@ -289,7 +280,7 @@ public class ManageActivity extends BaseActivity<ManagePresenter, ManageModel>
 
     @Override
     public void onCityModify() {
-        RxBusEvent.MainEvent event = new RxBusEvent.MainEvent(mAdapter.getData());
+        RxBusEvent.MainEvent event = new RxBusEvent.MainEvent(mAdapter.getData(), Integer.MIN_VALUE);
         RxBus.getInstance().post(event);
     }
 

@@ -1,16 +1,16 @@
 package com.ape.material.weather.bean;
 
+import com.google.gson.annotations.SerializedName;
+
 import android.text.TextUtils;
 
 import com.ape.material.weather.util.FormatUtil;
-import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.util.List;
 
 /**
- * Created by way on 2016/11/9.
- * https://free-api.heweather.com/v5/weather?key=808caad621854628b1b3273555ae1632&city=shenzhen&lang=zh-cn
+ * Created by way on 2016/11/9. https://free-api.heweather.com/v5/weather?key=808caad621854628b1b3273555ae1632&city=shenzhen&lang=zh-cn
  */
 
 public class HeWeather implements Serializable {
@@ -87,8 +87,6 @@ public class HeWeather implements Serializable {
 
     /**
      * 今天的气温 6~16°
-     *
-     * @return
      */
     public String getTodayTempDescription() {
         final int todayIndex = getTodayDailyForecastIndex();
@@ -104,12 +102,12 @@ public class HeWeather implements Serializable {
         /**
          * alarms : [{"level":"蓝色","stat":"预警中","title":"山东省青岛市气象台发布大风蓝色预警","txt":"青岛市气象台2016年08月29日15时24分继续发布大风蓝色预警信号：预计今天下午到明天，我市北风风力海上6到7级阵风9级，陆地4到5阵风7级，请注意防范。","type":"大风"}]
          * aqi : {"city":{"aqi":"54","co":"1","no2":"36","o3":"28","pm10":"55","pm25":"32","qlty":"良","so2":"5"}}
-         * basic : {"city":"深圳","cnty":"中国","id":"CN101280601","lat":"22.544000","lon":"114.109000","update":{"loc":"2016-11-09 21:56","utc":"2016-11-09 13:56"}}
-         * daily_forecast : [{"astro":{"mr":"13:49","ms":"00:47","sr":"06:32","ss":"17:42"},"cond":{"code_d":"101","code_n":"305","txt_d":"多云","txt_n":"小雨"},"date":"2016-11-09","hum":"73","pcpn":"0.1","pop":"0","pres":"1021","tmp":{"max":"20","min":"15"},"uv":"6","vis":"10","wind":{"deg":"32","dir":"无持续风向","sc":"微风","spd":"3"}},{"astro":{"mr":"14:33","ms":"01:44","sr":"06:33","ss":"17:41"},"cond":{"code_d":"104","code_n":"101","txt_d":"阴","txt_n":"多云"},"date":"2016-11-10","hum":"75","pcpn":"1.6","pop":"100","pres":"1021","tmp":{"max":"19","min":"15"},"uv":"6","vis":"10","wind":{"deg":"10","dir":"无持续风向","sc":"微风","spd":"8"}},{"astro":{"mr":"15:17","ms":"02:43","sr":"06:33","ss":"17:41"},"cond":{"code_d":"101","code_n":"101","txt_d":"多云","txt_n":"多云"},"date":"2016-11-11","hum":"74","pcpn":"0.0","pop":"0","pres":"1019","tmp":{"max":"22","min":"17"},"uv":"7","vis":"10","wind":{"deg":"94","dir":"无持续风向","sc":"微风","spd":"6"}}]
-         * hourly_forecast : [{"cond":{"code":"305","txt":"小雨"},"date":"2016-11-09 22:00","hum":"75","pop":"0","pres":"1022","tmp":"20","wind":{"deg":"21","dir":"无持续风向","sc":"微风","spd":"13"}}]
+         * basic : {"city":"深圳","cnty":"中国","id":"CN101280601","lat":"22.544000","lon":"114.109000","update":{"loc":"2016-11-09
+         * 21:56","utc":"2016-11-09 13:56"}} daily_forecast : [{"astro":{"mr":"13:49","ms":"00:47","sr":"06:32","ss":"17:42"},"cond":{"code_d":"101","code_n":"305","txt_d":"多云","txt_n":"小雨"},"date":"2016-11-09","hum":"73","pcpn":"0.1","pop":"0","pres":"1021","tmp":{"max":"20","min":"15"},"uv":"6","vis":"10","wind":{"deg":"32","dir":"无持续风向","sc":"微风","spd":"3"}},{"astro":{"mr":"14:33","ms":"01:44","sr":"06:33","ss":"17:41"},"cond":{"code_d":"104","code_n":"101","txt_d":"阴","txt_n":"多云"},"date":"2016-11-10","hum":"75","pcpn":"1.6","pop":"100","pres":"1021","tmp":{"max":"19","min":"15"},"uv":"6","vis":"10","wind":{"deg":"10","dir":"无持续风向","sc":"微风","spd":"8"}},{"astro":{"mr":"15:17","ms":"02:43","sr":"06:33","ss":"17:41"},"cond":{"code_d":"101","code_n":"101","txt_d":"多云","txt_n":"多云"},"date":"2016-11-11","hum":"74","pcpn":"0.0","pop":"0","pres":"1019","tmp":{"max":"22","min":"17"},"uv":"7","vis":"10","wind":{"deg":"94","dir":"无持续风向","sc":"微风","spd":"6"}}]
+         * hourly_forecast : [{"cond":{"code":"305","txt":"小雨"},"date":"2016-11-09
+         * 22:00","hum":"75","pop":"0","pres":"1022","tmp":"20","wind":{"deg":"21","dir":"无持续风向","sc":"微风","spd":"13"}}]
          * now : {"cond":{"code":"104","txt":"阴"},"fl":"16","hum":"85","pcpn":"0","pres":"1022","tmp":"17","vis":"3","wind":{"deg":"20","dir":"北风","sc":"4-5","spd":"24"}}
-         * status : ok
-         * suggestion : {"air":{"brf":"中","txt":"气象条件对空气污染物稀释、扩散和清除无明显影响，易感人群应适当减少室外活动时间。"},"comf":{"brf":"舒适","txt":"白天不太热也不太冷，风力不大，相信您在这样的天气条件下，应会感到比较清爽和舒适。"},"cw":{"brf":"不宜","txt":"不宜洗车，未来24小时内有雨，如果在此期间洗车，雨水和路上的泥水可能会再次弄脏您的爱车。"},"drsg":{"brf":"较舒适","txt":"建议着薄外套、开衫牛仔衫裤等服装。年老体弱者应适当添加衣物，宜着夹克衫、薄毛衣等。"},"flu":{"brf":"较易发","txt":"天气较凉，较易发生感冒，请适当增加衣服。体质较弱的朋友尤其应该注意防护。"},"sport":{"brf":"较适宜","txt":"阴天，较适宜进行各种户内外运动。"},"trav":{"brf":"适宜","txt":"天气较好，温度适宜，总体来说还是好天气哦，这样的天气适宜旅游，您可以尽情地享受大自然的风光。"},"uv":{"brf":"最弱","txt":"属弱紫外线辐射天气，无需特别防护。若长期在户外，建议涂擦SPF在8-12之间的防晒护肤品。"}}
+         * status : ok suggestion : {"air":{"brf":"中","txt":"气象条件对空气污染物稀释、扩散和清除无明显影响，易感人群应适当减少室外活动时间。"},"comf":{"brf":"舒适","txt":"白天不太热也不太冷，风力不大，相信您在这样的天气条件下，应会感到比较清爽和舒适。"},"cw":{"brf":"不宜","txt":"不宜洗车，未来24小时内有雨，如果在此期间洗车，雨水和路上的泥水可能会再次弄脏您的爱车。"},"drsg":{"brf":"较舒适","txt":"建议着薄外套、开衫牛仔衫裤等服装。年老体弱者应适当添加衣物，宜着夹克衫、薄毛衣等。"},"flu":{"brf":"较易发","txt":"天气较凉，较易发生感冒，请适当增加衣服。体质较弱的朋友尤其应该注意防护。"},"sport":{"brf":"较适宜","txt":"阴天，较适宜进行各种户内外运动。"},"trav":{"brf":"适宜","txt":"天气较好，温度适宜，总体来说还是好天气哦，这样的天气适宜旅游，您可以尽情地享受大自然的风光。"},"uv":{"brf":"最弱","txt":"属弱紫外线辐射天气，无需特别防护。若长期在户外，建议涂擦SPF在8-12之间的防晒护肤品。"}}
          */
 
         private AqiBean aqi;
@@ -204,14 +202,7 @@ public class HeWeather implements Serializable {
             public static class CityBean implements Serializable {
                 private static final long serialVersionUID = -2811143428761620271L;
                 /**
-                 * aqi : 54
-                 * co : 1
-                 * no2 : 36
-                 * o3 : 28
-                 * pm10 : 55
-                 * pm25 : 32
-                 * qlty : 良
-                 * so2 : 5
+                 * aqi : 54 co : 1 no2 : 36 o3 : 28 pm10 : 55 pm25 : 32 qlty : 良 so2 : 5
                  */
 
                 private String aqi;
@@ -292,12 +283,8 @@ public class HeWeather implements Serializable {
         public static class BasicBean implements Serializable {
             private static final long serialVersionUID = -5703567936732275283L;
             /**
-             * city : 深圳
-             * cnty : 中国
-             * id : CN101280601
-             * lat : 22.544000
-             * lon : 114.109000
-             * update : {"loc":"2016-11-09 21:56","utc":"2016-11-09 13:56"}
+             * city : 深圳 cnty : 中国 id : CN101280601 lat : 22.544000 lon : 114.109000 update :
+             * {"loc":"2016-11-09 21:56","utc":"2016-11-09 13:56"}
              */
 
             private String city;
@@ -358,8 +345,7 @@ public class HeWeather implements Serializable {
             public static class UpdateBean implements Serializable {
                 private static final long serialVersionUID = -7867087729972388060L;
                 /**
-                 * loc : 2016-11-09 21:56
-                 * utc : 2016-11-09 13:56
+                 * loc : 2016-11-09 21:56 utc : 2016-11-09 13:56
                  */
 
                 private String loc;
@@ -386,14 +372,8 @@ public class HeWeather implements Serializable {
         public static class NowBean implements Serializable {
             private static final long serialVersionUID = 1537448213382014178L;
             /**
-             * cond : {"code":"104","txt":"阴"}
-             * fl : 16
-             * hum : 85
-             * pcpn : 0
-             * pres : 1022
-             * tmp : 17
-             * vis : 3
-             * wind : {"deg":"20","dir":"北风","sc":"4-5","spd":"24"}
+             * cond : {"code":"104","txt":"阴"} fl : 16 hum : 85 pcpn : 0 pres : 1022 tmp : 17 vis :
+             * 3 wind : {"deg":"20","dir":"北风","sc":"4-5","spd":"24"}
              */
 
             private CondBean cond;
@@ -472,8 +452,7 @@ public class HeWeather implements Serializable {
             public static class CondBean implements Serializable {
                 private static final long serialVersionUID = 4048084230537287476L;
                 /**
-                 * code : 104
-                 * txt : 阴
+                 * code : 104 txt : 阴
                  */
 
                 private String code;
@@ -499,10 +478,7 @@ public class HeWeather implements Serializable {
             public static class WindBean implements Serializable {
                 private static final long serialVersionUID = 999547904951255849L;
                 /**
-                 * deg : 20
-                 * dir : 北风
-                 * sc : 4-5
-                 * spd : 24
+                 * deg : 20 dir : 北风 sc : 4-5 spd : 24
                  */
 
                 private String deg;
@@ -547,13 +523,12 @@ public class HeWeather implements Serializable {
         public static class SuggestionBean implements Serializable {
             private static final long serialVersionUID = 7109042187891099867L;
             /**
-             * air : {"brf":"中","txt":"气象条件对空气污染物稀释、扩散和清除无明显影响，易感人群应适当减少室外活动时间。"}
-             * comf : {"brf":"舒适","txt":"白天不太热也不太冷，风力不大，相信您在这样的天气条件下，应会感到比较清爽和舒适。"}
-             * cw : {"brf":"不宜","txt":"不宜洗车，未来24小时内有雨，如果在此期间洗车，雨水和路上的泥水可能会再次弄脏您的爱车。"}
-             * drsg : {"brf":"较舒适","txt":"建议着薄外套、开衫牛仔衫裤等服装。年老体弱者应适当添加衣物，宜着夹克衫、薄毛衣等。"}
-             * flu : {"brf":"较易发","txt":"天气较凉，较易发生感冒，请适当增加衣服。体质较弱的朋友尤其应该注意防护。"}
-             * sport : {"brf":"较适宜","txt":"阴天，较适宜进行各种户内外运动。"}
-             * trav : {"brf":"适宜","txt":"天气较好，温度适宜，总体来说还是好天气哦，这样的天气适宜旅游，您可以尽情地享受大自然的风光。"}
+             * air : {"brf":"中","txt":"气象条件对空气污染物稀释、扩散和清除无明显影响，易感人群应适当减少室外活动时间。"} comf :
+             * {"brf":"舒适","txt":"白天不太热也不太冷，风力不大，相信您在这样的天气条件下，应会感到比较清爽和舒适。"} cw :
+             * {"brf":"不宜","txt":"不宜洗车，未来24小时内有雨，如果在此期间洗车，雨水和路上的泥水可能会再次弄脏您的爱车。"} drsg :
+             * {"brf":"较舒适","txt":"建议着薄外套、开衫牛仔衫裤等服装。年老体弱者应适当添加衣物，宜着夹克衫、薄毛衣等。"} flu :
+             * {"brf":"较易发","txt":"天气较凉，较易发生感冒，请适当增加衣服。体质较弱的朋友尤其应该注意防护。"} sport :
+             * {"brf":"较适宜","txt":"阴天，较适宜进行各种户内外运动。"} trav : {"brf":"适宜","txt":"天气较好，温度适宜，总体来说还是好天气哦，这样的天气适宜旅游，您可以尽情地享受大自然的风光。"}
              * uv : {"brf":"最弱","txt":"属弱紫外线辐射天气，无需特别防护。若长期在户外，建议涂擦SPF在8-12之间的防晒护肤品。"}
              */
 
@@ -633,8 +608,7 @@ public class HeWeather implements Serializable {
             public static class AirBean implements Serializable {
                 private static final long serialVersionUID = -5949291669372902632L;
                 /**
-                 * brf : 中
-                 * txt : 气象条件对空气污染物稀释、扩散和清除无明显影响，易感人群应适当减少室外活动时间。
+                 * brf : 中 txt : 气象条件对空气污染物稀释、扩散和清除无明显影响，易感人群应适当减少室外活动时间。
                  */
 
                 private String brf;
@@ -660,8 +634,7 @@ public class HeWeather implements Serializable {
             public static class ComfBean implements Serializable {
                 private static final long serialVersionUID = 7392161898818639676L;
                 /**
-                 * brf : 舒适
-                 * txt : 白天不太热也不太冷，风力不大，相信您在这样的天气条件下，应会感到比较清爽和舒适。
+                 * brf : 舒适 txt : 白天不太热也不太冷，风力不大，相信您在这样的天气条件下，应会感到比较清爽和舒适。
                  */
 
                 private String brf;
@@ -687,8 +660,7 @@ public class HeWeather implements Serializable {
             public static class CwBean implements Serializable {
                 private static final long serialVersionUID = 5821065975275891165L;
                 /**
-                 * brf : 不宜
-                 * txt : 不宜洗车，未来24小时内有雨，如果在此期间洗车，雨水和路上的泥水可能会再次弄脏您的爱车。
+                 * brf : 不宜 txt : 不宜洗车，未来24小时内有雨，如果在此期间洗车，雨水和路上的泥水可能会再次弄脏您的爱车。
                  */
 
                 private String brf;
@@ -714,8 +686,7 @@ public class HeWeather implements Serializable {
             public static class DrsgBean implements Serializable {
                 private static final long serialVersionUID = 8274317947560570867L;
                 /**
-                 * brf : 较舒适
-                 * txt : 建议着薄外套、开衫牛仔衫裤等服装。年老体弱者应适当添加衣物，宜着夹克衫、薄毛衣等。
+                 * brf : 较舒适 txt : 建议着薄外套、开衫牛仔衫裤等服装。年老体弱者应适当添加衣物，宜着夹克衫、薄毛衣等。
                  */
 
                 private String brf;
@@ -741,8 +712,7 @@ public class HeWeather implements Serializable {
             public static class FluBean implements Serializable {
                 private static final long serialVersionUID = -5098212090166554875L;
                 /**
-                 * brf : 较易发
-                 * txt : 天气较凉，较易发生感冒，请适当增加衣服。体质较弱的朋友尤其应该注意防护。
+                 * brf : 较易发 txt : 天气较凉，较易发生感冒，请适当增加衣服。体质较弱的朋友尤其应该注意防护。
                  */
 
                 private String brf;
@@ -768,8 +738,7 @@ public class HeWeather implements Serializable {
             public static class SportBean implements Serializable {
                 private static final long serialVersionUID = -6959848390197920565L;
                 /**
-                 * brf : 较适宜
-                 * txt : 阴天，较适宜进行各种户内外运动。
+                 * brf : 较适宜 txt : 阴天，较适宜进行各种户内外运动。
                  */
 
                 private String brf;
@@ -795,8 +764,7 @@ public class HeWeather implements Serializable {
             public static class TravBean implements Serializable {
                 private static final long serialVersionUID = -6921325207578532910L;
                 /**
-                 * brf : 适宜
-                 * txt : 天气较好，温度适宜，总体来说还是好天气哦，这样的天气适宜旅游，您可以尽情地享受大自然的风光。
+                 * brf : 适宜 txt : 天气较好，温度适宜，总体来说还是好天气哦，这样的天气适宜旅游，您可以尽情地享受大自然的风光。
                  */
 
                 private String brf;
@@ -822,8 +790,7 @@ public class HeWeather implements Serializable {
             public static class UvBean implements Serializable {
                 private static final long serialVersionUID = 1805156332079370824L;
                 /**
-                 * brf : 最弱
-                 * txt : 属弱紫外线辐射天气，无需特别防护。若长期在户外，建议涂擦SPF在8-12之间的防晒护肤品。
+                 * brf : 最弱 txt : 属弱紫外线辐射天气，无需特别防护。若长期在户外，建议涂擦SPF在8-12之间的防晒护肤品。
                  */
 
                 private String brf;
@@ -850,10 +817,7 @@ public class HeWeather implements Serializable {
         public static class AlarmsBean implements Serializable {
             private static final long serialVersionUID = 9165771083960176140L;
             /**
-             * level : 蓝色
-             * stat : 预警中
-             * title : 山东省青岛市气象台发布大风蓝色预警
-             * txt : 青岛市气象台2016年08月29日15时24分继续发布大风蓝色预警信号：预计今天下午到明天，我市北风风力海上6到7级阵风9级，陆地4到5阵风7级，请注意防范。
+             * level : 蓝色 stat : 预警中 title : 山东省青岛市气象台发布大风蓝色预警 txt : 青岛市气象台2016年08月29日15时24分继续发布大风蓝色预警信号：预计今天下午到明天，我市北风风力海上6到7级阵风9级，陆地4到5阵风7级，请注意防范。
              * type : 大风
              */
 
@@ -907,17 +871,10 @@ public class HeWeather implements Serializable {
         public static class DailyForecastBean implements Serializable {
             private static final long serialVersionUID = -7405274118143553755L;
             /**
-             * astro : {"mr":"13:49","ms":"00:47","sr":"06:32","ss":"17:42"}
-             * cond : {"code_d":"101","code_n":"305","txt_d":"多云","txt_n":"小雨"}
-             * date : 2016-11-09
-             * hum : 73
-             * pcpn : 0.1
-             * pop : 0
-             * pres : 1021
-             * tmp : {"max":"20","min":"15"}
-             * uv : 6
-             * vis : 10
-             * wind : {"deg":"32","dir":"无持续风向","sc":"微风","spd":"3"}
+             * astro : {"mr":"13:49","ms":"00:47","sr":"06:32","ss":"17:42"} cond :
+             * {"code_d":"101","code_n":"305","txt_d":"多云","txt_n":"小雨"} date : 2016-11-09 hum : 73
+             * pcpn : 0.1 pop : 0 pres : 1021 tmp : {"max":"20","min":"15"} uv : 6 vis : 10 wind :
+             * {"deg":"32","dir":"无持续风向","sc":"微风","spd":"3"}
              */
 
             private AstroBean astro;
@@ -1023,10 +980,7 @@ public class HeWeather implements Serializable {
             public static class AstroBean implements Serializable {
                 private static final long serialVersionUID = 4612235552830521062L;
                 /**
-                 * mr : 13:49
-                 * ms : 00:47
-                 * sr : 06:32
-                 * ss : 17:42
+                 * mr : 13:49 ms : 00:47 sr : 06:32 ss : 17:42
                  */
 
                 private String mr;
@@ -1070,10 +1024,7 @@ public class HeWeather implements Serializable {
             public static class CondBeanX implements Serializable {
                 private static final long serialVersionUID = -8102920287943124036L;
                 /**
-                 * code_d : 101
-                 * code_n : 305
-                 * txt_d : 多云
-                 * txt_n : 小雨
+                 * code_d : 101 code_n : 305 txt_d : 多云 txt_n : 小雨
                  */
 
                 private String code_d;
@@ -1117,8 +1068,7 @@ public class HeWeather implements Serializable {
             public static class TmpBean implements Serializable {
                 private static final long serialVersionUID = 5875029753830019814L;
                 /**
-                 * max : 20
-                 * min : 15
+                 * max : 20 min : 15
                  */
 
                 private String max;
@@ -1144,10 +1094,7 @@ public class HeWeather implements Serializable {
             public static class WindBeanX implements Serializable {
                 private static final long serialVersionUID = -1476702449825412620L;
                 /**
-                 * deg : 32
-                 * dir : 无持续风向
-                 * sc : 微风
-                 * spd : 3
+                 * deg : 32 dir : 无持续风向 sc : 微风 spd : 3
                  */
 
                 private String deg;
@@ -1192,13 +1139,8 @@ public class HeWeather implements Serializable {
         public static class HourlyForecastBean implements Serializable {
             private static final long serialVersionUID = 6090339610498200124L;
             /**
-             * cond : {"code":"305","txt":"小雨"}
-             * date : 2016-11-09 22:00
-             * hum : 75
-             * pop : 0
-             * pres : 1022
-             * tmp : 20
-             * wind : {"deg":"21","dir":"无持续风向","sc":"微风","spd":"13"}
+             * cond : {"code":"305","txt":"小雨"} date : 2016-11-09 22:00 hum : 75 pop : 0 pres : 1022
+             * tmp : 20 wind : {"deg":"21","dir":"无持续风向","sc":"微风","spd":"13"}
              */
 
             private CondBeanXX cond;
@@ -1268,8 +1210,7 @@ public class HeWeather implements Serializable {
             public static class CondBeanXX implements Serializable {
                 private static final long serialVersionUID = -7270642462900165772L;
                 /**
-                 * code : 305
-                 * txt : 小雨
+                 * code : 305 txt : 小雨
                  */
 
                 private String code;
@@ -1295,10 +1236,7 @@ public class HeWeather implements Serializable {
             public static class WindBeanXX implements Serializable {
                 private static final long serialVersionUID = -6184267326059460941L;
                 /**
-                 * deg : 21
-                 * dir : 无持续风向
-                 * sc : 微风
-                 * spd : 13
+                 * deg : 21 dir : 无持续风向 sc : 微风 spd : 13
                  */
 
                 private String deg;

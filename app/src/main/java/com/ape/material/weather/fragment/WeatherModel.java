@@ -97,8 +97,6 @@ public class WeatherModel implements WeatherContract.Model {
 
     /**
      * get Location: Latitude and Longitude
-     *
-     * @return
      */
     private Observable<Location> getLocation() {
         return Observable.fromEmitter(new Action1<Emitter<Location>>() {
@@ -133,7 +131,6 @@ public class WeatherModel implements WeatherContract.Model {
      *
      * @param lat Latitude
      * @param lon Longitude
-     * @return
      */
     private Observable<String> getCityName(final double lat, final double lon) {
         return Observable.create(new Observable.OnSubscribe<String>() {

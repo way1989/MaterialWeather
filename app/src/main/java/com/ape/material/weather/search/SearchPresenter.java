@@ -1,10 +1,10 @@
 package com.ape.material.weather.search;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.ape.material.weather.bean.City;
+import com.ape.material.weather.data.WeatherRepository;
 
 import java.util.List;
 
@@ -22,11 +22,11 @@ public class SearchPresenter extends SearchContract.Presenter {
     private static final String TAG = "SearchPresenter";
     @NonNull
     private final CompositeSubscription mSubscriptions;
+    WeatherRepository mRepository;
 
     @Inject
-    SearchPresenter(Context context, SearchContract.Model model, SearchContract.View view) {
-        mContext = context;
-        mModel = model;
+    SearchPresenter(WeatherRepository model, SearchContract.View view) {
+        mRepository = model;
         mView = view;
         mSubscriptions = new CompositeSubscription();
     }
@@ -35,7 +35,7 @@ public class SearchPresenter extends SearchContract.Presenter {
     public void search(String query) {
         Log.d(TAG, "search... query = " + query);
         mSubscriptions.clear();
-        Subscription subscription = mModel.search(query).subscribe(new Observer<List<City>>() {
+        Subscription subscription = mRepository.searchCity(query).subscribe(new Observer<List<City>>() {
             @Override
             public void onCompleted() {
 
@@ -57,7 +57,7 @@ public class SearchPresenter extends SearchContract.Presenter {
     @Override
     public void addOrUpdateCity(final City city) {
         mSubscriptions.clear();
-        Subscription subscription = mModel.addOrUpdateCity(city).subscribe(new Observer<Boolean>() {
+        Subscription subscription = mRepository.addCity(city).subscribe(new Observer<Boolean>() {
             @Override
             public void onCompleted() {
 

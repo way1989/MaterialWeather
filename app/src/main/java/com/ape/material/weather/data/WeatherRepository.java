@@ -26,8 +26,11 @@ import rx.functions.Func1;
 
 public class WeatherRepository implements WeatherDataSource {
     private static final String TAG = "WeatherRepository";
+
     @Inject
-    WeatherRepository(){}
+    WeatherRepository() {
+    }
+
     @Override
     public Observable<List<City>> getCities() {
         return Observable.create(new Observable.OnSubscribe<List<City>>() {

@@ -42,7 +42,7 @@ import rx.functions.Action1;
 
 import static com.ape.material.weather.R.id.toolbar;
 
-public class MainActivity extends BaseActivity<MainPresenter, MainModel>
+public class MainActivity extends BaseActivity<MainPresenter>
         implements MainContract.View, WeatherFragment.OnDrawerTypeChangeListener {
     private static final String TAG = "MainActivity";
     @BindView(R.id.dynamic_weather_view)

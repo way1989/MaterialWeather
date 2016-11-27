@@ -16,11 +16,6 @@ public class SearchPresenterModule {
     }
 
     @Provides
-    SearchContract.Model getModel() {
-        return new SearchModel();
-    }
-
-    @Provides
     SearchContract.View getView() {
         return mView;
     }

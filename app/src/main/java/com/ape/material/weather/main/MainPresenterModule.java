@@ -1,7 +1,5 @@
 package com.ape.material.weather.main;
 
-import android.content.Context;
-
 import dagger.Module;
 import dagger.Provides;
 
@@ -14,11 +12,6 @@ public final class MainPresenterModule {
 
     MainPresenterModule(MainContract.View view) {
         mView = view;
-    }
-
-    @Provides
-    MainContract.Model getModel(Context context) {
-        return new MainModel(context);
     }
 
     @Provides

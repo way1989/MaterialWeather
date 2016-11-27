@@ -44,7 +44,7 @@ import permissions.dispatcher.RuntimePermissions;
  */
 
 @RuntimePermissions
-public class WeatherFragment extends BaseFragment<WeatherPresenter, WeatherModel>
+public class WeatherFragment extends BaseFragment<WeatherPresenter>
         implements WeatherContract.View, PullRefreshLayout.OnRefreshListener {
     private static final String TAG = "WeatherFragment";
     private static final String ARG_KEY = "city";
@@ -158,7 +158,7 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter, WeatherModel
             return;
         }
 
-        mPresenter.getWeather(city.getAreaId(), "zh-cn", force);
+        mPresenter.getWeather(city.getAreaId(), force);
     }
 
     @Override

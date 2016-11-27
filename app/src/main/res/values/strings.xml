@@ -15,7 +15,7 @@
     <string name="permission_message">get location need to access location.</string>
     <string name="permission_denied">you denied permission request</string>
     <string name="permission_never_ask_again">can\'t get you location</string>
-    <string name="auto_location">Detecting...</string>
+    <string name="auto_location">Detecting&#8230;</string>
     <string name="nodata">No data</string>
     <string name="gps_disabled_toast">please enable GPS provider</string>
     <string name="no_internet_toast">No internet!</string>
@@ -45,5 +45,6 @@
     <string name="weather_update">%1$s published</string>
     <string name="city_exist">City is exist</string>
     <string name="weather_common_index_title">Common index</string>
+    <string name="relocation_toast">new location city = %1$s</string>
 
 </resources>

@@ -2,124 +2,124 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
 
     <TextView
-        style="@style/w_section_title"
-        android:text="@string/weather_detail_title"/>
+            style="@style/w_section_title"
+            android:text="@string/weather_detail_title"/>
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:divider="@drawable/divider_linearlayout"
-        android:orientation="horizontal"
-        android:paddingBottom="0dp"
-        android:paddingLeft="0dp"
-        android:paddingRight="16dp"
-        android:showDividers="none">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@drawable/divider_linearlayout"
+            android:orientation="horizontal"
+            android:paddingBottom="0dp"
+            android:paddingLeft="0dp"
+            android:paddingRight="16dp"
+            android:showDividers="none">
 
         <LinearLayout
-            android:layout_width="140dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:gravity="center_horizontal"
-            android:orientation="vertical">
+                android:layout_width="140dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
 
             <com.ape.material.weather.widget.FontTextView
-                android:id="@+id/w_todaydetail_temp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:maxLines="1"
-                android:text="-°"
-                android:textColor="@color/w_text_primary"
-                android:textSize="52dp"/>
+                    android:id="@+id/w_todaydetail_temp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:maxLines="1"
+                    android:text="-°"
+                    android:textColor="@color/w_text_primary"
+                    android:textSize="52dp"/>
 
             <ImageView
-                android:id="@+id/w_todaydetail_cond_imageview"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:layout_gravity="center"
-                android:scaleType="center"
-                android:src="@drawable/cond_icon_na"
-                android:visibility="gone"/>
+                    android:id="@+id/w_todaydetail_cond_imageview"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_gravity="center"
+                    android:scaleType="center"
+                    android:src="@drawable/cond_icon_na"
+                    android:visibility="gone"/>
 
             <com.ape.material.weather.widget.FontTextView
-                android:id="@+id/w_todaydetail_bottomline"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:maxLines="1"
-                android:text="-"
-                android:textColor="@color/w_text_primary"
-                android:textSize="14dp"/>
+                    android:id="@+id/w_todaydetail_bottomline"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:maxLines="1"
+                    android:text="-"
+                    android:textColor="@color/w_text_primary"
+                    android:textSize="14dp"/>
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
             <LinearLayout style="@style/todaydetail_info_layout">
 
                 <TextView
-                    style="@style/todaydetail_info_title"
-                    android:text="@string/feel_temp"/>
+                        style="@style/todaydetail_info_title"
+                        android:text="@string/feel_temp"/>
 
                 <com.ape.material.weather.widget.FontTextView
-                    android:id="@+id/w_now_fl"
-                    style="@style/todaydetail_info_content"/>
+                        android:id="@+id/w_now_fl"
+                        style="@style/todaydetail_info_content"/>
             </LinearLayout>
 
             <View
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/w_divider_size_secondary"
-                android:background="@color/w_divider_secondary"/>
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/w_divider_size_secondary"
+                    android:background="@color/w_divider_secondary"/>
 
             <LinearLayout style="@style/todaydetail_info_layout">
 
                 <TextView
-                    style="@style/todaydetail_info_title"
-                    android:text="@string/temp"/>
+                        style="@style/todaydetail_info_title"
+                        android:text="@string/temp"/>
 
                 <com.ape.material.weather.widget.FontTextView
-                    android:id="@+id/w_now_hum"
-                    style="@style/todaydetail_info_content"/>
+                        android:id="@+id/w_now_hum"
+                        style="@style/todaydetail_info_content"/>
             </LinearLayout>
 
             <View
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/w_divider_size_secondary"
-                android:background="@color/w_divider_secondary"/>
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/w_divider_size_secondary"
+                    android:background="@color/w_divider_secondary"/>
 
             <LinearLayout style="@style/todaydetail_info_layout">
 
                 <TextView
-                    style="@style/todaydetail_info_title"
-                    android:text="@string/see_distance"/>
+                        style="@style/todaydetail_info_title"
+                        android:text="@string/see_distance"/>
 
                 <com.ape.material.weather.widget.FontTextView
-                    android:id="@+id/w_now_vis"
-                    style="@style/todaydetail_info_content"/>
+                        android:id="@+id/w_now_vis"
+                        style="@style/todaydetail_info_content"/>
             </LinearLayout>
 
             <View
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/w_divider_size_secondary"
-                android:background="@color/w_divider_secondary"/>
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/w_divider_size_secondary"
+                    android:background="@color/w_divider_secondary"/>
 
             <LinearLayout style="@style/todaydetail_info_layout">
 
                 <TextView
-                    style="@style/todaydetail_info_title"
-                    android:text="@string/rain_size"/>
+                        style="@style/todaydetail_info_title"
+                        android:text="@string/rain_size"/>
 
                 <com.ape.material.weather.widget.FontTextView
-                    android:id="@+id/w_now_pcpn"
-                    style="@style/todaydetail_info_content"/>
+                        android:id="@+id/w_now_pcpn"
+                        style="@style/todaydetail_info_content"/>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 
     <View
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/w_divider_size"
-        android:background="@color/w_divider"/>
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/w_divider_size"
+            android:background="@color/w_divider"/>
 </merge>

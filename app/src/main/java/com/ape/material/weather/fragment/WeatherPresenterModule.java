@@ -15,11 +15,6 @@ public class WeatherPresenterModule {
     }
 
     @Provides
-    WeatherContract.Model getModel() {
-        return new WeatherModel();
-    }
-
-    @Provides
     WeatherContract.View getView() {
         return mView;
     }

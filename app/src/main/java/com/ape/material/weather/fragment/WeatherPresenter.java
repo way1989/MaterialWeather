@@ -1,11 +1,11 @@
 package com.ape.material.weather.fragment;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.ape.material.weather.bean.City;
 import com.ape.material.weather.bean.HeWeather;
+import com.ape.material.weather.data.WeatherRepository;
 
 import javax.inject.Inject;
 
@@ -19,22 +19,22 @@ import rx.subscriptions.CompositeSubscription;
 
 public class WeatherPresenter extends WeatherContract.Presenter {
     private static final String TAG = "WeatherPresenter";
+    WeatherRepository mRepository;
     @NonNull
     private CompositeSubscription mSubscriptions;
 
     @Inject
-    WeatherPresenter(Context context, WeatherContract.Model model, WeatherContract.View view) {
-        mContext = context;
-        mModel = model;
+    WeatherPresenter(WeatherRepository model, WeatherContract.View view) {
+        mRepository = model;
         mView = view;
         mSubscriptions = new CompositeSubscription();
     }
 
     @Override
-    public void getWeather(String city, String lang, boolean force) {
-        Log.i(TAG, "getWeather... city = " + city + ", lang = " + lang);
+    public void getWeather(String city, boolean force) {
+        Log.i(TAG, "getWeather... city = " + city);
         mSubscriptions.clear();
-        Subscription subscription = mModel.getWeather(city, lang, force).subscribe(new Observer<HeWeather>() {
+        Subscription subscription = mRepository.getWeather(city, force).subscribe(new Observer<HeWeather>() {
             @Override
             public void onCompleted() {
             }
@@ -56,7 +56,7 @@ public class WeatherPresenter extends WeatherContract.Presenter {
     public void getLocation() {
         Log.d(TAG, "getLocation...");
         mSubscriptions.clear();
-        Subscription subscription = mModel.getCity().subscribe(new Observer<City>() {
+        Subscription subscription = mRepository.getLocation().subscribe(new Observer<City>() {
             @Override
             public void onCompleted() {
             }

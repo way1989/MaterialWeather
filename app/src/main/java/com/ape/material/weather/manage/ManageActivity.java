@@ -35,7 +35,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-public class ManageActivity extends BaseActivity<ManagePresenter, ManageModel>
+public class ManageActivity extends BaseActivity<ManagePresenter>
         implements ManageContract.View {
     private static final String TAG = "ManageActivity";
     private static final int REQUEST_CODE_CITY = 0;
@@ -108,7 +108,8 @@ public class ManageActivity extends BaseActivity<ManagePresenter, ManageModel>
 
             @Override
             public void onItemLocation(int position) {
-                Snackbar.make(mRecyclerView, "detecting...", Snackbar.LENGTH_SHORT).show();
+                //Snackbar.make(mRecyclerView, "detecting...", Snackbar.LENGTH_SHORT).show();
+                mPresenter.getLocation();
             }
         });
 
@@ -282,6 +283,12 @@ public class ManageActivity extends BaseActivity<ManagePresenter, ManageModel>
     public void onCityModify() {
         RxEvent.MainEvent event = new RxEvent.MainEvent(mAdapter.getData(), Integer.MIN_VALUE);
         RxBus.getInstance().post(event);
+    }
+
+    @Override
+    public void onLocationChanged(City city) {
+        mPresenter.getCities();
+        Snackbar.make(mRecyclerView, getString(R.string.relocation_toast, city.getCity()), Snackbar.LENGTH_SHORT).show();
     }
 
     @OnClick(R.id.fab)

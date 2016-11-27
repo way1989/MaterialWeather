@@ -32,7 +32,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 
-public class SearchCityActivity extends BaseActivity<SearchPresenter, SearchModel> implements SearchContract.View,
+public class SearchCityActivity extends BaseActivity<SearchPresenter> implements SearchContract.View,
         SearchView.OnQueryTextListener, View.OnTouchListener, SearchAdapter.OnItemClickListener {
     private static final String TAG = "SearchCityActivity";
     @BindView(R.id.recyclerview)

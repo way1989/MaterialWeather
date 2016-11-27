@@ -18,7 +18,7 @@ import butterknife.ButterKnife;
  * Created by android on 16-11-10.
  */
 
-public abstract class BaseFragment<T extends BasePresenter, E extends BaseModel> extends RxFragment {
+public abstract class BaseFragment<T extends BasePresenter> extends RxFragment {
     protected View rootView;
     protected boolean isViewInitiated;
     protected boolean isDataInitiated;

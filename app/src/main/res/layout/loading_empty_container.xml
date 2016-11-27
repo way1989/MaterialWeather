@@ -8,11 +8,11 @@
                                                        android:gravity="center">
 
     <ProgressBar
-        android:id="@+id/progressbar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:alpha="0"/>
+            android:id="@+id/progressbar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:alpha="0"/>
 
     <include layout="@layout/no_results_message"/>
 </com.ape.material.weather.widget.LoadingEmptyContainer>

@@ -20,7 +20,7 @@
     </item>
     <item android:right="16dp">
         <bitmap
-            android:gravity="right|center_vertical"
-            android:src="@drawable/ic_location_on_white_18dp"/>
+                android:gravity="right|center_vertical"
+                android:src="@drawable/ic_location_on_white_18dp"/>
     </item>
 </layer-list>

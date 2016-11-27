@@ -14,7 +14,7 @@ import butterknife.ButterKnife;
  * Created by android on 16-11-10.
  */
 
-public abstract class BaseActivity<T extends BasePresenter, E extends BaseModel> extends RxAppCompatActivity {
+public abstract class BaseActivity<T extends BasePresenter> extends RxAppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -20,33 +20,46 @@ import butterknife.ButterKnife;
 
 public abstract class BaseFragment<T extends BasePresenter> extends RxFragment {
     protected View rootView;
-    protected boolean isViewInitiated;
-    protected boolean isDataInitiated;
+    /**
+     * 视图是否已经初初始化
+     */
+    protected boolean isInit = false;
+    protected boolean isLoad = false;
 
-    @Override
+/*    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        isViewInitiated = true;
-        prepareFetchData();
-    }
+        isInit = true;
+        isCanLoadData();
+    }*/
 
     @Override
 
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser)
-            prepareFetchData();
+        isCanLoadData();
     }
 
-    public abstract void loadDataFirstTime();
+    public abstract void lazyLoad();
 
-    private boolean prepareFetchData() {
-        if (getUserVisibleHint() && isViewInitiated && !isDataInitiated) {
-            loadDataFirstTime();
-            isDataInitiated = true;
-            return true;
+    public abstract void stopLoad();
+
+    /**
+     * 是否可以加载数据 可以加载数据的条件： 1.视图已经初始化 2.视图对用户可见
+     */
+    private void isCanLoadData() {
+        if (!isInit) {
+            return;
         }
-        return false;
+
+        if (getUserVisibleHint()) {
+            lazyLoad();
+            isLoad = true;
+        } else {
+            if (isLoad) {
+                stopLoad();
+            }
+        }
     }
 
     @Nullable
@@ -58,14 +71,22 @@ public abstract class BaseFragment<T extends BasePresenter> extends RxFragment {
 
         initPresenter(((App) getActivity().getApplication()).getAppComponent());
         initView();
+        isInit = true;
+        /**初始化的时候去加载数据**/
+        isCanLoadData();
         return rootView;
     }
 
     protected abstract void initView();
 
+    /**
+     * 视图销毁的时候讲Fragment是否初始化的状态变为false
+     */
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        isInit = false;
+        isLoad = false;
     }
 
     //public abstract String getTitle();

@@ -143,4 +143,9 @@ public class ManagePresenter extends ManageContract.Presenter {
         });
         mSubscriptions.add(subscription);
     }
+
+    @Override
+    public void unSubscribe() {
+        mSubscriptions.clear();
+    }
 }

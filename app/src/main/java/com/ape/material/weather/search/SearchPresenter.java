@@ -75,4 +75,9 @@ public class SearchPresenter extends SearchContract.Presenter {
         });
         mSubscriptions.add(subscription);
     }
+
+    @Override
+    public void unSubscribe() {
+        mSubscriptions.clear();
+    }
 }

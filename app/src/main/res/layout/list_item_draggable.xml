@@ -45,9 +45,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="top|left"
+                android:paddingLeft="16dp"
                 android:layout_marginLeft="32dp"
                 android:layout_marginRight="32dp"
-                android:gravity="center"
+                android:gravity="left|center_vertical"
                 tools:ignore="RtlHardcoded"/>
 
     </FrameLayout>

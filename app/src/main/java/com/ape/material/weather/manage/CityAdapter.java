@@ -125,11 +125,11 @@ public class CityAdapter extends RecyclerView.Adapter<CityAdapter.MyViewHolder>
         if (TextUtils.isEmpty(name)) {
             return new SpannableString(App.getContext().getString(R.string.auto_location));
         }
-        SpannableString ss = new SpannableString(" " + name);
+        SpannableString ss = new SpannableString(name + " ");
         Drawable drawable = App.getContext().getResources()
                 .getDrawable(R.drawable.ic_location_on_black_18dp);
         drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
-        ss.setSpan(new ImageSpan(drawable), 0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        ss.setSpan(new ImageSpan(drawable), name.length(), ss.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         return ss;
     }
 

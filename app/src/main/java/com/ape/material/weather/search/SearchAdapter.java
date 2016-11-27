@@ -43,13 +43,10 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ItemHolder
         holder.itemView.setTag(city);
         holder.cityName.setText(city.getCity());
         if (!TextUtils.isEmpty(city.getProv())) {
-            holder.cityProv.setVisibility(View.VISIBLE);
-            holder.cityProv.setText(city.getProv());
+            holder.cityProv.setText("--" + city.getProv() + "--" + city.getCountry());
         } else {
-            holder.cityProv.setVisibility(View.GONE);
-            holder.cityProv.setText("");
+            holder.cityProv.setText("--" + city.getCountry());
         }
-        holder.cityCountry.setText(city.getCountry());
     }
 
     @Override
@@ -67,13 +64,12 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ItemHolder
     }
 
     public class ItemHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        protected TextView cityName, cityProv, cityCountry;
+        protected TextView cityName, cityProv;
 
         public ItemHolder(View itemView) {
             super(itemView);
             cityName = (TextView) itemView.findViewById(R.id.city_name_tv);
             cityProv = (TextView) itemView.findViewById(R.id.city_prov_tv);
-            cityCountry = (TextView) itemView.findViewById(R.id.city_country_tv);
             itemView.setOnClickListener(this);
         }
 

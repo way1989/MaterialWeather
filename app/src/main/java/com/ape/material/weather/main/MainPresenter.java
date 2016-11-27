@@ -50,4 +50,9 @@ public class MainPresenter extends MainContract.Presenter {
         });
         mSubscriptions.add(subscription);
     }
+
+    @Override
+    public void unSubscribe() {
+        mSubscriptions.clear();
+    }
 }

@@ -74,4 +74,8 @@ public class WeatherPresenter extends WeatherContract.Presenter {
         mSubscriptions.add(subscription);
     }
 
+    @Override
+    public void unSubscribe() {
+        mSubscriptions.clear();
+    }
 }

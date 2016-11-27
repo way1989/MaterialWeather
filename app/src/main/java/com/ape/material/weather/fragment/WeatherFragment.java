@@ -19,6 +19,7 @@ import com.ape.material.weather.R;
 import com.ape.material.weather.base.BaseFragment;
 import com.ape.material.weather.bean.City;
 import com.ape.material.weather.bean.HeWeather;
+import com.ape.material.weather.data.WeatherUtil;
 import com.ape.material.weather.dynamicweather.BaseDrawer;
 import com.ape.material.weather.util.CityLocationManager;
 import com.ape.material.weather.util.DeviceUtil;
@@ -64,9 +65,10 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter>
     TextView mCityTitleTv;
     @Inject
     WeatherPresenter mPresenter;
-    private City mCity;
     private OnDrawerTypeChangeListener mListener;
     private BaseDrawer.Type mWeatherType;
+    private City mCity;
+    private HeWeather mWeather;
 
     public static WeatherFragment makeInstance(@NonNull City city) {
         WeatherFragment fragment = new WeatherFragment();
@@ -85,6 +87,15 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter>
             throw new RuntimeException(context.toString()
                     + " must implement OnDrawerTypeChangeListener");
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mWeather == null || !DeviceUtil.hasInternet()
+                || !WeatherUtil.isCacheFailure(mWeather))
+            return;
+        mPresenter.getWeather(mCity.getAreaId(), true);
     }
 
     @Override
@@ -110,7 +121,8 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter>
 
     @Override
     public void onWeatherChange(HeWeather weather) {
-        updateWeatherUI(weather);
+        mWeather = weather;
+        updateWeatherUI();
     }
 
     @Override
@@ -129,7 +141,7 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter>
     }
 
     @Override
-    public void loadDataFirstTime() {
+    public void lazyLoad() {
         if (mWPullRefreshLayout == null || getActivity() == null) return;
 
         mWPullRefreshLayout.post(new Runnable() {
@@ -139,6 +151,11 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter>
                 getWeather(mCity, false);
             }
         });
+    }
+
+    @Override
+    public void stopLoad() {
+        mPresenter.unSubscribe();
     }
 
     private void getWeather(City city, boolean force) {
@@ -174,7 +191,6 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter>
                     mWWeatherScrollView.scrollTo(0, 0);
                 }
             });
-
     }
 
     private void setTitle() {
@@ -188,7 +204,8 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter>
         getWeather(mCity, true);
     }
 
-    private void updateWeatherUI(HeWeather weather) {
+    private void updateWeatherUI() {
+        final HeWeather weather = mWeather;
         mWPullRefreshLayout.setRefreshing(false);
         if (weather == null || !weather.isOK()) {
             return;

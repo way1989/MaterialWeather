@@ -66,7 +66,7 @@ public class WeatherUtil {
                 });
     }
 
-    private static boolean isCacheFailure(HeWeather weather) {
+    public static boolean isCacheFailure(HeWeather weather) {
         boolean isWifi = DeviceUtil.isWifiOpen();
         long cacheTime = weather.getUpdateTime();
 

@@ -127,18 +127,17 @@ public class ManagePresenter extends ManageContract.Presenter {
         Subscription subscription = mRepository.getLocation().subscribe(new Observer<City>() {
             @Override
             public void onCompleted() {
-                mView.onLocationChanged(null);
             }
 
             @Override
             public void onError(Throwable e) {
+                mView.onLocationChanged(null);
 
             }
 
             @Override
             public void onNext(City city) {
-                //mView.onCityModify();
-                //mView.onLocationChanged(city);
+                mView.onLocationChanged(city);
             }
         });
         mSubscriptions.add(subscription);

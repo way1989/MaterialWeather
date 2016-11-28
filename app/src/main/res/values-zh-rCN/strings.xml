@@ -38,4 +38,5 @@
     <string name="weather_update">%1$s 发布</string>
     <string name="city_exist">该城市已存在</string>
     <string name="weather_common_index_title">综合</string>
+    <string name="relocation_toast">已重新定位到: %1$s</string>
 </resources>

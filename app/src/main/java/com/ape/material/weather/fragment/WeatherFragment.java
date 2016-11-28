@@ -92,10 +92,10 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter>
     @Override
     public void onResume() {
         super.onResume();
-        if (mWeather == null || !DeviceUtil.hasInternet()
-                || !WeatherUtil.isCacheFailure(mWeather))
-            return;
-        mPresenter.getWeather(mCity.getAreaId(), true);
+//        if (mWeather == null || !DeviceUtil.hasInternet()
+//                || !WeatherUtil.isCacheFailure(mWeather))
+//            return;
+//        mPresenter.getWeather(mCity.getAreaId(), true);
     }
 
     @Override

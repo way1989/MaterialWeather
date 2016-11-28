@@ -288,7 +288,9 @@ public class ManageActivity extends BaseActivity<ManagePresenter>
     @Override
     public void onLocationChanged(City city) {
         mPresenter.getCities();
-        Snackbar.make(mRecyclerView, getString(R.string.relocation_toast, city.getCity()), Snackbar.LENGTH_SHORT).show();
+        if (city != null)
+            Snackbar.make(mRecyclerView, getString(R.string.relocation_toast, city.getCity()),
+                    Snackbar.LENGTH_SHORT).show();
     }
 
     @OnClick(R.id.fab)

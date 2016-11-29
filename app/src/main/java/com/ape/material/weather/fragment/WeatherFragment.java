@@ -92,10 +92,10 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter>
     @Override
     public void onResume() {
         super.onResume();
-//        if (mWeather == null || !DeviceUtil.hasInternet()
-//                || !WeatherUtil.isCacheFailure(mWeather))
-//            return;
-//        mPresenter.getWeather(mCity.getAreaId(), true);
+        if (mWeather == null || !DeviceUtil.hasInternet()
+                || !WeatherUtil.isCacheFailure(mWeather))
+            return;
+        mPresenter.getWeather(mCity.getAreaId(), true);
     }
 
     @Override
@@ -141,7 +141,7 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter>
     }
 
     @Override
-    public void lazyLoad() {
+    public void loadDataFirstTime() {
         if (mWPullRefreshLayout == null || getActivity() == null) return;
 
         mWPullRefreshLayout.post(new Runnable() {
@@ -151,11 +151,6 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter>
                 getWeather(mCity, false);
             }
         });
-    }
-
-    @Override
-    public void stopLoad() {
-        mPresenter.unSubscribe();
     }
 
     private void getWeather(City city, boolean force) {

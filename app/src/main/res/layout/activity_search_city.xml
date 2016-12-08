@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context="com.ape.material.weather.search.SearchCityActivity">
+<com.weavey.loading.lib.LoadingLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/loading_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:isFirstVisible="true">
 
     <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fadeScrollbars="true"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+        android:id="@+id/recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fadeScrollbars="true"/>
 
-    <include layout="@layout/loading_empty_container"/>
-</FrameLayout>
+</com.weavey.loading.lib.LoadingLayout>

@@ -27,6 +27,7 @@ import com.h6ah4i.android.widget.advrecyclerview.draggable.RecyclerViewDragDropM
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
 import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager;
 import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
+import com.weavey.loading.lib.LoadingLayout;
 
 import java.util.List;
 
@@ -41,6 +42,8 @@ public class ManageActivity extends BaseActivity<ManagePresenter>
     private static final int REQUEST_CODE_CITY = 0;
     @BindView(R.id.recycler_view)
     RecyclerView mRecyclerView;
+    @BindView(R.id.loading_layout)
+    LoadingLayout mLoadingLayout;
     @Inject
     ManagePresenter mPresenter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -276,6 +279,11 @@ public class ManageActivity extends BaseActivity<ManagePresenter>
 
     @Override
     public void onCityChange(List<City> cities) {
+        if(cities != null && cities.size() > 0){
+            mLoadingLayout.setStatus(LoadingLayout.Success);
+        }else {
+            mLoadingLayout.setStatus(LoadingLayout.Empty);
+        }
         mAdapter.setDatas(cities);
     }
 
@@ -291,6 +299,11 @@ public class ManageActivity extends BaseActivity<ManagePresenter>
         if (city != null)
             Snackbar.make(mRecyclerView, getString(R.string.relocation_toast, city.getCity()),
                     Snackbar.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showLoading() {
+        mLoadingLayout.setStatus(LoadingLayout.Loading);
     }
 
     @OnClick(R.id.fab)

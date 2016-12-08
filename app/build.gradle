@@ -107,6 +107,9 @@ dependencies {
         transitive=true
     }
 
+    //loading layout
+    compile 'com.lai.weavey:loadinglayout:1.2'
+
     // Dagger dependencies
     apt "com.google.dagger:dagger-compiler:$rootProject.daggerVersion"
     provided 'org.glassfish:javax.annotation:10.0-b28'
@@ -118,4 +121,5 @@ dependencies {
 
     debugCompile 'io.github.skyhacker2:sqliteonweb:1.0.1'
     releaseCompile 'io.github.skyhacker2:sqliteonweb-no-op:1.0.2'
+
 }

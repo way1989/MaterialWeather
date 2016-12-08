@@ -23,8 +23,8 @@ import com.ape.material.weather.R;
 import com.ape.material.weather.base.BaseActivity;
 import com.ape.material.weather.bean.City;
 import com.ape.material.weather.util.AppConstant;
-import com.ape.material.weather.widget.LoadingEmptyContainer;
 import com.h6ah4i.android.widget.advrecyclerview.decoration.SimpleListDividerDecorator;
+import com.weavey.loading.lib.LoadingLayout;
 
 import java.util.List;
 
@@ -37,8 +37,8 @@ public class SearchCityActivity extends BaseActivity<SearchPresenter> implements
     private static final String TAG = "SearchCityActivity";
     @BindView(R.id.recyclerview)
     RecyclerView mRecyclerview;
-    @BindView(R.id.loading_empty_container)
-    LoadingEmptyContainer mLoadingEmptyContainer;
+    @BindView(R.id.loading_layout)
+    LoadingLayout mLoadingLayout;
     @Inject
     SearchPresenter mPresenter;
     private SearchAdapter adapter;
@@ -108,23 +108,28 @@ public class SearchCityActivity extends BaseActivity<SearchPresenter> implements
     public boolean onQueryTextSubmit(String query) {
         Log.d(TAG, "onQueryTextSubmit... query = " + query);
         hideInputManager();
+        search(query);
+        return true;
+    }
+
+    private void search(String query) {
         if (query.equals(queryString)) {
-            return true;
+            return;
         }
         queryString = query;
         if (queryString.trim().equals("")) {
             adapter.clear();
-            mLoadingEmptyContainer.showNoResults();
+            mLoadingLayout.setStatus(LoadingLayout.Empty);
         } else {
             mPresenter.search(queryString);
-            mLoadingEmptyContainer.showLoading();
+            mLoadingLayout.setStatus(LoadingLayout.Loading);
         }
-        return true;
     }
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        return false;
+        search(newText);
+        return true;
     }
 
     @Override
@@ -147,10 +152,10 @@ public class SearchCityActivity extends BaseActivity<SearchPresenter> implements
         Log.d(TAG, "onSearchResult... city size = " + cities.size());
         if (cities.isEmpty()) {
             adapter.clear();
-            mLoadingEmptyContainer.showNoResults();
+            mLoadingLayout.setStatus(LoadingLayout.Empty);
         } else {
             adapter.updateSearchResults(cities);
-            mLoadingEmptyContainer.hideAll();
+            mLoadingLayout.setStatus(LoadingLayout.Success);
         }
     }
 
@@ -158,7 +163,7 @@ public class SearchCityActivity extends BaseActivity<SearchPresenter> implements
     public void onSearchError(Throwable e) {
         Log.d(TAG, "onSearchError... e = " + e.getMessage());
         adapter.clear();
-        mLoadingEmptyContainer.showNoResults();
+        mLoadingLayout.setStatus(LoadingLayout.Empty);
         if (BuildConfig.LOG_DEBUG)
             Snackbar.make(mRecyclerview, e.getMessage(), Snackbar.LENGTH_LONG).show();
     }

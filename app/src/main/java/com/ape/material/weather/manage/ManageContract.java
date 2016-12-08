@@ -19,6 +19,8 @@ public class ManageContract {
         void onCityModify();
 
         void onLocationChanged(City city);
+
+        void showLoading();
     }
 
     abstract static class Presenter extends BasePresenter<ManageContract.View> {

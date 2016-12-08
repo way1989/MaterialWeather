@@ -14,6 +14,7 @@ import javax.inject.Inject;
 
 import rx.Observer;
 import rx.Subscription;
+import rx.functions.Action0;
 import rx.subscriptions.CompositeSubscription;
 
 /**
@@ -35,7 +36,14 @@ public class ManagePresenter extends ManageContract.Presenter {
     @Override
     public void getCities() {
         mSubscriptions.clear();
-        Subscription subscription = mRepository.getCities().subscribe(new Observer<List<City>>() {
+        Subscription subscription = mRepository.getCities()
+                .doOnSubscribe(new Action0() {
+                    @Override
+                    public void call() {
+                        mView.showLoading();
+                    }
+                })
+                .subscribe(new Observer<List<City>>() {
             @Override
             public void onCompleted() {
 

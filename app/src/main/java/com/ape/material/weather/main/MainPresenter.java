@@ -56,7 +56,6 @@ public class MainPresenter extends MainContract.Presenter {
 
             }
         });
-        mCompositeDisposable.dispose();
     }
 
     @Override

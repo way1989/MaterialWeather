@@ -1,9 +1,8 @@
 package com.ape.material.weather.util;
 
-import rx.Observable;
-import rx.subjects.PublishSubject;
-import rx.subjects.SerializedSubject;
-import rx.subjects.Subject;
+import io.reactivex.Observable;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
 
 /**
  * Created by way on 2016/10/27.
@@ -11,10 +10,10 @@ import rx.subjects.Subject;
 
 public class RxBus {
     private static volatile RxBus sInstance;
-    private final Subject subject;
+    private final Subject<Object> subject;
 
     private RxBus() {
-        subject = new SerializedSubject<>(PublishSubject.create());
+        subject = PublishSubject.create().toSerialized();
     }
 
     public static RxBus getInstance() {

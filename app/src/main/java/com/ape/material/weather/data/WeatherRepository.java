@@ -11,14 +11,20 @@ import com.ape.material.weather.bean.HeCity;
 import com.ape.material.weather.bean.HeWeather;
 import com.ape.material.weather.util.RxSchedulers;
 
+import org.reactivestreams.Subscriber;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
-import rx.Observable;
-import rx.Subscriber;
-import rx.functions.Func1;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.ObservableSource;
+import io.reactivex.functions.Function;
+import io.reactivex.functions.Predicate;
+
 
 /**
  * Created by way on 2016/11/26.
@@ -33,9 +39,9 @@ public class WeatherRepository implements WeatherDataSource {
 
     @Override
     public Observable<List<City>> getCities() {
-        return Observable.create(new Observable.OnSubscribe<List<City>>() {
+        return Observable.create(new ObservableOnSubscribe<List<City>>() {
             @Override
-            public void call(Subscriber<? super List<City>> subscriber) {
+            public void subscribe(ObservableEmitter<List<City>> e) throws Exception {
                 ArrayList<City> cities = DBUtil.getCityFromCache();
                 if (cities.isEmpty()) {
                     City city = new City();
@@ -44,17 +50,17 @@ public class WeatherRepository implements WeatherDataSource {
 
                     DBUtil.insertAutoLocation();
                 }
-                subscriber.onNext(cities);
-                subscriber.onCompleted();
+                e.onNext(cities);
+                e.onComplete();
             }
         }).compose(RxSchedulers.<List<City>>io_main());
     }
 
     @Override
     public Observable<City> getLocation() {
-        return LocationUtil.getLocation().flatMap(new Func1<Location, Observable<City>>() {
+        return LocationUtil.getLocation().flatMap(new Function<Location, ObservableSource<City>>() {
             @Override
-            public Observable<City> call(Location location) {
+            public ObservableSource<City> apply(Location location) throws Exception {
                 Log.i(TAG, "flatMap... lat = " + location.getLatitude() + ", lon = " + location.getLongitude());
                 return LocationUtil.getCity(location.getLatitude(), location.getLongitude());
             }
@@ -65,50 +71,49 @@ public class WeatherRepository implements WeatherDataSource {
     public Observable<HeWeather> getWeather(String city, boolean force) {
         Observable<HeWeather> disk = WeatherUtil.getLocalWeather(city, force);
         Observable<HeWeather> network = WeatherUtil.getRemoteWeather(city);
-        return Observable.concat(disk, network).filter(new Func1<HeWeather, Boolean>() {
+        return Observable.concat(disk, network).filter(new Predicate<HeWeather>() {
             @Override
-            public Boolean call(HeWeather weather) {
-                return weather != null && weather.isOK();
+            public boolean test(HeWeather heWeather) throws Exception {
+                return heWeather != null && heWeather.isOK();
             }
-        }).first().compose(RxSchedulers.<HeWeather>io_main());
+        })/*.first()*/.compose(RxSchedulers.<HeWeather>io_main());
     }
 
     @Override
     public Observable<Boolean> swapCity(final List<City> cities) {
-        return Observable.create(new Observable.OnSubscribe<Boolean>() {
+        return Observable.create(new ObservableOnSubscribe<Boolean>() {
             @Override
-            public void call(Subscriber<? super Boolean> subscriber) {
+            public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
                 for (int i = 0; i < cities.size(); i++) {
                     City city = cities.get(i);
                     DBUtil.updateIndex(city, i);
                 }
-                subscriber.onNext(true);
-                subscriber.onCompleted();
+                e.onNext(true);
+                e.onComplete();
             }
         }).compose(RxSchedulers.<Boolean>io_main());
     }
 
     @Override
     public Observable<Boolean> deleteCity(final City city) {
-        return Observable.create(new Observable.OnSubscribe<Boolean>() {
+        return Observable.create(new ObservableOnSubscribe<Boolean>() {
             @Override
-            public void call(Subscriber<? super Boolean> subscriber) {
-
+            public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
                 boolean result = DBUtil.deleteCity(city);
-                subscriber.onNext(result);
-                subscriber.onCompleted();
+                e.onNext(result);
+                e.onComplete();
             }
         }).compose(RxSchedulers.<Boolean>io_main());
     }
 
     @Override
     public Observable<Boolean> undoCity(final City city) {
-        return Observable.create(new Observable.OnSubscribe<Boolean>() {
+        return Observable.create(new ObservableOnSubscribe<Boolean>() {
             @Override
-            public void call(Subscriber<? super Boolean> subscriber) {
+            public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
                 boolean result = DBUtil.undoCity(city);
-                subscriber.onNext(result);
-                subscriber.onCompleted();
+                e.onNext(result);
+                e.onComplete();
             }
         }).compose(RxSchedulers.<Boolean>io_main());
     }
@@ -116,9 +121,9 @@ public class WeatherRepository implements WeatherDataSource {
     @Override
     public Observable<List<City>> searchCity(String query) {
         Log.d(TAG, "searchCity... query = " + query);
-        return Api.getInstance().searchCity(BuildConfig.HEWEATHER_KEY, query).map(new Func1<HeCity, List<City>>() {
+        return Api.getInstance().searchCity(BuildConfig.HEWEATHER_KEY, query).map(new Function<HeCity, List<City>>() {
             @Override
-            public List<City> call(HeCity heCity) {
+            public List<City> apply(HeCity heCity) throws Exception {
                 Log.d(TAG, "searchCity... result heCity = " + heCity);
                 ArrayList<City> cities = new ArrayList<>();
                 if (heCity == null || !heCity.isOK())
@@ -136,19 +141,20 @@ public class WeatherRepository implements WeatherDataSource {
                 Log.d(TAG, "searchCity... end size = " + cities.size());
                 return cities;
             }
+
         }).compose(RxSchedulers.<List<City>>io_main());
     }
 
     @Override
     public Observable<Boolean> addCity(final City city) {
         Log.d(TAG, "addCity... city = " + city.getCity());
-        return Observable.create(new Observable.OnSubscribe<Boolean>() {
+        return Observable.create(new ObservableOnSubscribe<Boolean>() {
             @Override
-            public void call(Subscriber<? super Boolean> subscriber) {
+            public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
                 boolean exist = DBUtil.isExist(city);
                 Log.d(TAG, "addCity... exist = " + exist);
-                subscriber.onNext(!exist && DBUtil.addCity(city, false));
-                subscriber.onCompleted();
+                e.onNext(!exist && DBUtil.addCity(city, false));
+                e.onComplete();
             }
         }).compose(RxSchedulers.<Boolean>io_main());
     }

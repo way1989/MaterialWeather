@@ -9,9 +9,11 @@ import com.ape.material.weather.bean.HeWeather;
 import com.ape.material.weather.util.DeviceUtil;
 import com.ape.material.weather.util.DiskLruCacheUtil;
 
-import rx.Observable;
-import rx.Subscriber;
-import rx.functions.Func1;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.functions.Function;
+import io.reactivex.functions.Predicate;
 
 import static com.ape.material.weather.util.DeviceUtil.hasInternet;
 
@@ -28,40 +30,40 @@ public class WeatherUtil {
     private static final String LANG = "zh-cn";
 
     public static Observable<HeWeather> getLocalWeather(final String city, final boolean force) {
-        return Observable.create(new Observable.OnSubscribe<HeWeather>() {
-
+        return Observable.create(new ObservableOnSubscribe<HeWeather>() {
             @Override
-            public void call(Subscriber<? super HeWeather> subscriber) {
+            public void subscribe(ObservableEmitter<HeWeather> e) throws Exception {
                 HeWeather weather = (HeWeather) DiskLruCacheUtil.getInstance(App.getContext())
                         .readObject(city);
-                if (weather != null && weather.isOK())
-                    subscriber.onNext(weather);
-                subscriber.onCompleted();
+                if (weather != null && weather.isOK()) {
+                    e.onNext(weather);
+                }
+                e.onComplete();
             }
-        }).filter(new Func1<HeWeather, Boolean>() {
+        }).filter(new Predicate<HeWeather>() {
             @Override
-            public Boolean call(HeWeather weather) {
+            public boolean test(HeWeather heWeather) throws Exception {
                 if (!hasInternet()) return true;//如果没有网，直接使用缓存
                 if (force) return false;//如果强制刷新数据
                 //判断是否缓存超时
-                return !isCacheFailure(weather);
+                return !isCacheFailure(heWeather);
             }
         });
     }
 
     public static Observable<HeWeather> getRemoteWeather(final String city) {
         return Api.getInstance().getWeather(BuildConfig.HEWEATHER_KEY, city, LANG)
-                .filter(new Func1<HeWeather, Boolean>() {
+                .filter(new Predicate<HeWeather>() {
                     @Override
-                    public Boolean call(HeWeather weather) {
-                        return weather != null && weather.isOK();
+                    public boolean test(HeWeather heWeather) throws Exception {
+                        return heWeather != null && heWeather.isOK();
                     }
-                }).map(new Func1<HeWeather, HeWeather>() {
+                }).map(new Function<HeWeather, HeWeather>() {
                     @Override
-                    public HeWeather call(HeWeather weather) {
-                        weather.setUpdateTime(System.currentTimeMillis());
-                        DiskLruCacheUtil.getInstance(App.getContext()).saveObject(city, weather);
-                        return weather;
+                    public HeWeather apply(HeWeather heWeather) throws Exception {
+                        heWeather.setUpdateTime(System.currentTimeMillis());
+                        DiskLruCacheUtil.getInstance(App.getContext()).saveObject(city, heWeather);
+                        return heWeather;
                     }
                 });
     }

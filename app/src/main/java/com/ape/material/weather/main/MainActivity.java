@@ -28,7 +28,7 @@ import com.ape.material.weather.manage.ManageActivity;
 import com.ape.material.weather.util.RxBus;
 import com.ape.material.weather.util.RxEvent;
 import com.ape.material.weather.util.UiUtil;
-import com.trello.rxlifecycle.android.ActivityEvent;
+import com.trello.rxlifecycle2.android.ActivityEvent;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -37,8 +37,8 @@ import java.util.List;
 import javax.inject.Inject;
 
 import butterknife.BindView;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
 
 import static com.ape.material.weather.R.id.toolbar;
 
@@ -81,26 +81,26 @@ public class MainActivity extends BaseActivity<MainPresenter>
         RxBus.getInstance().toObservable(RxEvent.MainEvent.class)
                 .observeOn(AndroidSchedulers.mainThread())
                 .compose(this.<RxEvent.MainEvent>bindUntilEvent(ActivityEvent.DESTROY))
-                .subscribe(new Action1<RxEvent.MainEvent>() {
+                .subscribe(new Consumer<RxEvent.MainEvent>() {
                     @Override
-                    public void call(RxEvent.MainEvent event) {
-                        //do some thing
-                        if (event.position >= 0 && event.position < mAdapter.getCount()) {
-                            mMainViewPager.setCurrentItem(event.position);
+                    public void accept(RxEvent.MainEvent mainEvent) throws Exception {
+                        if (mainEvent.position >= 0 && mainEvent.position < mAdapter.getCount()) {
+                            mMainViewPager.setCurrentItem(mainEvent.position);
                             return;
                         }
-                        List<City> cities = event.cities;
+                        List<City> cities = mainEvent.cities;
                         if (cities != null) {
                             onCityChange(cities);
                         } else {
                             reloadCity();
                         }
                     }
-                }, new Action1<Throwable>() {
+                }, new Consumer<Throwable>() {
                     @Override
-                    public void call(Throwable throwable) {
+                    public void accept(Throwable throwable) throws Exception {
                         throwable.printStackTrace();
                     }
+
                 });
     }
 

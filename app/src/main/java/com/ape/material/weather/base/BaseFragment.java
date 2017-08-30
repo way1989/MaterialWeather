@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import com.ape.material.weather.App;
 import com.ape.material.weather.AppComponent;
 import com.ape.material.weather.dynamicweather.BaseDrawer;
-import com.trello.rxlifecycle.components.support.RxFragment;
+import com.trello.rxlifecycle2.components.support.RxFragment;
 
 import butterknife.ButterKnife;
 

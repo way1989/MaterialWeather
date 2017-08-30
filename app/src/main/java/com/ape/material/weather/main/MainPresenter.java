@@ -5,37 +5,45 @@ import android.support.annotation.NonNull;
 import com.ape.material.weather.bean.City;
 import com.ape.material.weather.data.WeatherRepository;
 
+import org.reactivestreams.Subscription;
+
 import java.util.List;
 
 import javax.inject.Inject;
 
-import rx.Observer;
-import rx.Subscription;
-import rx.subscriptions.CompositeSubscription;
+import io.reactivex.Observer;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+
 
 /**
  * Created by android on 16-11-10.
  */
 
 public class MainPresenter extends MainContract.Presenter {
-    WeatherRepository mRepository;
+    private WeatherRepository mRepository;
     @NonNull
-    private CompositeSubscription mSubscriptions;
+    private CompositeDisposable mCompositeDisposable;
 
     @Inject
     MainPresenter(WeatherRepository model, MainContract.View view) {
         mRepository = model;
         mView = view;
-        mSubscriptions = new CompositeSubscription();
+        mCompositeDisposable = new CompositeDisposable();
     }
 
     @Override
     public void getCities() {
-        mSubscriptions.clear();
-        Subscription subscription = mRepository.getCities().subscribe(new Observer<List<City>>() {
+        mCompositeDisposable.clear();
+        mRepository.getCities().subscribe(new Observer<List<City>>() {
             @Override
-            public void onCompleted() {
+            public void onSubscribe(Disposable d) {
+                mCompositeDisposable.add(d);
+            }
 
+            @Override
+            public void onNext(List<City> cities) {
+                mView.onCityChange(cities);
             }
 
             @Override
@@ -44,15 +52,16 @@ public class MainPresenter extends MainContract.Presenter {
             }
 
             @Override
-            public void onNext(List<City> cities) {
-                mView.onCityChange(cities);
+            public void onComplete() {
+
             }
         });
-        mSubscriptions.add(subscription);
+        mCompositeDisposable.dispose();
     }
 
     @Override
     public void unSubscribe() {
-        mSubscriptions.clear();
+        mCompositeDisposable.dispose();
+        mCompositeDisposable.clear();
     }
 }

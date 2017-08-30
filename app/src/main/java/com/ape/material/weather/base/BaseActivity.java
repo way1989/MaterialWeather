@@ -6,7 +6,7 @@ import android.view.MenuItem;
 
 import com.ape.material.weather.App;
 import com.ape.material.weather.AppComponent;
-import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
+import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 
 import butterknife.ButterKnife;
 

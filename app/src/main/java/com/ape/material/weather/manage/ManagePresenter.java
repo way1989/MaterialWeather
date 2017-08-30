@@ -12,68 +12,66 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import rx.Observer;
-import rx.Subscription;
-import rx.functions.Action0;
-import rx.subscriptions.CompositeSubscription;
+import io.reactivex.Observer;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+
 
 /**
  * Created by way on 2016/11/13.
  */
 
 public class ManagePresenter extends ManageContract.Presenter {
-    WeatherRepository mRepository;
+    private WeatherRepository mRepository;
     @NonNull
-    private CompositeSubscription mSubscriptions;
+    private CompositeDisposable mCompositeDisposable;
 
     @Inject
     ManagePresenter(WeatherRepository model, ManageContract.View view) {
         mRepository = model;
         mView = view;
-        mSubscriptions = new CompositeSubscription();
+        mCompositeDisposable = new CompositeDisposable();
     }
 
     @Override
     public void getCities() {
-        mSubscriptions.clear();
-        Subscription subscription = mRepository.getCities()
-                .doOnSubscribe(new Action0() {
-                    @Override
-                    public void call() {
-                        mView.showLoading();
-                    }
-                })
-                .subscribe(new Observer<List<City>>() {
+        mCompositeDisposable.clear();
+        mRepository.getCities().doOnSubscribe(new Consumer<Disposable>() {
             @Override
-            public void onCompleted() {
-
+            public void accept(Disposable disposable) throws Exception {
+                mView.showLoading();
             }
-
+        }).subscribe(new Observer<List<City>>() {
             @Override
-            public void onError(Throwable e) {
-
+            public void onSubscribe(Disposable d) {
+                mCompositeDisposable.add(d);
             }
 
             @Override
             public void onNext(List<City> cities) {
                 mView.onCityChange(cities);
             }
-        });
-        mSubscriptions.add(subscription);
-    }
-
-    @Override
-    public void swapCity(final ArrayList<City> data) {
-        mSubscriptions.clear();
-        Subscription subscription = mRepository.swapCity(data).subscribe(new Observer<Boolean>() {
-            @Override
-            public void onCompleted() {
-
-            }
 
             @Override
             public void onError(Throwable e) {
 
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
+    }
+
+    @Override
+    public void swapCity(final ArrayList<City> data) {
+        mCompositeDisposable.clear();
+        mRepository.swapCity(data).subscribe(new Observer<Boolean>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+                mCompositeDisposable.add(d);
             }
 
             @Override
@@ -81,17 +79,31 @@ public class ManagePresenter extends ManageContract.Presenter {
                 RxEvent.MainEvent event = new RxEvent.MainEvent(data, Integer.MIN_VALUE);
                 RxBus.getInstance().post(event);
             }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
         });
-        mSubscriptions.add(subscription);
     }
 
     @Override
     public void deleteCity(City city) {
-        mSubscriptions.clear();
-        Subscription subscription = mRepository.deleteCity(city).subscribe(new Observer<Boolean>() {
+        mCompositeDisposable.clear();
+        mRepository.deleteCity(city).subscribe(new Observer<Boolean>() {
             @Override
-            public void onCompleted() {
+            public void onSubscribe(Disposable d) {
+                mCompositeDisposable.add(d);
+            }
 
+            @Override
+            public void onNext(Boolean aBoolean) {
+                mView.onCityModify();
             }
 
             @Override
@@ -100,59 +112,67 @@ public class ManagePresenter extends ManageContract.Presenter {
             }
 
             @Override
-            public void onNext(Boolean aBoolean) {
-                mView.onCityModify();
+            public void onComplete() {
+
             }
         });
-        mSubscriptions.add(subscription);
     }
 
     @Override
     public void undoCity(City city) {
-        mSubscriptions.clear();
-        Subscription subscription = mRepository.undoCity(city).subscribe(new Observer<Boolean>() {
+        mCompositeDisposable.clear();
+        mRepository.undoCity(city).subscribe(new Observer<Boolean>() {
             @Override
-            public void onCompleted() {
-
-            }
-
-            @Override
-            public void onError(Throwable e) {
-
+            public void onSubscribe(Disposable d) {
+                mCompositeDisposable.add(d);
             }
 
             @Override
             public void onNext(Boolean aBoolean) {
                 mView.onCityModify();
             }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
         });
-        mSubscriptions.add(subscription);
     }
 
     @Override
     public void getLocation() {
-        mSubscriptions.clear();
-        Subscription subscription = mRepository.getLocation().subscribe(new Observer<City>() {
+        mCompositeDisposable.clear();
+        mRepository.getLocation().subscribe(new Observer<City>() {
             @Override
-            public void onCompleted() {
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                mView.onLocationChanged(null);
-
+            public void onSubscribe(Disposable d) {
+                mCompositeDisposable.add(d);
             }
 
             @Override
             public void onNext(City city) {
-                mView.onLocationChanged(city);
+                mView.onLocationChanged(null);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
             }
         });
-        mSubscriptions.add(subscription);
     }
 
     @Override
     public void unSubscribe() {
-        mSubscriptions.clear();
+        mCompositeDisposable.dispose();
+        mCompositeDisposable.clear();
     }
 }

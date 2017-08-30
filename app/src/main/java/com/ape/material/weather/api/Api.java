@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
@@ -35,7 +35,7 @@ public class Api {
                 .create();
         return new Retrofit.Builder()
                 .client(client)//添加一个client,不然retrofit会自己默认添加一个
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .baseUrl(BASE_RUL)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();

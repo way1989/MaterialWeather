@@ -3,9 +3,9 @@ package com.ape.material.weather.api;
 import com.ape.material.weather.bean.HeCity;
 import com.ape.material.weather.bean.HeWeather;
 
+import io.reactivex.Observable;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
-import rx.Observable;
 
 /**
  * Created by android on 16-9-30.

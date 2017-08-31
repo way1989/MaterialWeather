@@ -5,15 +5,13 @@ import android.support.annotation.NonNull;
 import com.ape.material.weather.bean.City;
 import com.ape.material.weather.data.WeatherRepository;
 
-import org.reactivestreams.Subscription;
-
 import java.util.List;
 
 import javax.inject.Inject;
 
-import io.reactivex.Observer;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.observers.DisposableObserver;
 
 
 /**
@@ -35,11 +33,7 @@ public class MainPresenter extends MainContract.Presenter {
     @Override
     public void getCities() {
         mCompositeDisposable.clear();
-        mRepository.getCities().subscribe(new Observer<List<City>>() {
-            @Override
-            public void onSubscribe(Disposable d) {
-                mCompositeDisposable.add(d);
-            }
+        DisposableObserver<List<City>> observer = new DisposableObserver<List<City>>() {
 
             @Override
             public void onNext(List<City> cities) {
@@ -55,12 +49,18 @@ public class MainPresenter extends MainContract.Presenter {
             public void onComplete() {
 
             }
-        });
+        };
+        mRepository.getCities().subscribe(observer);
+        register(observer);
     }
 
     @Override
     public void unSubscribe() {
-        mCompositeDisposable.dispose();
         mCompositeDisposable.clear();
     }
+
+    public void register(Disposable disposable) {
+        mCompositeDisposable.add(disposable);
+    }
+
 }

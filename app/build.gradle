@@ -49,24 +49,31 @@ android {
             //是否开启ACRA
             buildConfigField "boolean", "ACRA_ENABLED", "false"
             buildConfigField "String", "HEWEATHER_URL", HEWEATHER_FREE_URL
+            manifestPlaceholders = [amap_key: AMAP_KEY]
         }
         release {
             // 不显示Log
             buildConfigField "boolean", "LOG_DEBUG", "true"
             //是否开启ACRA
             buildConfigField "boolean", "ACRA_ENABLED", "true"
-            buildConfigField "String", "HEWEATHER_URL", HEWEATHER_RELEASE_URL
+            //buildConfigField "String", "HEWEATHER_URL", HEWEATHER_RELEASE_URL
+            buildConfigField "String", "HEWEATHER_URL", HEWEATHER_FREE_URL
+            manifestPlaceholders = [amap_key: AMAP_KEY]
             signingConfig signingConfigs.release
-            shrinkResources true
-            minifyEnabled true
+            shrinkResources false
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
 
     }
 
     lintOptions {
-        abortOnError false
+        abortOnError
+        disable "ResourceType"
+        disable 'MissingTranslation'
+        disable 'ExtraTranslation'
     }
+
 }
 
 dependencies {
@@ -123,4 +130,5 @@ dependencies {
     debugCompile 'io.github.skyhacker2:sqliteonweb:1.0.2'
     releaseCompile 'io.github.skyhacker2:sqliteonweb-no-op:1.0.2'
 
+    compile 'com.amap.api:location:latest.integration' //定位功能
 }

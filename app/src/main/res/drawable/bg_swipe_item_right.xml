@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
        Copyright (C) 2015 Haruki Hasegawa
 
        Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,11 +15,11 @@
 -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
-        <color android:color="@color/bg_swipe_item_dismiss"/>
+        <color android:color="@color/bg_swipe_item_dismiss" />
     </item>
     <item android:left="16dp">
         <bitmap
-                android:gravity="left|center_vertical"
-                android:src="@drawable/ic_delete"/>
+            android:gravity="left|center_vertical"
+            android:src="@drawable/ic_delete" />
     </item>
 </layer-list>

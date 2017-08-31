@@ -279,9 +279,9 @@ public class ManageActivity extends BaseActivity<ManagePresenter>
 
     @Override
     public void onCityChange(List<City> cities) {
-        if(cities != null && cities.size() > 0){
+        if (cities != null && cities.size() > 0) {
             mLoadingLayout.setStatus(LoadingLayout.Success);
-        }else {
+        } else {
             mLoadingLayout.setStatus(LoadingLayout.Empty);
         }
         mAdapter.setDatas(cities);

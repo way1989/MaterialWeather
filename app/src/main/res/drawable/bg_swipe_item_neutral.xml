@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
        Copyright (C) 2015 Haruki Hasegawa
 
        Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,6 +13,5 @@
        See the License for the specific language governing permissions and
        limitations under the License.
 -->
-<color
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:color="@color/bg_swipe_item_neutral"/>
+<color xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/bg_swipe_item_neutral" />

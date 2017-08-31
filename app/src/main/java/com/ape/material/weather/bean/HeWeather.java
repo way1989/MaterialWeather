@@ -1,10 +1,9 @@
 package com.ape.material.weather.bean;
 
-import com.google.gson.annotations.SerializedName;
-
 import android.text.TextUtils;
 
 import com.ape.material.weather.util.FormatUtil;
+import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.util.List;
@@ -41,6 +40,14 @@ public class HeWeather implements Serializable {
             return TextUtils.equals(weather5Bean.getStatus(), "ok");
         }
         return false;
+    }
+
+    public String getErrorStatus(){
+        if (heWeather5List.size() > 0) {
+            final HeWeather5Bean weather5Bean = heWeather5List.get(0);
+            return weather5Bean.getStatus();
+        }
+        return "";
     }
 
     public boolean hasAqi() {

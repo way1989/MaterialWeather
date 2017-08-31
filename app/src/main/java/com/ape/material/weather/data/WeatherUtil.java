@@ -13,7 +13,6 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.functions.Function;
-import io.reactivex.functions.Predicate;
 
 import static com.ape.material.weather.util.DeviceUtil.hasInternet;
 
@@ -33,34 +32,30 @@ public class WeatherUtil {
         return Observable.create(new ObservableOnSubscribe<HeWeather>() {
             @Override
             public void subscribe(ObservableEmitter<HeWeather> e) throws Exception {
-                HeWeather weather = (HeWeather) DiskLruCacheUtil.getInstance(App.getContext())
-                        .readObject(city);
-                if (weather != null && weather.isOK()) {
-                    e.onNext(weather);
+                final boolean hasInternet = hasInternet();
+                Log.d(TAG, "getLocalWeather: force = " + force + ", hasInternet = " + hasInternet);
+                if (force && hasInternet) {//有网且强制刷新,直接onComplete,实现网络数据
+                    e.onComplete();
+                } else {
+                    HeWeather weather = (HeWeather) DiskLruCacheUtil.getInstance(App.getContext())
+                            .readObject(city);
+                    if (!hasInternet || !isCacheFailure(weather)) {//如果没有网
+                        Log.d(TAG, "getLocalWeather: local weather = " + weather.isOK());
+                        e.onNext(weather);
+                    } else {
+                        e.onComplete();
+                    }
                 }
-                e.onComplete();
-            }
-        }).filter(new Predicate<HeWeather>() {
-            @Override
-            public boolean test(HeWeather heWeather) throws Exception {
-                if (!hasInternet()) return true;//如果没有网，直接使用缓存
-                if (force) return false;//如果强制刷新数据
-                //判断是否缓存超时
-                return !isCacheFailure(heWeather);
             }
         });
     }
 
     public static Observable<HeWeather> getRemoteWeather(final String city) {
         return Api.getInstance().getWeather(BuildConfig.HEWEATHER_KEY, city, LANG)
-                .filter(new Predicate<HeWeather>() {
-                    @Override
-                    public boolean test(HeWeather heWeather) throws Exception {
-                        return heWeather != null && heWeather.isOK();
-                    }
-                }).map(new Function<HeWeather, HeWeather>() {
+                .map(new Function<HeWeather, HeWeather>() {
                     @Override
                     public HeWeather apply(HeWeather heWeather) throws Exception {
+                        Log.d(TAG, "getRemoteWeather: map heWeather = " + heWeather.getErrorStatus());
                         heWeather.setUpdateTime(System.currentTimeMillis());
                         DiskLruCacheUtil.getInstance(App.getContext()).saveObject(city, heWeather);
                         return heWeather;
@@ -69,6 +64,9 @@ public class WeatherUtil {
     }
 
     public static boolean isCacheFailure(HeWeather weather) {
+        if (weather == null || !weather.isOK()) {
+            return true;
+        }
         boolean isWifi = DeviceUtil.isWifiOpen();
         long cacheTime = weather.getUpdateTime();
 

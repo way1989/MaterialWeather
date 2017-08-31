@@ -1,13 +1,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:app="http://schemas.android.com/apk/res-auto"
-      xmlns:tools="http://schemas.android.com/tools"
-      tools:context=".activity.MainActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".activity.MainActivity">
     <item
-            android:id="@+id/action_manage"
-            android:icon="@drawable/ic_location_city"
-            android:orderInCategory="99"
-            android:title="@string/action_city_manage"
-            app:showAsAction="ifRoom"/>
+        android:id="@+id/action_manage"
+        android:icon="@drawable/ic_location_city"
+        android:orderInCategory="99"
+        android:title="@string/action_city_manage"
+        app:showAsAction="ifRoom" />
     <!--    <item
             android:id="@+id/action_share"
             android:orderInCategory="99"

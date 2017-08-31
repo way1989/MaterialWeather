@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
        Copyright (C) 2015 Haruki Hasegawa
 
        Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,6 +14,6 @@
        limitations under the License.
 -->
 <nine-patch xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:src="@drawable/material_shadow_z1_xxhdpi"
-            tools:ignore="unused"/>
+    xmlns:tools="http://schemas.android.com/tools"
+    android:src="@drawable/material_shadow_z1_xxhdpi"
+    tools:ignore="unused" />

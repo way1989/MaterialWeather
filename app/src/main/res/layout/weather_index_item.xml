@@ -1,209 +1,209 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <TextView
-            style="@style/w_section_title"
-            android:text="@string/weather_index_title"/>
+        style="@style/w_section_title"
+        android:text="@string/weather_index_title" />
 
     <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp">
 
         <ImageView
-                style="@style/suggestion_image"
-                android:src="@drawable/ic_suggestion_comf"/>
+            style="@style/suggestion_image"
+            android:src="@drawable/ic_suggestion_comf" />
 
         <TextView
-                style="@style/suggestion_title"
-                android:text="@string/weather_common_index_title"
-                android:textColor="@color/w_text_primary"
-                android:textSize="16dp"/>
+            style="@style/suggestion_title"
+            android:text="@string/weather_common_index_title"
+            android:textColor="@color/w_text_primary"
+            android:textSize="16dp" />
 
         <TextView
-                android:id="@+id/w_suggestion_comf_brf"
-                style="@style/suggestion_brf"
-                android:text=""/>
+            android:id="@+id/w_suggestion_comf_brf"
+            style="@style/suggestion_brf"
+            android:text="" />
 
         <TextView
-                android:id="@+id/w_suggestion_comf"
-                style="@style/suggestion_info_content"
-                android:layout_below="@id/w_suggestion_comf_brf"/>
+            android:id="@+id/w_suggestion_comf"
+            style="@style/suggestion_info_content"
+            android:layout_below="@id/w_suggestion_comf_brf" />
     </RelativeLayout>
 
-    <View style="@style/suggestion_divider"/>
+    <View style="@style/suggestion_divider" />
 
     <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp">
 
         <ImageView
-                style="@style/suggestion_image"
-                android:src="@drawable/ic_suggestion_drsg"/>
+            style="@style/suggestion_image"
+            android:src="@drawable/ic_suggestion_drsg" />
 
         <TextView
-                style="@style/suggestion_title"
-                android:text="穿衣"
-                android:textColor="@color/w_text_primary"
-                android:textSize="16dp"/>
+            style="@style/suggestion_title"
+            android:text="穿衣"
+            android:textColor="@color/w_text_primary"
+            android:textSize="16dp" />
 
         <TextView
-                android:id="@+id/w_suggestion_drsg_brf"
-                style="@style/suggestion_brf"
-                android:text=""/>
+            android:id="@+id/w_suggestion_drsg_brf"
+            style="@style/suggestion_brf"
+            android:text="" />
 
         <TextView
-                android:id="@+id/w_suggestion_drsg"
-                style="@style/suggestion_info_content"
-                android:layout_below="@+id/w_suggestion_drsg_brf"/>
+            android:id="@+id/w_suggestion_drsg"
+            style="@style/suggestion_info_content"
+            android:layout_below="@+id/w_suggestion_drsg_brf" />
     </RelativeLayout>
 
-    <View style="@style/suggestion_divider"/>
+    <View style="@style/suggestion_divider" />
 
     <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp">
 
         <ImageView
-                style="@style/suggestion_image"
-                android:src="@drawable/ic_suggestion_uv"/>
+            style="@style/suggestion_image"
+            android:src="@drawable/ic_suggestion_uv" />
 
         <TextView
-                style="@style/suggestion_title"
-                android:text="@string/uv_index_title"
-                android:textColor="@color/w_text_primary"
-                android:textSize="16dp"/>
+            style="@style/suggestion_title"
+            android:text="@string/uv_index_title"
+            android:textColor="@color/w_text_primary"
+            android:textSize="16dp" />
 
         <TextView
-                android:id="@+id/w_suggestion_uv_brf"
-                style="@style/suggestion_brf"
-                android:text=""/>
+            android:id="@+id/w_suggestion_uv_brf"
+            style="@style/suggestion_brf"
+            android:text="" />
 
         <TextView
-                android:id="@+id/w_suggestion_uv"
-                style="@style/suggestion_info_content"
-                android:layout_below="@+id/w_suggestion_uv_brf"/>
+            android:id="@+id/w_suggestion_uv"
+            style="@style/suggestion_info_content"
+            android:layout_below="@+id/w_suggestion_uv_brf" />
     </RelativeLayout>
 
-    <View style="@style/suggestion_divider"/>
+    <View style="@style/suggestion_divider" />
 
     <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp">
 
         <ImageView
-                style="@style/suggestion_image"
-                android:src="@drawable/ic_suggestion_sport"/>
+            style="@style/suggestion_image"
+            android:src="@drawable/ic_suggestion_sport" />
 
         <TextView
-                style="@style/suggestion_title"
-                android:text="@string/sport_index_title"
-                android:textColor="@color/w_text_primary"
-                android:textSize="16dp"/>
+            style="@style/suggestion_title"
+            android:text="@string/sport_index_title"
+            android:textColor="@color/w_text_primary"
+            android:textSize="16dp" />
 
         <TextView
-                android:id="@+id/w_suggestion_sport_brf"
-                style="@style/suggestion_brf"
-                android:text=""/>
+            android:id="@+id/w_suggestion_sport_brf"
+            style="@style/suggestion_brf"
+            android:text="" />
 
         <TextView
-                android:id="@+id/w_suggestion_sport"
-                style="@style/suggestion_info_content"
-                android:layout_below="@+id/w_suggestion_sport_brf"/>
+            android:id="@+id/w_suggestion_sport"
+            style="@style/suggestion_info_content"
+            android:layout_below="@+id/w_suggestion_sport_brf" />
     </RelativeLayout>
 
-    <View style="@style/suggestion_divider"/>
+    <View style="@style/suggestion_divider" />
 
     <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp">
 
         <ImageView
-                style="@style/suggestion_image"
-                android:src="@drawable/ic_suggestion_flu"/>
+            style="@style/suggestion_image"
+            android:src="@drawable/ic_suggestion_flu" />
 
         <TextView
-                style="@style/suggestion_title"
-                android:text="@string/flu_index_title"
-                android:textColor="@color/w_text_primary"
-                android:textSize="16dp"/>
+            style="@style/suggestion_title"
+            android:text="@string/flu_index_title"
+            android:textColor="@color/w_text_primary"
+            android:textSize="16dp" />
 
         <TextView
-                android:id="@+id/w_suggestion_flu_brf"
-                style="@style/suggestion_brf"
-                android:text=""/>
+            android:id="@+id/w_suggestion_flu_brf"
+            style="@style/suggestion_brf"
+            android:text="" />
 
         <TextView
-                android:id="@+id/w_suggestion_flu"
-                style="@style/suggestion_info_content"
-                android:layout_below="@+id/w_suggestion_flu_brf"/>
+            android:id="@+id/w_suggestion_flu"
+            style="@style/suggestion_info_content"
+            android:layout_below="@+id/w_suggestion_flu_brf" />
     </RelativeLayout>
 
-    <View style="@style/suggestion_divider"/>
+    <View style="@style/suggestion_divider" />
 
     <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp">
 
         <ImageView
-                style="@style/suggestion_image"
-                android:src="@drawable/ic_suggestion_trav"/>
+            style="@style/suggestion_image"
+            android:src="@drawable/ic_suggestion_trav" />
 
         <TextView
-                style="@style/suggestion_title"
-                android:text="@string/trav_index_title"
-                android:textColor="@color/w_text_primary"
-                android:textSize="16dp"/>
+            style="@style/suggestion_title"
+            android:text="@string/trav_index_title"
+            android:textColor="@color/w_text_primary"
+            android:textSize="16dp" />
 
         <TextView
-                android:id="@+id/w_suggestion_tarv_brf"
-                style="@style/suggestion_brf"
-                android:text=""/>
+            android:id="@+id/w_suggestion_tarv_brf"
+            style="@style/suggestion_brf"
+            android:text="" />
 
         <TextView
-                android:id="@+id/w_suggestion_tarv"
-                style="@style/suggestion_info_content"
-                android:layout_below="@+id/w_suggestion_tarv_brf"/>
+            android:id="@+id/w_suggestion_tarv"
+            style="@style/suggestion_info_content"
+            android:layout_below="@+id/w_suggestion_tarv_brf" />
     </RelativeLayout>
 
-    <View style="@style/suggestion_divider"/>
+    <View style="@style/suggestion_divider" />
 
     <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp">
 
         <ImageView
-                style="@style/suggestion_image"
-                android:src="@drawable/ic_suggestion_cw"/>
+            style="@style/suggestion_image"
+            android:src="@drawable/ic_suggestion_cw" />
 
         <TextView
-                style="@style/suggestion_title"
-                android:text="@string/car_index_title"
-                android:textColor="@color/w_text_primary"
-                android:textSize="16dp"/>
+            style="@style/suggestion_title"
+            android:text="@string/car_index_title"
+            android:textColor="@color/w_text_primary"
+            android:textSize="16dp" />
 
         <TextView
-                android:id="@+id/w_suggestion_cw_brf"
-                style="@style/suggestion_brf"
-                android:text=""/>
+            android:id="@+id/w_suggestion_cw_brf"
+            style="@style/suggestion_brf"
+            android:text="" />
 
         <TextView
-                android:id="@+id/w_suggestion_cw"
-                style="@style/suggestion_info_content"
-                android:layout_below="@+id/w_suggestion_cw_brf"/>
+            android:id="@+id/w_suggestion_cw"
+            style="@style/suggestion_info_content"
+            android:layout_below="@+id/w_suggestion_cw_brf" />
     </RelativeLayout>
 
     <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/w_divider_size"
-            android:background="@color/w_divider"/>
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/w_divider_size"
+        android:background="@color/w_divider" />
 </LinearLayout>

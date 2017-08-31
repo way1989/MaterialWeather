@@ -1,6 +1,5 @@
 package com.ape.material.weather.data;
 
-import android.location.Location;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -11,17 +10,16 @@ import com.ape.material.weather.bean.HeCity;
 import com.ape.material.weather.bean.HeWeather;
 import com.ape.material.weather.util.RxSchedulers;
 
-import org.reactivestreams.Subscriber;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.ObservableSource;
+import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.functions.Predicate;
 
@@ -58,25 +56,28 @@ public class WeatherRepository implements WeatherDataSource {
 
     @Override
     public Observable<City> getLocation() {
-        return LocationUtil.getLocation().flatMap(new Function<Location, ObservableSource<City>>() {
-            @Override
-            public ObservableSource<City> apply(Location location) throws Exception {
-                Log.i(TAG, "flatMap... lat = " + location.getLatitude() + ", lon = " + location.getLongitude());
-                return LocationUtil.getCity(location.getLatitude(), location.getLongitude());
-            }
-        });
+//        return LocationUtil.getLocation().flatMap(new Function<Location, ObservableSource<City>>() {
+//            @Override
+//            public ObservableSource<City> apply(Location location) throws Exception {
+//                Log.i(TAG, "flatMap... lat = " + location.getLatitude() + ", lon = " + location.getLongitude());
+//                return LocationUtil.getCity(location.getLatitude(), location.getLongitude());
+//            }
+//        });
+        return LocationUtil.getCity();
     }
 
     @Override
     public Observable<HeWeather> getWeather(String city, boolean force) {
         Observable<HeWeather> disk = WeatherUtil.getLocalWeather(city, force);
         Observable<HeWeather> network = WeatherUtil.getRemoteWeather(city);
-        return Observable.concat(disk, network).filter(new Predicate<HeWeather>() {
+        return Observable.concat(disk, network).doOnNext(new Consumer<HeWeather>() {
             @Override
-            public boolean test(HeWeather heWeather) throws Exception {
-                return heWeather != null && heWeather.isOK();
+            public void accept(HeWeather heWeather) throws Exception {
+                if (heWeather == null || !heWeather.isOK()) {
+                    throw new Exception("get Weather failed");
+                }
             }
-        })/*.first()*/.compose(RxSchedulers.<HeWeather>io_main());
+        }).timeout(20, TimeUnit.SECONDS).compose(RxSchedulers.<HeWeather>io_main());
     }
 
     @Override

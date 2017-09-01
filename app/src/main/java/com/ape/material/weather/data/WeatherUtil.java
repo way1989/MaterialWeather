@@ -34,18 +34,15 @@ public class WeatherUtil {
             public void subscribe(ObservableEmitter<HeWeather> e) throws Exception {
                 final boolean hasInternet = hasInternet();
                 Log.d(TAG, "getLocalWeather: force = " + force + ", hasInternet = " + hasInternet);
-                if (force && hasInternet) {//有网且强制刷新,直接onComplete,实现网络数据
-                    e.onComplete();
-                } else {
+                if (!force || !hasInternet) {//无网或者非强制刷新,先读取缓存
                     HeWeather weather = (HeWeather) DiskLruCacheUtil.getInstance(App.getContext())
                             .readObject(city);
-                    if (!hasInternet || !isCacheFailure(weather)) {//如果没有网
+                    if (!hasInternet || !isCacheFailure(weather)) {//无网或者缓存未过期，直接使用缓存
                         Log.d(TAG, "getLocalWeather: local weather = " + weather.isOK());
                         e.onNext(weather);
-                    } else {
-                        e.onComplete();
                     }
                 }
+                e.onComplete();
             }
         });
     }

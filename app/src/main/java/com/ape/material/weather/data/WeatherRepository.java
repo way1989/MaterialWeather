@@ -70,7 +70,8 @@ public class WeatherRepository implements WeatherDataSource {
     public Observable<HeWeather> getWeather(String city, boolean force) {
         Observable<HeWeather> disk = WeatherUtil.getLocalWeather(city, force);
         Observable<HeWeather> network = WeatherUtil.getRemoteWeather(city);
-        return Observable.concat(disk, network).doOnNext(new Consumer<HeWeather>() {
+
+        return disk.switchIfEmpty(network).doOnNext(new Consumer<HeWeather>() {
             @Override
             public void accept(HeWeather heWeather) throws Exception {
                 if (heWeather == null || !heWeather.isOK()) {

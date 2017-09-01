@@ -42,6 +42,7 @@ public class WeatherPresenter extends WeatherContract.Presenter {
 
             @Override
             public void onError(Throwable e) {
+                Log.d(TAG, "onError: e = " + e);
                 mView.showErrorTip(e.getMessage());
             }
 

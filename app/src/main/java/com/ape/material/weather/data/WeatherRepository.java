@@ -78,7 +78,7 @@ public class WeatherRepository implements WeatherDataSource {
                     throw new Exception("get Weather failed");
                 }
             }
-        }).timeout(20, TimeUnit.SECONDS).compose(RxSchedulers.<HeWeather>io_main());
+        }).compose(RxSchedulers.<HeWeather>io_main());
     }
 
     @Override

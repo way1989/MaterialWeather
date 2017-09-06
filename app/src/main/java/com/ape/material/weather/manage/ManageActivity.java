@@ -84,7 +84,9 @@ public class ManageActivity extends BaseActivity<ManagePresenter>
             @Override
             public void onItemDragFinished(int fromPosition, int toPosition, boolean result) {
                 Log.i(TAG, "onItemDragFinished... fromPosition = " + fromPosition + ", toPosition = " + toPosition + ", result = " + result);
-                mPresenter.swapCity(mAdapter.getData());
+                if (fromPosition != toPosition) {
+                    mPresenter.swapCity(mAdapter.getData());
+                }
             }
 
             @Override

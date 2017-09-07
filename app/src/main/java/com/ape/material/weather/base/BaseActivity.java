@@ -8,6 +8,8 @@ import com.ape.material.weather.App;
 import com.ape.material.weather.AppComponent;
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 
+import javax.inject.Inject;
+
 import butterknife.ButterKnife;
 
 /**
@@ -15,7 +17,8 @@ import butterknife.ButterKnife;
  */
 
 public abstract class BaseActivity<T extends BasePresenter> extends RxAppCompatActivity {
-
+    @Inject
+    protected T mPresenter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +42,9 @@ public abstract class BaseActivity<T extends BasePresenter> extends RxAppCompatA
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (mPresenter != null) {
+            mPresenter.unSubscribe();
+        }
     }
 
     /**

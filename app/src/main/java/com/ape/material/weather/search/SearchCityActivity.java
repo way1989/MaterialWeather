@@ -39,8 +39,6 @@ public class SearchCityActivity extends BaseActivity<SearchPresenter> implements
     RecyclerView mRecyclerview;
     @BindView(R.id.loading_layout)
     LoadingLayout mLoadingLayout;
-    @Inject
-    SearchPresenter mPresenter;
     private SearchAdapter adapter;
     private SearchView mSearchView;
     private InputMethodManager mImm;

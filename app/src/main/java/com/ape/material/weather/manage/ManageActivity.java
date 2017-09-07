@@ -44,8 +44,7 @@ public class ManageActivity extends BaseActivity<ManagePresenter>
     RecyclerView mRecyclerView;
     @BindView(R.id.loading_layout)
     LoadingLayout mLoadingLayout;
-    @Inject
-    ManagePresenter mPresenter;
+
     private RecyclerView.LayoutManager mLayoutManager;
     private CityAdapter mAdapter;
     private RecyclerView.Adapter mWrappedAdapter;

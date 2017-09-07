@@ -3,13 +3,16 @@ package com.ape.material.weather.data;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.ape.material.weather.App;
 import com.ape.material.weather.BuildConfig;
 import com.ape.material.weather.api.Api;
+import com.ape.material.weather.api.CacheService;
 import com.ape.material.weather.bean.City;
 import com.ape.material.weather.bean.HeCity;
 import com.ape.material.weather.bean.HeWeather;
 import com.ape.material.weather.util.RxSchedulers;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -22,6 +25,11 @@ import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.functions.Predicate;
+import io.rx_cache2.DynamicKey;
+import io.rx_cache2.EvictProvider;
+import io.rx_cache2.Reply;
+import io.rx_cache2.internal.RxCache;
+import io.victoralbertos.jolyglot.GsonSpeaker;
 
 
 /**
@@ -30,9 +38,12 @@ import io.reactivex.functions.Predicate;
 
 public class WeatherRepository implements WeatherDataSource {
     private static final String TAG = "WeatherRepository";
-
+    private final CacheService providers;
     @Inject
     WeatherRepository() {
+        providers = new RxCache.Builder()
+                .persistence(App.getContext().getCacheDir(), new GsonSpeaker())
+                .using(CacheService.class);
     }
 
     @Override
@@ -68,17 +79,19 @@ public class WeatherRepository implements WeatherDataSource {
 
     @Override
     public Observable<HeWeather> getWeather(String city, boolean force) {
-        Observable<HeWeather> disk = WeatherUtil.getLocalWeather(city, force);
+//        Observable<HeWeather> disk = WeatherUtil.getLocalWeather(city, force);
         Observable<HeWeather> network = WeatherUtil.getRemoteWeather(city);
+       return providers.getWeather(network, new DynamicKey(city), new EvictProvider(force))
+               .compose(RxSchedulers.<HeWeather>io_main());
 
-        return disk.switchIfEmpty(network).doOnNext(new Consumer<HeWeather>() {
-            @Override
-            public void accept(HeWeather heWeather) throws Exception {
-                if (heWeather == null || !heWeather.isOK()) {
-                    throw new Exception("get Weather failed");
-                }
-            }
-        }).compose(RxSchedulers.<HeWeather>io_main());
+//        return disk.switchIfEmpty(network).doOnNext(new Consumer<HeWeather>() {
+//            @Override
+//            public void accept(HeWeather heWeather) throws Exception {
+//                if (heWeather == null || !heWeather.isOK()) {
+//                    throw new Exception("get Weather failed");
+//                }
+//            }
+//        }).compose(RxSchedulers.<HeWeather>io_main());
     }
 
     @Override

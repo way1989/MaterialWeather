@@ -53,8 +53,7 @@ public class MainActivity extends BaseActivity<MainPresenter>
     Toolbar mToolbar;
     @BindView(R.id.app_bar_layout)
     AppBarLayout mAppBarLayout;
-    @Inject
-    MainPresenter mMainPresenter;
+
     private MainFragmentPagerAdapter mAdapter;
 
     @Override
@@ -186,7 +185,7 @@ public class MainActivity extends BaseActivity<MainPresenter>
 
     @Override
     public void reloadCity() {
-        mMainPresenter.getCities();
+        mPresenter.getCities();
     }
 
     @Override

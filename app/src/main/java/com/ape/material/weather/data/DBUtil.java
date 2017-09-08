@@ -2,11 +2,11 @@ package com.ape.material.weather.data;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 
-import com.ape.material.weather.App;
 import com.ape.material.weather.bean.City;
 import com.ape.material.weather.db.CityProvider;
 
@@ -19,9 +19,9 @@ import java.util.ArrayList;
 public class DBUtil {
     private static final String TAG = "DBUtil";
 
-    public static ArrayList<City> getCityFromCache() {
+    public static ArrayList<City> getCityFromCache(Context context) {
         ArrayList<City> cities = new ArrayList<>();
-        ContentResolver contentResolver = App.getContext().getContentResolver();
+        ContentResolver contentResolver = context.getContentResolver();
         Cursor cursor = contentResolver.query(CityProvider.CITY_CONTENT_URI, null, null, null,
                 CityProvider.CityConstants.DEFAULT_SORT_ORDER);
         Log.d(TAG, "getCityFromCache cursor = " + cursor);
@@ -49,8 +49,8 @@ public class DBUtil {
         return cities;
     }
 
-    public static boolean isExist(City city) {
-        ContentResolver contentResolver = App.getContext().getContentResolver();
+    public static boolean isExist(Context context, City city) {
+        ContentResolver contentResolver = context.getContentResolver();
         Cursor cursor = contentResolver.query(CityProvider.CITY_CONTENT_URI,
                 new String[]{CityProvider.CityConstants.CITY},
                 CityProvider.CityConstants.AREA_ID + "=?", new String[]{city.getAreaId()}, null);
@@ -64,7 +64,7 @@ public class DBUtil {
         return size > 0;
     }
 
-    public static boolean addCity(City city, boolean autoLocation) {
+    public static boolean addCity(Context context, City city, boolean autoLocation) {
         ContentValues values = new ContentValues();
         values.put(CityProvider.CityConstants.CITY, city.getCity());
         values.put(CityProvider.CityConstants.AREA_ID, city.getAreaId());
@@ -73,14 +73,14 @@ public class DBUtil {
         values.put(CityProvider.CityConstants.LONGITUDE, city.getLon());
         values.put(CityProvider.CityConstants.PROVINCE, city.getProv());
         values.put(CityProvider.CityConstants.IS_LOCATION, autoLocation ? 1 : 0);
-        values.put(CityProvider.CityConstants.ORDER_INDEX, getCacheCitySize());
+        values.put(CityProvider.CityConstants.ORDER_INDEX, getCacheCitySize(context));
 
-        ContentResolver contentResolver = App.getContext().getContentResolver();
+        ContentResolver contentResolver = context.getContentResolver();
         Uri uri = contentResolver.insert(CityProvider.CITY_CONTENT_URI, values);
         return uri != null;
     }
 
-    public static boolean updateCity(City city, boolean autoLocation) {
+    public static boolean updateCity(Context context, City city, boolean autoLocation) {
         ContentValues values = new ContentValues();
         values.put(CityProvider.CityConstants.CITY, city.getCity());
         values.put(CityProvider.CityConstants.AREA_ID, city.getAreaId());
@@ -88,7 +88,7 @@ public class DBUtil {
         values.put(CityProvider.CityConstants.LATITUDE, city.getLat());
         values.put(CityProvider.CityConstants.LONGITUDE, city.getLon());
         values.put(CityProvider.CityConstants.PROVINCE, city.getProv());
-        ContentResolver contentResolver = App.getContext().getContentResolver();
+        ContentResolver contentResolver = context.getContentResolver();
         String where = autoLocation ? CityProvider.CityConstants.IS_LOCATION + "=?"
                 : CityProvider.CityConstants.AREA_ID + "=?";
         String[] selectionArgs = autoLocation ? new String[]{"1"} : new String[]{city.getAreaId()};
@@ -96,7 +96,7 @@ public class DBUtil {
                 values, where, selectionArgs);
         if (rowsModified == 0) {
             values.put(CityProvider.CityConstants.IS_LOCATION, autoLocation ? 1 : 0);
-            values.put(CityProvider.CityConstants.ORDER_INDEX, getCacheCitySize());
+            values.put(CityProvider.CityConstants.ORDER_INDEX, getCacheCitySize(context));
             // If no prior row existed, insert a new one
             Uri uri = contentResolver.insert(CityProvider.CITY_CONTENT_URI, values);
             return uri != null;
@@ -104,8 +104,8 @@ public class DBUtil {
         return rowsModified > 0;
     }
 
-    public static int getCacheCitySize() {
-        ContentResolver contentResolver = App.getContext().getContentResolver();
+    public static int getCacheCitySize(Context context) {
+        ContentResolver contentResolver = context.getContentResolver();
         Cursor cursor = contentResolver.query(CityProvider.CITY_CONTENT_URI,
                 new String[]{CityProvider.CityConstants.CITY}, null, null, null);
         Log.d(TAG, "getCityFromCache cursor = " + cursor);
@@ -118,8 +118,8 @@ public class DBUtil {
         return size;
     }
 
-    public static boolean updateIndex(City city, int i) {
-        ContentResolver contentResolver = App.getContext().getContentResolver();
+    public static boolean updateIndex(Context context, City city, int i) {
+        ContentResolver contentResolver = context.getContentResolver();
         ContentValues values = new ContentValues();
         values.put(CityProvider.CityConstants.ORDER_INDEX, i);
         int rowsModified = contentResolver.update(CityProvider.CITY_CONTENT_URI,
@@ -128,14 +128,14 @@ public class DBUtil {
         return rowsModified > 0;
     }
 
-    public static boolean deleteCity(City city) {
-        ContentResolver contentResolver = App.getContext().getContentResolver();
+    public static boolean deleteCity(Context context, City city) {
+        ContentResolver contentResolver = context.getContentResolver();
         int rowsModified = contentResolver.delete(CityProvider.CITY_CONTENT_URI,
                 CityProvider.CityConstants.AREA_ID + "=?", new String[]{city.getAreaId()});
         return rowsModified > 0;
     }
 
-    public static boolean undoCity(City city) {
+    public static boolean undoCity(Context context, City city) {
         ContentValues values = new ContentValues();
         values.put(CityProvider.CityConstants.CITY, city.getCity());
         values.put(CityProvider.CityConstants.AREA_ID, city.getAreaId());
@@ -146,14 +146,14 @@ public class DBUtil {
         values.put(CityProvider.CityConstants.IS_LOCATION, city.isLocation());
         values.put(CityProvider.CityConstants.ORDER_INDEX, city.getIndex());
 
-        ContentResolver contentResolver = App.getContext().getContentResolver();
+        ContentResolver contentResolver = context.getContentResolver();
         Uri uri = contentResolver.insert(CityProvider.CITY_CONTENT_URI, values);
         return uri != null;
     }
 
-    public static void insertAutoLocation() {
+    public static void insertAutoLocation(Context context) {
         ContentValues values = new ContentValues();
         values.put(CityProvider.CityConstants.IS_LOCATION, 1);
-        App.getContext().getContentResolver().insert(CityProvider.CITY_CONTENT_URI, values);
+        context.getContentResolver().insert(CityProvider.CITY_CONTENT_URI, values);
     }
 }

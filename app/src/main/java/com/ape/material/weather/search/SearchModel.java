@@ -1,5 +1,6 @@
 package com.ape.material.weather.search;
 
+import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -29,7 +30,8 @@ public class SearchModel extends SearchContract.Model {
     private static final String TAG = "SearchModel";
 
     @Inject
-    public SearchModel(IRepositoryManager manager) {
+    public SearchModel(Context context, IRepositoryManager manager) {
+        mContext = context;
         mRepositoryManager = manager;
     }
 
@@ -67,9 +69,9 @@ public class SearchModel extends SearchContract.Model {
         return Observable.create(new ObservableOnSubscribe<Boolean>() {
             @Override
             public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
-                boolean exist = DBUtil.isExist(city);
+                boolean exist = DBUtil.isExist(mContext, city);
                 Log.d(TAG, "addCity... exist = " + exist);
-                e.onNext(!exist && DBUtil.addCity(city, false));
+                e.onNext(!exist && DBUtil.addCity(mContext, city, false));
                 e.onComplete();
             }
         });

@@ -150,7 +150,7 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter>
                 + ", request location = "
                 + (city.isLocation() && TextUtils.isEmpty(city.getAreaId())));
         if (city.isLocation() && TextUtils.isEmpty(city.getAreaId())) {
-            if (!DeviceUtil.hasInternet()) {
+            if (!DeviceUtil.hasInternet(getContext())) {
                 showErrorTip(getString(R.string.no_internet_toast));
                 return;
             }

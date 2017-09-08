@@ -1,5 +1,6 @@
 package com.ape.material.weather.manage;
 
+import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
@@ -14,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.ape.material.weather.App;
 import com.ape.material.weather.R;
 import com.ape.material.weather.bean.City;
 import com.ape.material.weather.util.ViewUtils;
@@ -89,7 +89,8 @@ public class CityAdapter extends RecyclerView.Adapter<CityAdapter.MyViewHolder>
         holder.mContainer.setOnClickListener(mItemViewOnClickListener);
 
         // set text
-        holder.mTextView.setText(item.isLocation() ? getSpannable(item.getCity()) : item.getCity());
+        holder.mTextView.setText(item.isLocation() ? getSpannable(holder.mTextView.getContext(),
+                item.getCity()) : item.getCity());
 
         // set background resource (target view ID: container)
         /*final int dragState = holder.getDragStateFlags();
@@ -121,12 +122,12 @@ public class CityAdapter extends RecyclerView.Adapter<CityAdapter.MyViewHolder>
         holder.setSwipeItemHorizontalSlideAmount(0);
     }
 
-    private SpannableString getSpannable(String name) {
+    private SpannableString getSpannable(Context context, String name) {
         if (TextUtils.isEmpty(name)) {
-            return new SpannableString(App.getContext().getString(R.string.auto_location));
+            return new SpannableString(context.getString(R.string.auto_location));
         }
         SpannableString ss = new SpannableString(name + " ");
-        Drawable drawable = App.getContext().getResources()
+        Drawable drawable = context.getResources()
                 .getDrawable(R.drawable.ic_location_on_black_18dp);
         drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
         ss.setSpan(new ImageSpan(drawable), name.length(), ss.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);

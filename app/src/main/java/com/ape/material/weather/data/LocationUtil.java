@@ -1,5 +1,6 @@
 package com.ape.material.weather.data;
 
+import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -31,7 +32,7 @@ public class LocationUtil {
     private static final String TAG = "LocationUtil";
     private static final long LOCATION_OUT_TIME = 20;//20s out time to get location
 
-    public static Observable<City> getCity(final IRepositoryManager repositoryManager) {
+    public static Observable<City> getCity(final Context context, final IRepositoryManager repositoryManager) {
         return Observable.create(new ObservableOnSubscribe<String>() {
             @Override
             public void subscribe(final ObservableEmitter<String> e) throws Exception {
@@ -43,7 +44,7 @@ public class LocationUtil {
                             final String city = aMapLocation.getCity();
                             Log.d(TAG, "onLocationChanged: city = " + city);
                             if (!TextUtils.isEmpty(city)) {
-                                AMapLocationHelper.getInstance(App.getContext()).stopLocation();
+                                AMapLocationHelper.getInstance(context).stopLocation();
                                 e.onNext(aMapLocation.getCity());
                                 e.onComplete();
                             }
@@ -51,7 +52,7 @@ public class LocationUtil {
                             //定位失败时，可通过ErrCode（错误码）信息来确定失败的原因，errInfo是错误信息，详见错误码表。
                             Log.e(TAG, "location Error, ErrCode:" + aMapLocation.getErrorCode()
                                     + ", errInfo:" + aMapLocation.getErrorInfo());
-                            e.onError(new Throwable(aMapLocation.getAdCode() + ": " +aMapLocation.getErrorInfo()));
+                            e.onError(new Throwable(aMapLocation.getAdCode() + ": " + aMapLocation.getErrorInfo()));
                         }
                     }
                 });
@@ -82,7 +83,7 @@ public class LocationUtil {
                                         City city = new City(basicBean.getCity(), basicBean.getCnty(),
                                                 basicBean.getId(), basicBean.getLat(), basicBean.getLon(), basicBean.getProv());
                                         city.setLocation(true);
-                                        DBUtil.updateCity(city, true);
+                                        DBUtil.updateCity(context, city, true);
                                         return city;
                                     }
                                 });

@@ -1,5 +1,7 @@
 package com.ape.material.weather.manage;
 
+import android.content.Context;
+
 import com.ape.material.weather.bean.City;
 import com.ape.material.weather.data.DBUtil;
 import com.ape.material.weather.data.IRepositoryManager;
@@ -22,7 +24,8 @@ import io.reactivex.ObservableOnSubscribe;
 public class ManageModel extends ManageContract.Model {
 
     @Inject
-    public ManageModel(IRepositoryManager manager) {
+    public ManageModel(Context context, IRepositoryManager manager) {
+        mContext = context;
         mRepositoryManager = manager;
     }
 
@@ -32,13 +35,13 @@ public class ManageModel extends ManageContract.Model {
         return Observable.create(new ObservableOnSubscribe<List<City>>() {
             @Override
             public void subscribe(ObservableEmitter<List<City>> e) throws Exception {
-                ArrayList<City> cities = DBUtil.getCityFromCache();
+                ArrayList<City> cities = DBUtil.getCityFromCache(mContext);
                 if (cities.isEmpty()) {
                     City city = new City();
                     city.setLocation(true);
                     cities.add(city);
 
-                    DBUtil.insertAutoLocation();
+                    DBUtil.insertAutoLocation(mContext);
                 }
                 e.onNext(cities);
                 e.onComplete();
@@ -53,7 +56,7 @@ public class ManageModel extends ManageContract.Model {
             public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
                 for (int i = 0; i < cities.size(); i++) {
                     City city = cities.get(i);
-                    DBUtil.updateIndex(city, i);
+                    DBUtil.updateIndex(mContext, city, i);
                 }
                 e.onNext(true);
                 e.onComplete();
@@ -66,7 +69,7 @@ public class ManageModel extends ManageContract.Model {
         return Observable.create(new ObservableOnSubscribe<Boolean>() {
             @Override
             public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
-                boolean result = DBUtil.deleteCity(city);
+                boolean result = DBUtil.deleteCity(mContext, city);
                 e.onNext(result);
                 e.onComplete();
             }
@@ -78,7 +81,7 @@ public class ManageModel extends ManageContract.Model {
         return Observable.create(new ObservableOnSubscribe<Boolean>() {
             @Override
             public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
-                boolean result = DBUtil.undoCity(city);
+                boolean result = DBUtil.undoCity(mContext, city);
                 e.onNext(result);
                 e.onComplete();
             }
@@ -87,6 +90,6 @@ public class ManageModel extends ManageContract.Model {
 
     @Override
     Observable<City> getLocation() {
-        return LocationUtil.getCity(mRepositoryManager);
+        return LocationUtil.getCity(mContext, mRepositoryManager);
     }
 }

@@ -1,5 +1,7 @@
 package com.ape.material.weather.fragment;
 
+import android.content.Context;
+
 import com.ape.material.weather.BuildConfig;
 import com.ape.material.weather.api.ApiService;
 import com.ape.material.weather.api.CacheService;
@@ -23,7 +25,8 @@ public class WeatherModel extends WeatherContract.Model {
     private static final String LANG = "zh-cn";
 
     @Inject
-    public WeatherModel(IRepositoryManager manager) {
+    public WeatherModel(Context context, IRepositoryManager manager) {
+        mContext = context;
         mRepositoryManager = manager;
     }
 
@@ -38,7 +41,7 @@ public class WeatherModel extends WeatherContract.Model {
     @Override
     public Observable<City> getLocation() {
 
-        return LocationUtil.getCity(mRepositoryManager);
+        return LocationUtil.getCity(mContext, mRepositoryManager);
     }
 
 }

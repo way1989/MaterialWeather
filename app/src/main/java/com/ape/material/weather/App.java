@@ -29,18 +29,16 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         sContext = getApplicationContext();
-        if (sTypeface == null)
-            sTypeface = Typeface.createFromAsset(getAssets(), "fonts/mxx_font2.ttf");
+        if (sTypeface == null) {
+            sTypeface = Typeface.createFromAsset(getAssets(), "fonts/weather_font.ttf");
+        }
 
-//        if (BuildConfig.BUGLY_ENABLED) {
-//            CrashReport.initCrashReport(sContext, String.valueOf(BuildConfig.BUGLY_APPID), false);
-//        }
-        if (BuildConfig.DEBUG)
-            LeakCanary.install(this);
+        LeakCanary.install(this);
+
+        SQLiteOnWeb.init(this).start();
 
         mAppComponent = DaggerAppComponent.builder()
                 .appModule(new AppModule(getApplicationContext())).build();
-        SQLiteOnWeb.init(this).start();
     }
 
     public AppComponent getAppComponent() {

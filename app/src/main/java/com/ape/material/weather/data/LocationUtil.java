@@ -1,8 +1,5 @@
 package com.ape.material.weather.data;
 
-import android.location.Address;
-import android.location.Geocoder;
-import android.location.Location;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -10,21 +7,17 @@ import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationListener;
 import com.ape.material.weather.App;
 import com.ape.material.weather.BuildConfig;
-import com.ape.material.weather.api.Api;
+import com.ape.material.weather.api.ApiService;
 import com.ape.material.weather.bean.City;
 import com.ape.material.weather.bean.HeCity;
 import com.ape.material.weather.util.AMapLocationHelper;
-import com.ape.material.weather.util.CityLocationManager;
-import com.ape.material.weather.util.RxSchedulers;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.ObservableSource;
-import io.reactivex.functions.Cancellable;
 import io.reactivex.functions.Function;
 import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
@@ -36,65 +29,9 @@ import io.reactivex.schedulers.Schedulers;
 
 public class LocationUtil {
     private static final String TAG = "LocationUtil";
-    private static final long LOCATION_OUT_TIME = 20;//10s out time to get location
+    private static final long LOCATION_OUT_TIME = 20;//20s out time to get location
 
-    /**
-     * get Location: Latitude and Longitude
-     */
-    public static Observable<Location> getLocation() {
-        return Observable.create(new ObservableOnSubscribe<Location>() {
-            @Override
-            public void subscribe(final ObservableEmitter<Location> e) throws Exception {
-                final CityLocationManager manager = new CityLocationManager(App.getContext());
-                CityLocationManager.Listener listener = new CityLocationManager.Listener() {
-                    @Override
-                    public void onLocationSuccess(Location location) {
-                        e.onNext(location);
-                        e.onComplete();
-                    }
-                };
-                e.setCancellable(new Cancellable() {
-                    @Override
-                    public void cancel() throws Exception {
-                        manager.setListener(null);
-                    }
-                });
-                manager.setListener(listener);
-
-                manager.startReceivingLocationUpdates();
-            }
-        }).timeout(LOCATION_OUT_TIME, TimeUnit.SECONDS).compose(RxSchedulers.<Location>io_main());
-    }
-
-    public static Observable<City> getCity(double latitude, double longitude) {
-        Observable<String> cityName = getCityName(latitude, longitude);
-        return cityName.flatMap(new Function<String, ObservableSource<City>>() {
-            @Override
-            public ObservableSource<City> apply(String s) throws Exception {
-                return Api.getInstance().searchCity(BuildConfig.HEWEATHER_KEY, s)
-                        .filter(new Predicate<HeCity>() {
-                            @Override
-                            public boolean test(HeCity heCity) throws Exception {
-                                Log.i(TAG, "filter... heCity = " + heCity);
-                                return heCity != null && heCity.isOK();
-                            }
-                        }).map(new Function<HeCity, City>() {
-                            @Override
-                            public City apply(HeCity heCity) throws Exception {
-                                Log.i(TAG, "map... heCity = " + heCity);
-                                HeCity.HeWeather5Bean.BasicBean basicBean = heCity.getHeWeather5().get(0).getBasic();
-                                City city = new City(basicBean.getCity(), basicBean.getCnty(),
-                                        basicBean.getId(), basicBean.getLat(), basicBean.getLon(), basicBean.getProv());
-                                city.setLocation(true);
-                                DBUtil.updateCity(city, true);
-                                return city;
-                            }
-                        });
-            }
-        }).compose(RxSchedulers.<City>io_main());
-    }
-
-    public static Observable<City> getCity() {
+    public static Observable<City> getCity(final IRepositoryManager repositoryManager) {
         return Observable.create(new ObservableOnSubscribe<String>() {
             @Override
             public void subscribe(final ObservableEmitter<String> e) throws Exception {
@@ -103,30 +40,25 @@ public class LocationUtil {
                     @Override
                     public void onLocationChanged(AMapLocation aMapLocation) {
                         if (aMapLocation.getErrorCode() == 0) {
-                            Log.d(TAG, "onLocationChanged: city = " + aMapLocation.getCity());
-                            //可在其中解析amapLocation获取相应内容。
-                            e.onNext(aMapLocation.getCity());
-                            e.onComplete();
-                            AMapLocationHelper.getInstance(App.getContext()).stopLocation();
+                            final String city = aMapLocation.getCity();
+                            Log.d(TAG, "onLocationChanged: city = " + city);
+                            if (!TextUtils.isEmpty(city)) {
+                                AMapLocationHelper.getInstance(App.getContext()).stopLocation();
+                                e.onNext(aMapLocation.getCity());
+                                e.onComplete();
+                            }
                         } else {
                             //定位失败时，可通过ErrCode（错误码）信息来确定失败的原因，errInfo是错误信息，详见错误码表。
                             Log.e(TAG, "location Error, ErrCode:" + aMapLocation.getErrorCode()
                                     + ", errInfo:" + aMapLocation.getErrorInfo());
-//                            e.onError(new Throwable("location Error, ErrCode:" + aMapLocation.getErrorCode()
-//                                    + ", errInfo:" + aMapLocation.getErrorInfo()));
+                            e.onError(new Throwable(aMapLocation.getAdCode() + ": " +aMapLocation.getErrorInfo()));
                         }
                     }
                 });
-              /* e.onNext("深圳");
-               e.onComplete();*/
             }
         }).observeOn(Schedulers.io())
-                .timeout(LOCATION_OUT_TIME, TimeUnit.SECONDS).filter(new Predicate<String>() {
-                    @Override
-                    public boolean test(String s) throws Exception {
-                        return !TextUtils.isEmpty(s);
-                    }
-                }).map(new Function<String, String>() {
+                .timeout(LOCATION_OUT_TIME, TimeUnit.SECONDS)
+                .map(new Function<String, String>() {
                     @Override
                     public String apply(String s) throws Exception {
                         return s.replace("市", "");
@@ -135,7 +67,7 @@ public class LocationUtil {
                     @Override
                     public ObservableSource<City> apply(String s) throws Exception {
                         Log.d(TAG, "getCity start flatMap: city = " + s);
-                        return Api.getInstance().searchCity(BuildConfig.HEWEATHER_KEY, s)
+                        return repositoryManager.obtainRetrofitService(ApiService.class).searchCity(BuildConfig.HEWEATHER_KEY, s)
                                 .filter(new Predicate<HeCity>() {
                                     @Override
                                     public boolean test(HeCity heCity) throws Exception {
@@ -155,39 +87,7 @@ public class LocationUtil {
                                     }
                                 });
                     }
-                }).compose(RxSchedulers.<City>io_main());
-    }
-
-    /**
-     * get city name by Geocoder
-     *
-     * @param lat Latitude
-     * @param lon Longitude
-     */
-    private static Observable<String> getCityName(final double lat, final double lon) {
-        return Observable.create(new ObservableOnSubscribe<String>() {
-            @Override
-            public void subscribe(ObservableEmitter<String> e) throws Exception {
-                Geocoder geocoder = new Geocoder(App.getContext());
-                List<Address> addresses = geocoder.getFromLocation(lat, lon, 1);
-                if (addresses != null && !addresses.isEmpty()) {
-                    e.onNext(addresses.get(0).getLocality());
-                    e.onComplete();
-                } else {
-                    throw new Exception("addressed is null");
-                }
-            }
-        }).filter(new Predicate<String>() {
-            @Override
-            public boolean test(String s) throws Exception {
-                return !TextUtils.isEmpty(s);
-            }
-        }).map(new Function<String, String>() {
-            @Override
-            public String apply(String s) throws Exception {
-                return s.replace("市", "");
-            }
-        });
+                });
     }
 
 }

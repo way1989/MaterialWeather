@@ -12,6 +12,8 @@ import com.ape.material.weather.AppComponent;
 import com.ape.material.weather.dynamicweather.BaseDrawer;
 import com.trello.rxlifecycle2.components.support.RxFragment;
 
+import javax.inject.Inject;
+
 import butterknife.ButterKnife;
 
 /**
@@ -22,6 +24,8 @@ public abstract class BaseFragment<T extends BasePresenter> extends RxFragment {
     protected View rootView;
     protected boolean isViewInitiated;
     protected boolean isDataInitiated;
+    @Inject
+    protected T mPresenter;
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {

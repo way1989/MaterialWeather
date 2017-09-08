@@ -42,7 +42,7 @@ public class HeWeather implements Serializable {
         return false;
     }
 
-    public String getErrorStatus(){
+    public String getErrorStatus() {
         if (heWeather5List.size() > 0) {
             final HeWeather5Bean weather5Bean = heWeather5List.get(0);
             return weather5Bean.getStatus();

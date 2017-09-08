@@ -22,5 +22,5 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Scope
 @Documented
 @Retention(value = RUNTIME)
-public @interface FragmentScoped {
+public @interface FragmentScope {
 }

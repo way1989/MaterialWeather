@@ -19,9 +19,7 @@ import com.ape.material.weather.R;
 import com.ape.material.weather.base.BaseFragment;
 import com.ape.material.weather.bean.City;
 import com.ape.material.weather.bean.HeWeather;
-import com.ape.material.weather.data.WeatherUtil;
 import com.ape.material.weather.dynamicweather.BaseDrawer;
-import com.ape.material.weather.util.CityLocationManager;
 import com.ape.material.weather.util.DeviceUtil;
 import com.ape.material.weather.util.FormatUtil;
 import com.ape.material.weather.widget.AqiView;
@@ -29,8 +27,6 @@ import com.ape.material.weather.widget.AstroView;
 import com.ape.material.weather.widget.DailyForecastView;
 import com.ape.material.weather.widget.HourlyForecastView;
 import com.ape.material.weather.widget.PullRefreshLayout;
-
-import javax.inject.Inject;
 
 import butterknife.BindView;
 import permissions.dispatcher.NeedsPermission;
@@ -63,8 +59,7 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter>
     PullRefreshLayout mWPullRefreshLayout;
     @BindView(R.id.city_title_tv)
     TextView mCityTitleTv;
-    @Inject
-    WeatherPresenter mPresenter;
+
     private OnDrawerTypeChangeListener mListener;
     private BaseDrawer.Type mWeatherType;
     private City mCity;
@@ -92,16 +87,14 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter>
     @Override
     public void onResume() {
         super.onResume();
-        if (mWeather == null || !DeviceUtil.hasInternet()
-                || !WeatherUtil.isCacheFailure(mWeather))
-            return;
-        mPresenter.getWeather(mCity.getAreaId(), true);
+//        if (mWeather == null || !DeviceUtil.hasInternet())
+//            return;
+//        mPresenter.getWeather(mCity.getAreaId(), true);
     }
 
     @Override
     protected void initPresenter(AppComponent appComponent) {
         super.initPresenter(appComponent);
-        //mPresenter.setVM(this, mModel);
         DaggerWeatherComponent.builder().appComponent(appComponent).weatherPresenterModule(new WeatherPresenterModule(this)).build().inject(this);
     }
 
@@ -128,7 +121,6 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter>
     @Override
     public void onCityChange(City city) {
         mCity = city;
-        //RxBus.getInstance().post(new RxEvent.MainEvent(null));
         setTitle();
         getWeather(city, false);
     }
@@ -162,7 +154,7 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter>
                 showErrorTip(getString(R.string.no_internet_toast));
                 return;
             }
-            if (CityLocationManager.isGPSProviderEnabled(getContext())) {
+            if (DeviceUtil.isGPSProviderEnabled(getContext())) {
                 WeatherFragmentPermissionsDispatcher.getLocationWithCheck(this);
             } else {
                 showErrorTip(getString(R.string.gps_disabled_toast));

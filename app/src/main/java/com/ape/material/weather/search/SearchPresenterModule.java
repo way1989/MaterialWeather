@@ -1,5 +1,7 @@
 package com.ape.material.weather.search;
 
+import com.ape.material.weather.util.ActivityScope;
+
 import dagger.Module;
 import dagger.Provides;
 
@@ -16,7 +18,14 @@ public class SearchPresenterModule {
     }
 
     @Provides
+    @ActivityScope
     SearchContract.View getView() {
         return mView;
+    }
+
+    @Provides
+    @ActivityScope
+    SearchContract.Model provideModel(SearchModel model) {
+        return model;
     }
 }

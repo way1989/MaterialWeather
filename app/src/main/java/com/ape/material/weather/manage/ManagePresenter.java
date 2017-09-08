@@ -3,9 +3,10 @@ package com.ape.material.weather.manage;
 import android.support.annotation.NonNull;
 
 import com.ape.material.weather.bean.City;
-import com.ape.material.weather.data.WeatherRepository;
+import com.ape.material.weather.util.ActivityScope;
 import com.ape.material.weather.util.RxBus;
 import com.ape.material.weather.util.RxEvent;
+import com.ape.material.weather.util.RxSchedulers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,15 +22,14 @@ import io.reactivex.observers.DisposableObserver;
 /**
  * Created by way on 2016/11/13.
  */
-
+@ActivityScope
 public class ManagePresenter extends ManageContract.Presenter {
-    private WeatherRepository mRepository;
     @NonNull
     private CompositeDisposable mCompositeDisposable;
 
     @Inject
-    ManagePresenter(WeatherRepository model, ManageContract.View view) {
-        mRepository = model;
+    ManagePresenter(ManageContract.Model model, ManageContract.View view) {
+        mModel = model;
         mView = view;
         mCompositeDisposable = new CompositeDisposable();
     }
@@ -53,13 +53,14 @@ public class ManagePresenter extends ManageContract.Presenter {
 
             }
         };
-        mRepository.getCities().doOnSubscribe(new Consumer<Disposable>() {
-            @Override
-            public void accept(Disposable disposable) throws Exception {
-                mView.showLoading();
-            }
-        }).subscribe(observer);
-        register(observer);
+        mModel.getCities().compose(RxSchedulers.<List<City>>io_main())
+                .doOnSubscribe(new Consumer<Disposable>() {
+                    @Override
+                    public void accept(Disposable disposable) throws Exception {
+                        mView.showLoading();
+                    }
+                }).subscribe(observer);
+        subscribe(observer);
     }
 
     @Override
@@ -82,8 +83,8 @@ public class ManagePresenter extends ManageContract.Presenter {
 
             }
         };
-        mRepository.swapCity(data).subscribe(observer);
-        register(observer);
+        mModel.swapCity(data).compose(RxSchedulers.<Boolean>io_main()).subscribe(observer);
+        subscribe(observer);
     }
 
     @Override
@@ -105,8 +106,8 @@ public class ManagePresenter extends ManageContract.Presenter {
 
             }
         };
-        mRepository.deleteCity(city).subscribe(observer);
-        register(observer);
+        mModel.deleteCity(city).compose(RxSchedulers.<Boolean>io_main()).subscribe(observer);
+        subscribe(observer);
     }
 
     @Override
@@ -128,8 +129,8 @@ public class ManagePresenter extends ManageContract.Presenter {
 
             }
         };
-        mRepository.undoCity(city).subscribe(observer);
-        register(observer);
+        mModel.undoCity(city).compose(RxSchedulers.<Boolean>io_main()).subscribe(observer);
+        subscribe(observer);
     }
 
     @Override
@@ -151,12 +152,12 @@ public class ManagePresenter extends ManageContract.Presenter {
 
             }
         };
-        mRepository.getLocation().subscribe(observer);
-        register(observer);
+        mModel.getLocation().compose(RxSchedulers.<City>io_main()).subscribe(observer);
+        subscribe(observer);
     }
 
     @Override
-    public void register(Disposable disposable) {
+    public void subscribe(Disposable disposable) {
         mCompositeDisposable.add(disposable);
     }
 

@@ -31,8 +31,6 @@ import com.weavey.loading.lib.LoadingLayout;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 

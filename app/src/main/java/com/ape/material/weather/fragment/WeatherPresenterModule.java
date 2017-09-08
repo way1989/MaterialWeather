@@ -1,5 +1,7 @@
 package com.ape.material.weather.fragment;
 
+import com.ape.material.weather.util.FragmentScope;
+
 import dagger.Module;
 import dagger.Provides;
 
@@ -15,7 +17,14 @@ public class WeatherPresenterModule {
     }
 
     @Provides
+    @FragmentScope
     WeatherContract.View getView() {
         return mView;
+    }
+
+    @Provides
+    @FragmentScope
+    WeatherContract.Model provideModel(WeatherModel model) {
+        return model;
     }
 }

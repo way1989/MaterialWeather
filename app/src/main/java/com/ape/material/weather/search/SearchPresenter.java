@@ -4,7 +4,8 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.ape.material.weather.bean.City;
-import com.ape.material.weather.data.WeatherRepository;
+import com.ape.material.weather.util.ActivityScope;
+import com.ape.material.weather.util.RxSchedulers;
 
 import java.util.List;
 
@@ -17,16 +18,15 @@ import io.reactivex.observers.DisposableObserver;
 /**
  * Created by android on 16-11-16.
  */
-
+@ActivityScope
 public class SearchPresenter extends SearchContract.Presenter {
     private static final String TAG = "SearchPresenter";
     @NonNull
     private final CompositeDisposable mCompositeDisposable;
-    private WeatherRepository mRepository;
 
     @Inject
-    SearchPresenter(WeatherRepository model, SearchContract.View view) {
-        mRepository = model;
+    SearchPresenter(SearchContract.Model model, SearchContract.View view) {
+        mModel = model;
         mView = view;
         mCompositeDisposable = new CompositeDisposable();
     }
@@ -51,8 +51,8 @@ public class SearchPresenter extends SearchContract.Presenter {
 
             }
         };
-        mRepository.searchCity(query).subscribe(observer);
-        register(observer);
+        mModel.search(query).compose(RxSchedulers.<List<City>>io_main()).subscribe(observer);
+        subscribe(observer);
     }
 
     @Override
@@ -74,12 +74,12 @@ public class SearchPresenter extends SearchContract.Presenter {
 
             }
         };
-        mRepository.addCity(city).subscribe(observer);
-        register(observer);
+        mModel.addOrUpdateCity(city).compose(RxSchedulers.<Boolean>io_main()).subscribe(observer);
+        subscribe(observer);
     }
 
     @Override
-    public void register(Disposable disposable) {
+    public void subscribe(Disposable disposable) {
         mCompositeDisposable.add(disposable);
     }
 

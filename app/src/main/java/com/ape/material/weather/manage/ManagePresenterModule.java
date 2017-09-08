@@ -1,5 +1,7 @@
 package com.ape.material.weather.manage;
 
+import com.ape.material.weather.util.ActivityScope;
+
 import dagger.Module;
 import dagger.Provides;
 
@@ -15,7 +17,14 @@ public class ManagePresenterModule {
     }
 
     @Provides
+    @ActivityScope
     ManageContract.View getView() {
         return mView;
+    }
+
+    @Provides
+    @ActivityScope
+    ManageContract.Model provideModel(ManageModel model) {
+        return model;
     }
 }

@@ -5,7 +5,8 @@ import android.util.Log;
 
 import com.ape.material.weather.bean.City;
 import com.ape.material.weather.bean.HeWeather;
-import com.ape.material.weather.data.WeatherRepository;
+import com.ape.material.weather.util.FragmentScope;
+import com.ape.material.weather.util.RxSchedulers;
 
 import javax.inject.Inject;
 
@@ -16,16 +17,15 @@ import io.reactivex.observers.DisposableObserver;
 /**
  * Created by android on 16-11-10.
  */
-
+@FragmentScope
 public class WeatherPresenter extends WeatherContract.Presenter {
     private static final String TAG = "WeatherPresenter";
-    private WeatherRepository mRepository;
     @NonNull
     private CompositeDisposable mCompositeDisposable;
 
     @Inject
-    WeatherPresenter(WeatherRepository model, WeatherContract.View view) {
-        mRepository = model;
+    WeatherPresenter(WeatherContract.Model model, WeatherContract.View view) {
+        mModel = model;
         mView = view;
         mCompositeDisposable = new CompositeDisposable();
     }
@@ -51,8 +51,8 @@ public class WeatherPresenter extends WeatherContract.Presenter {
 
             }
         };
-        mRepository.getWeather(city, force).subscribe(observer);
-        register(observer);
+        mModel.getWeather(city, force).compose(RxSchedulers.<HeWeather>io_main()).subscribe(observer);
+        subscribe(observer);
     }
 
     @Override
@@ -77,12 +77,12 @@ public class WeatherPresenter extends WeatherContract.Presenter {
 
             }
         };
-        mRepository.getLocation().subscribe(observer);
-        register(observer);
+        mModel.getLocation().compose(RxSchedulers.<City>io_main()).subscribe(observer);
+        subscribe(observer);
     }
 
     @Override
-    public void register(Disposable disposable) {
+    public void subscribe(Disposable disposable) {
         mCompositeDisposable.add(disposable);
     }
 

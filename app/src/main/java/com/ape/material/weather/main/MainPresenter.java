@@ -3,7 +3,8 @@ package com.ape.material.weather.main;
 import android.support.annotation.NonNull;
 
 import com.ape.material.weather.bean.City;
-import com.ape.material.weather.data.WeatherRepository;
+import com.ape.material.weather.util.ActivityScope;
+import com.ape.material.weather.util.RxSchedulers;
 
 import java.util.List;
 
@@ -17,15 +18,14 @@ import io.reactivex.observers.DisposableObserver;
 /**
  * Created by android on 16-11-10.
  */
-
+@ActivityScope
 public class MainPresenter extends MainContract.Presenter {
-    private WeatherRepository mRepository;
     @NonNull
     private CompositeDisposable mCompositeDisposable;
 
     @Inject
-    MainPresenter(WeatherRepository model, MainContract.View view) {
-        mRepository = model;
+    MainPresenter(MainContract.Model model, MainContract.View view) {
+        mModel = model;
         mView = view;
         mCompositeDisposable = new CompositeDisposable();
     }
@@ -50,8 +50,8 @@ public class MainPresenter extends MainContract.Presenter {
 
             }
         };
-        mRepository.getCities().subscribe(observer);
-        register(observer);
+        mModel.getCities().compose(RxSchedulers.<List<City>>io_main()).subscribe(observer);
+        subscribe(observer);
     }
 
     @Override
@@ -59,7 +59,7 @@ public class MainPresenter extends MainContract.Presenter {
         mCompositeDisposable.clear();
     }
 
-    public void register(Disposable disposable) {
+    public void subscribe(Disposable disposable) {
         mCompositeDisposable.add(disposable);
     }
 

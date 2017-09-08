@@ -19,6 +19,7 @@ import butterknife.ButterKnife;
 public abstract class BaseActivity<T extends BasePresenter> extends RxAppCompatActivity {
     @Inject
     protected T mPresenter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

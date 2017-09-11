@@ -13,13 +13,8 @@ import io.github.skyhacker2.sqliteonweb.SQLiteOnWeb;
  * Created by way on 16/6/10.
  */
 public class App extends Application {
-    private volatile static Context sContext;
     private volatile static Typeface sTypeface;
     private AppComponent mAppComponent;
-
-    public static Context getContext() {
-        return sContext;
-    }
 
     public static Typeface getTypeface() {
         return sTypeface;
@@ -28,7 +23,6 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        sContext = getApplicationContext();
         if (sTypeface == null) {
             sTypeface = Typeface.createFromAsset(getAssets(), "fonts/weather_font.ttf");
         }

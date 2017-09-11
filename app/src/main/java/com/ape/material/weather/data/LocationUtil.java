@@ -37,7 +37,7 @@ public class LocationUtil {
             @Override
             public void subscribe(final ObservableEmitter<String> e) throws Exception {
                 Log.d(TAG, "getCityName: start get location");
-                AMapLocationHelper.getInstance(App.getContext()).startLocation(new AMapLocationListener() {
+                AMapLocationHelper.getInstance(context).startLocation(new AMapLocationListener() {
                     @Override
                     public void onLocationChanged(AMapLocation aMapLocation) {
                         if (aMapLocation.getErrorCode() == 0) {

@@ -1,7 +1,6 @@
 package com.ape.material.weather;
 
 import android.app.Application;
-import android.content.Context;
 import android.graphics.Typeface;
 
 import com.squareup.leakcanary.LeakCanary;

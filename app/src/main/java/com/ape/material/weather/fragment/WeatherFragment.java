@@ -87,7 +87,7 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter>
     @Override
     public void onResume() {
         super.onResume();
-//        if (mWeather == null || !DeviceUtil.hasInternet())
+//        if (mWeather == null || !DeviceUtil.hasInternet(getContext()))
 //            return;
 //        mPresenter.getWeather(mCity.getAreaId(), true);
     }
@@ -122,6 +122,7 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter>
     public void onCityChange(City city) {
         mCity = city;
         setTitle();
+        if (getUserVisibleHint()) mListener.onCityChange(city);
         getWeather(city, false);
     }
 
@@ -181,9 +182,9 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter>
     }
 
     private void setTitle() {
-        if (!mCity.isLocation())
-            mCityTitleTv.setCompoundDrawables(null, null, null, null);
-        mCityTitleTv.setText(TextUtils.isEmpty(mCity.getCity()) ? getString(R.string.auto_location) : mCity.getCity());
+//        if (!mCity.isLocation())
+//            mCityTitleTv.setCompoundDrawables(null, null, null, null);
+//        mCityTitleTv.setText(TextUtils.isEmpty(mCity.getCity()) ? getString(R.string.auto_location) : mCity.getCity());
     }
 
     @Override
@@ -326,6 +327,8 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter>
 
     public interface OnDrawerTypeChangeListener {
         void onDrawerTypeChange(BaseDrawer.Type type);
+
+        void onCityChange(City city);
     }
 
 }

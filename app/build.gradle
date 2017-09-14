@@ -134,4 +134,6 @@ dependencies {
     //rxcache
     compile "com.github.VictorAlbertos.RxCache:runtime:1.8.1-2.x"
     compile 'com.github.VictorAlbertos.Jolyglot:gson:0.0.4'
+
+    compile 'com.github.LinweiJ:ViewPagerIndicator:0.0.2'
 }

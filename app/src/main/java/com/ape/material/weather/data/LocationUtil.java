@@ -6,7 +6,6 @@ import android.util.Log;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationListener;
-import com.ape.material.weather.App;
 import com.ape.material.weather.BuildConfig;
 import com.ape.material.weather.api.ApiService;
 import com.ape.material.weather.bean.City;

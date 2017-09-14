@@ -5,21 +5,23 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.TextUtils;
+import android.text.style.ImageSpan;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 
 import com.ape.material.weather.AppComponent;
 import com.ape.material.weather.R;
 import com.ape.material.weather.base.BaseActivity;
-import com.ape.material.weather.base.BaseFragment;
 import com.ape.material.weather.bean.City;
 import com.ape.material.weather.dynamicweather.BaseDrawer;
 import com.ape.material.weather.dynamicweather.DynamicWeatherView;
@@ -28,9 +30,9 @@ import com.ape.material.weather.manage.ManageActivity;
 import com.ape.material.weather.util.RxBus;
 import com.ape.material.weather.util.RxEvent;
 import com.ape.material.weather.util.UiUtil;
+import com.lwj.widget.viewpagerindicator.ViewPagerIndicator;
 import com.trello.rxlifecycle2.android.ActivityEvent;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -51,8 +53,11 @@ public class MainActivity extends BaseActivity<MainPresenter>
     Toolbar mToolbar;
     @BindView(R.id.app_bar_layout)
     AppBarLayout mAppBarLayout;
-
-    private MainFragmentPagerAdapter mAdapter;
+    @BindView(R.id.indicator_spring)
+    ViewPagerIndicator mIndicator;
+    private FragmentPagerAdapter mAdapter;
+    private WeatherFragment mCurFragment;
+    private List<City> mCities;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +88,7 @@ public class MainActivity extends BaseActivity<MainPresenter>
                     public void accept(RxEvent.MainEvent mainEvent) throws Exception {
                         if (mainEvent.position >= 0 && mainEvent.position < mAdapter.getCount()) {
                             mMainViewPager.setCurrentItem(mainEvent.position);
+                            setTitle(getTitle(mCities.get(mainEvent.position)));
                             return;
                         }
                         List<City> cities = mainEvent.cities;
@@ -156,29 +162,61 @@ public class MainActivity extends BaseActivity<MainPresenter>
     @Override
     public void onCityChange(List<City> cities) {
         if (cities != null && !cities.isEmpty()) {
-
-            List<BaseFragment> weatherFragmentList = new ArrayList<>();
-            for (City city : cities) {
-                Log.i(TAG, "city = " + city.getCity());
-                weatherFragmentList.add(WeatherFragment.makeInstance(city));
-
-            }
+            mCities = cities;
             if (mAdapter == null) {
-                mAdapter = new MainFragmentPagerAdapter(getSupportFragmentManager(), weatherFragmentList);
+                mAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
+
+                    @Override
+                    public int getCount() {
+                        return mCities.size();
+                    }
+
+                    @Override
+                    public Fragment getItem(int position) {
+                        return WeatherFragment.makeInstance(mCities.get(position));
+                    }
+
+                    @Override
+                    public void setPrimaryItem(ViewGroup container, int position, Object object) {
+                        super.setPrimaryItem(container, position, object);
+                        mCurFragment = (WeatherFragment) object;
+                    }
+
+                    //this is called when notifyDataSetChanged() is called
+                    @Override
+                    public int getItemPosition(Object object) {
+                        return PagerAdapter.POSITION_NONE;
+                    }
+                };
             } else {
                 //刷新fragment
-                mAdapter.setFragments(getSupportFragmentManager(), weatherFragmentList);
+                mAdapter.notifyDataSetChanged();
             }
             mMainViewPager.setAdapter(mAdapter);
-            //mMainViewPager.setOffscreenPageLimit(weatherFragmentList.size() - 1);
-            mMainViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            mMainViewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
                 @Override
                 public void onPageSelected(int position) {
                     super.onPageSelected(position);
-                    mDynamicWeatherView.setDrawerType(mAdapter.getItem(position).getDrawerType());
+                    mDynamicWeatherView.setDrawerType(mCurFragment.getDrawerType());
+                    setTitle(getTitle(mCities.get(position)));
                 }
             });
+            mIndicator.setViewPager(mMainViewPager);
+            mIndicator.setVisibility(mCities.size() > 1 ? View.VISIBLE : View.GONE);
+            setTitle(getTitle(mCities.get(0)));
         }
+    }
+
+    private SpannableString getTitle(City city) {
+        if (!city.isLocation()) {
+            return new SpannableString(TextUtils.isEmpty(city.getCity()) ? "unknown" : city.getCity());
+        }
+        ImageSpan imgSpan = new ImageSpan(getApplicationContext(), R.drawable.ic_location_on_white_18dp);
+        SpannableString spannableString = new SpannableString(TextUtils.isEmpty(city.getCity())
+                ? getString(R.string.auto_location) + " " : city.getCity() + " ");
+        spannableString.setSpan(imgSpan, spannableString.length() - 1,
+                spannableString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return spannableString;
     }
 
     @Override
@@ -191,51 +229,8 @@ public class MainActivity extends BaseActivity<MainPresenter>
         mDynamicWeatherView.setDrawerType(type);
     }
 
-    public static class MainFragmentPagerAdapter extends FragmentPagerAdapter {
-
-        private List<BaseFragment> mFragmentList;
-
-        MainFragmentPagerAdapter(FragmentManager fragmentManager, List<BaseFragment> fragmentList) {
-            super(fragmentManager);
-            setFragments(fragmentManager, fragmentList);
-        }
-
-        //刷新fragment
-        void setFragments(FragmentManager fm, List<BaseFragment> fragments) {
-            if (this.mFragmentList != null) {
-                FragmentTransaction ft = fm.beginTransaction();
-                for (Fragment f : this.mFragmentList) {
-                    ft.remove(f);
-                }
-                ft.commitAllowingStateLoss();
-                fm.executePendingTransactions();
-            }
-            this.mFragmentList = fragments;
-            notifyDataSetChanged();
-        }
-
-        @Override
-        public BaseFragment getItem(int position) {
-            BaseFragment fragment = mFragmentList.get(position);
-            fragment.setRetainInstance(true);
-            return fragment;
-        }
-
-       /* @Override
-        public CharSequence getPageTitle(int position) {
-            return mFragmentList.get(position).getTitle();
-        }*/
-
-        @Override
-        public int getCount() {
-            return mFragmentList.size();
-        }
-
-        @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            container.removeView(((Fragment) object).getView());
-            super.destroyItem(container, position, object);
-        }
-
+    @Override
+    public void onCityChange(City city) {
+        setTitle(getTitle(city));
     }
 }

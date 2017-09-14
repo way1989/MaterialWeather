@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -32,4 +32,17 @@
             app:layout_scrollFlags="scroll|enterAlways"
             app:popupTheme="@style/AppTheme" />
     </android.support.design.widget.AppBarLayout>
-</merge>
+
+    <com.lwj.widget.viewpagerindicator.ViewPagerIndicator
+        android:id="@+id/indicator_spring"
+        android:layout_width="wrap_content"
+        android:layout_height="16dp"
+        android:layout_marginTop="?attr/actionBarSize"
+        app:default_color="#80cdcdcd"
+        app:distance="10dp"
+        app:distanceType="BY_DISTANCE"
+        app:indicatorType="SPRING"
+        app:radius="3dp"
+        app:selected_color="#FFFFFF" />
+
+</RelativeLayout>

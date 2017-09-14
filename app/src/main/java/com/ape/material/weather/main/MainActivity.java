@@ -1,18 +1,21 @@
 package com.ape.material.weather.main;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.PagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
-import android.text.style.ImageSpan;
+import android.text.style.DynamicDrawableSpan;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,6 +25,7 @@ import android.view.WindowManager;
 import com.ape.material.weather.AppComponent;
 import com.ape.material.weather.R;
 import com.ape.material.weather.base.BaseActivity;
+import com.ape.material.weather.base.BaseFragment;
 import com.ape.material.weather.bean.City;
 import com.ape.material.weather.dynamicweather.BaseDrawer;
 import com.ape.material.weather.dynamicweather.DynamicWeatherView;
@@ -33,6 +37,7 @@ import com.ape.material.weather.util.UiUtil;
 import com.lwj.widget.viewpagerindicator.ViewPagerIndicator;
 import com.trello.rxlifecycle2.android.ActivityEvent;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -40,7 +45,6 @@ import butterknife.BindView;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 
-import static com.ape.material.weather.R.id.toolbar;
 
 public class MainActivity extends BaseActivity<MainPresenter>
         implements MainContract.View, WeatherFragment.OnDrawerTypeChangeListener {
@@ -49,14 +53,13 @@ public class MainActivity extends BaseActivity<MainPresenter>
     DynamicWeatherView mDynamicWeatherView;
     @BindView(R.id.main_view_pager)
     ViewPager mMainViewPager;
-    @BindView(toolbar)
+    @BindView(R.id.toolbar)
     Toolbar mToolbar;
     @BindView(R.id.app_bar_layout)
     AppBarLayout mAppBarLayout;
     @BindView(R.id.indicator_spring)
     ViewPagerIndicator mIndicator;
-    private FragmentPagerAdapter mAdapter;
-    private WeatherFragment mCurFragment;
+    private MainFragmentPagerAdapter mAdapter;
     private List<City> mCities;
 
     @Override
@@ -162,42 +165,24 @@ public class MainActivity extends BaseActivity<MainPresenter>
     @Override
     public void onCityChange(List<City> cities) {
         if (cities != null && !cities.isEmpty()) {
-            mCities = cities;
+            mCities = new ArrayList<>(cities);
+            List<BaseFragment> weatherFragmentList = new ArrayList<>();
+            for (City city : cities) {
+                Log.i(TAG, "city = " + city.getCity());
+                weatherFragmentList.add(WeatherFragment.makeInstance(city));
+            }
             if (mAdapter == null) {
-                mAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
-
-                    @Override
-                    public int getCount() {
-                        return mCities.size();
-                    }
-
-                    @Override
-                    public Fragment getItem(int position) {
-                        return WeatherFragment.makeInstance(mCities.get(position));
-                    }
-
-                    @Override
-                    public void setPrimaryItem(ViewGroup container, int position, Object object) {
-                        super.setPrimaryItem(container, position, object);
-                        mCurFragment = (WeatherFragment) object;
-                    }
-
-                    //this is called when notifyDataSetChanged() is called
-                    @Override
-                    public int getItemPosition(Object object) {
-                        return PagerAdapter.POSITION_NONE;
-                    }
-                };
+                mAdapter = new MainFragmentPagerAdapter(getSupportFragmentManager(), weatherFragmentList);
             } else {
                 //刷新fragment
-                mAdapter.notifyDataSetChanged();
+                mAdapter.setFragments(getSupportFragmentManager(), weatherFragmentList);
             }
             mMainViewPager.setAdapter(mAdapter);
             mMainViewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
                 @Override
                 public void onPageSelected(int position) {
                     super.onPageSelected(position);
-                    mDynamicWeatherView.setDrawerType(mCurFragment.getDrawerType());
+                    mDynamicWeatherView.setDrawerType(mAdapter.getItem(position).getDrawerType());
                     setTitle(getTitle(mCities.get(position)));
                 }
             });
@@ -211,10 +196,20 @@ public class MainActivity extends BaseActivity<MainPresenter>
         if (!city.isLocation()) {
             return new SpannableString(TextUtils.isEmpty(city.getCity()) ? "unknown" : city.getCity());
         }
-        ImageSpan imgSpan = new ImageSpan(getApplicationContext(), R.drawable.ic_location_on_white_18dp);
+        DynamicDrawableSpan drawableSpan =
+                new DynamicDrawableSpan(DynamicDrawableSpan.ALIGN_BASELINE) {//基于文本基线,默认是文本底部
+                    @Override
+                    public Drawable getDrawable() {
+                        Drawable d = getResources().getDrawable(R.drawable.ic_location_on_white_18dp);
+                        d.setBounds(0, 0, d.getIntrinsicWidth(), d.getIntrinsicHeight());
+                        return d;
+                    }
+                };
+        //ImageSpan imgSpan = new ImageSpan(getApplicationContext(), R.drawable.ic_location_on_white_18dp);
+
         SpannableString spannableString = new SpannableString(TextUtils.isEmpty(city.getCity())
                 ? getString(R.string.auto_location) + " " : city.getCity() + " ");
-        spannableString.setSpan(imgSpan, spannableString.length() - 1,
+        spannableString.setSpan(drawableSpan, spannableString.length() - 1,
                 spannableString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         return spannableString;
     }
@@ -232,5 +227,52 @@ public class MainActivity extends BaseActivity<MainPresenter>
     @Override
     public void onCityChange(City city) {
         setTitle(getTitle(city));
+    }
+
+    public static class MainFragmentPagerAdapter extends FragmentPagerAdapter {
+
+        private List<BaseFragment> mFragmentList;
+
+        MainFragmentPagerAdapter(FragmentManager fragmentManager, List<BaseFragment> fragmentList) {
+            super(fragmentManager);
+            setFragments(fragmentManager, fragmentList);
+        }
+
+        //刷新fragment
+        void setFragments(FragmentManager fm, List<BaseFragment> fragments) {
+            if (this.mFragmentList != null) {
+                FragmentTransaction ft = fm.beginTransaction();
+                for (Fragment f : this.mFragmentList) {
+                    ft.remove(f);
+                }
+                ft.commitAllowingStateLoss();
+                fm.executePendingTransactions();
+            }
+            this.mFragmentList = fragments;
+            notifyDataSetChanged();
+        }
+
+        @Override
+        public BaseFragment getItem(int position) {
+            BaseFragment fragment = mFragmentList.get(position);
+            fragment.setRetainInstance(true);
+            return fragment;
+        }
+
+               /* @Override
+        public CharSequence getPageTitle(int position) {
+            return mFragmentList.get(position).getTitle();
+        }*/
+
+        @Override
+        public int getCount() {
+            return mFragmentList.size();
+        }
+
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            container.removeView(((Fragment) object).getView());
+            super.destroyItem(container, position, object);
+        }
     }
 }

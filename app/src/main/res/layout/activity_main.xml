@@ -36,13 +36,13 @@
     <com.lwj.widget.viewpagerindicator.ViewPagerIndicator
         android:id="@+id/indicator_spring"
         android:layout_width="wrap_content"
-        android:layout_height="16dp"
-        android:layout_marginTop="?attr/actionBarSize"
+        android:layout_height="12dp"
+        android:layout_marginTop="80dp"
         app:default_color="#80cdcdcd"
         app:distance="10dp"
         app:distanceType="BY_DISTANCE"
         app:indicatorType="SPRING"
-        app:radius="3dp"
+        app:radius="2dp"
         app:selected_color="#FFFFFF" />
 
 </RelativeLayout>

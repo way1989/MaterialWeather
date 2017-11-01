@@ -47,7 +47,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:gravity="center"
-                android:text="和风天气 | 中国天气网"
+                android:text="@string/weather_source_title"
                 android:textColor="@color/w_text_secondary"
                 android:textSize="12dp" />
         </com.ape.material.weather.widget.FirstMatchInScrollViewLinearLayout>

@@ -39,4 +39,5 @@
     <string name="city_exist">該城市已經存在</string>
     <string name="weather_common_index_title">綜合</string>
     <string name="relocation_toast">已重新定位到: %1$s</string>
+    <string name="weather_source_title">Powered by 和風天氣</string>
 </resources>

@@ -46,3 +46,4 @@ build/
 .gradle/
 
 .DS_Store
+private.properties

@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
-    buildToolsVersion rootProject.ext.buildToolsVersion
+
     defaultConfig {
         applicationId "com.ape.material.weather"
         minSdkVersion rootProject.ext.minSdkVersion
@@ -13,10 +13,10 @@ android {
         buildConfigField "String", "HEWEATHER_KEY", HEWEATHER_KEY
         buildConfigField "String", "HEWEATHER_URL", HEWEATHER_FREE_URL
     }
-    def filePrivateProperties = file("../public.properties")
+    def filePrivateProperties = file("../jks/public.properties")
     if (filePrivateProperties.exists()) {
         signingConfigs {
-            debug {
+            release {
                 Properties propsPrivate = new Properties()
                 propsPrivate.load(new FileInputStream(filePrivateProperties))
 
@@ -29,14 +29,11 @@ android {
     }
 
     applicationVariants.all { variant ->//获取 variant 参数，就是 productFlavor x buildType
-        variant.outputs.each { output ->//获取输出文件
-            def file = output.outputFile//修改实例
-            if (file != null && file.name.endsWith('-release.apk')) {//变种名以release.apk结尾时才修改名字
-                def fileName = file.name.replace(file.name, "MaterialWeather" + "_" + variant.versionName + ".apk")
-                output.outputFile = new File(file.parentFile, fileName)
-            } else if (file != null && file.name.endsWith('-debug.apk')) {
-                def fileName = file.name.replace(file.name, "MaterialWeather-debug" + "_" + variant.versionName + ".apk")
-                output.outputFile = new File(file.parentFile, fileName)
+        variant.outputs.all {
+            if(outputFileName.endsWith('-release.apk')) {//变种名以release.apk结尾时才修改名字
+                outputFileName = outputFileName.replace(outputFileName, "MaterialWeather" + "_" + variant.versionName + ".apk")
+            } else if (outputFileName.endsWith('-debug.apk')) {
+                outputFileName = outputFileName.replace(outputFileName, "MaterialWeather-debug" + "_" + variant.versionName + ".apk")
             }
         }
     }
@@ -48,6 +45,9 @@ android {
             //是否开启ACRA
             buildConfigField "boolean", "ACRA_ENABLED", "false"
             manifestPlaceholders = [amap_key: AMAP_KEY]
+            if (filePrivateProperties.exists()) {
+                signingConfig signingConfigs.release
+            }
         }
         release {
             // 不显示Log
@@ -56,7 +56,7 @@ android {
             buildConfigField "boolean", "ACRA_ENABLED", "true"
             manifestPlaceholders = [amap_key: AMAP_KEY]
             if (filePrivateProperties.exists()) {
-                signingConfig signingConfigs.debug
+                signingConfig signingConfigs.release
             }
             shrinkResources false
             minifyEnabled false
@@ -66,71 +66,68 @@ android {
     }
 
     lintOptions {
-        abortOnError
-        disable "ResourceType"
-        disable 'MissingTranslation'
-        disable 'ExtraTranslation'
+        abortOnError false
     }
 
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    testCompile 'junit:junit:4.12'
-    compile "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
-    compile "com.android.support:design:$rootProject.supportLibraryVersion"
+    testImplementation 'junit:junit:4.12'
+    implementation "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
+    implementation "com.android.support:design:$rootProject.supportLibraryVersion"
     //butterknife
-    compile "com.jakewharton:butterknife:$rootProject.butterknifeVersion"
+    implementation "com.jakewharton:butterknife:$rootProject.butterknifeVersion"
     annotationProcessor "com.jakewharton:butterknife-compiler:$rootProject.butterknifeVersion"
 
     //permission dispatcher
-    compile 'com.github.hotchemi:permissionsdispatcher:2.4.0', {
+    implementation 'com.github.hotchemi:permissionsdispatcher:2.4.0', {
         // if you don't use android.app.Fragment you can exclude support for them
         exclude module: "support-v13"
     }
     annotationProcessor 'com.github.hotchemi:permissionsdispatcher-processor:2.4.0'
 
     //rxjava
-    compile 'io.reactivex.rxjava2:rxjava:2.1.3'
-    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.3'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
 
     //rxlife
-    compile 'com.trello.rxlifecycle2:rxlifecycle:2.1.0'
-    compile 'com.trello.rxlifecycle2:rxlifecycle-android:2.1.0'
-    compile 'com.trello.rxlifecycle2:rxlifecycle-components:2.1.0'
+    implementation 'com.trello.rxlifecycle2:rxlifecycle:2.1.0'
+    implementation 'com.trello.rxlifecycle2:rxlifecycle-android:2.1.0'
+    implementation 'com.trello.rxlifecycle2:rxlifecycle-components:2.1.0'
 
     //retrofit
-    compile 'com.squareup.retrofit2:retrofit:2.3.0'
-    compile 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
-    compile 'com.squareup.retrofit2:converter-gson:2.3.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
 
-    compile('com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.10.6@aar') {
+    implementation('com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.10.6@aar') {
         transitive = true
     }
 
     //loading layout
-    compile 'com.lai.weavey:loadinglayout:1.3.1'
+    implementation 'com.lai.weavey:loadinglayout:1.3.1'
 
     // Dagger dependencies
-    compile "com.google.dagger:dagger:$rootProject.daggerVersion"
+    implementation "com.google.dagger:dagger:$rootProject.daggerVersion"
     annotationProcessor "com.google.dagger:dagger-compiler:$rootProject.daggerVersion"
 
-    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.1'
-    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
-    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.1'
+    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
+    testImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
 
-    debugCompile 'io.github.skyhacker2:sqliteonweb:1.0.2'
-    releaseCompile 'io.github.skyhacker2:sqliteonweb-no-op:1.0.2'
+    debugImplementation 'io.github.skyhacker2:sqliteonweb:1.0.2'
+    releaseImplementation 'io.github.skyhacker2:sqliteonweb-no-op:1.0.2'
 
     //高德定位
-    compile 'com.amap.api:location:latest.integration'
+    implementation 'com.amap.api:location:latest.integration'
 
     //rxcache
-    compile "com.github.VictorAlbertos.RxCache:runtime:1.8.1-2.x"
-    compile 'com.github.VictorAlbertos.Jolyglot:gson:0.0.4'
+    implementation "com.github.VictorAlbertos.RxCache:runtime:1.8.1-2.x"
+    implementation 'com.github.VictorAlbertos.Jolyglot:gson:0.0.4'
 
-    compile 'com.github.LinweiJ:ViewPagerIndicator:0.0.2'
+    implementation 'com.github.LinweiJ:ViewPagerIndicator:0.0.2'
 }

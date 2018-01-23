@@ -37,12 +37,12 @@
     <string name="air_quality_index_title">Air quality index</string>
     <string name="flu_index_title">frigorism</string>
     <string name="weather_index_title">Life index</string>
-    <string name="weather_temp" translatable="false">%1$s°</string>
-    <string name="weather_percent" translatable="false">%1$s\%</string>
-    <string name="weather_km" translatable="false">%1$skm</string>
-    <string name="weather_mm" translatable="false">%1$smm</string>
-    <string name="weather_ug_m3" translatable="false">%1$sμg/m³</string>
-    <string name="weather_update">%1$s published</string>
+    <string name="weather_temp" translatable="false">%s°</string>
+    <string name="weather_percent" translatable="false">"%s'\%'"</string>
+    <string name="weather_km" translatable="false">%skm</string>
+    <string name="weather_mm" translatable="false">%smm</string>
+    <string name="weather_ug_m3" translatable="false">%sμg/m³</string>
+    <string name="weather_update">%s published</string>
     <string name="city_exist">City is exist</string>
     <string name="weather_common_index_title">Common index</string>
     <string name="relocation_toast">new location city: %1$s</string>

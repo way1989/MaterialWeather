@@ -210,7 +210,7 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter>
             setTextViewString(R.id.w_todaydetail_temp, getString(R.string.weather_temp, w.getNow().getTmp()));
 
             setTextViewString(R.id.w_now_fl, getString(R.string.weather_temp, w.getNow().getFl()));
-            setTextViewString(R.id.w_now_hum, getString(R.string.weather_percent, w.getNow().getHum()));// 湿度
+            setTextViewString(R.id.w_now_hum, w.getNow().getHum() + "%");// 湿度
             setTextViewString(R.id.w_now_vis, getString(R.string.weather_km, w.getNow().getVis()));// 能见度
             setTextViewString(R.id.w_now_pcpn, getString(R.string.weather_mm, w.getNow().getPcpn())); // 降雨量
 

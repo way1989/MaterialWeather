@@ -176,6 +176,16 @@ public class CityAdapter extends RecyclerView.Adapter<CityAdapter.MyViewHolder>
     }
 
     @Override
+    public void onItemDragStarted(int position) {
+
+    }
+
+    @Override
+    public void onItemDragFinished(int fromPosition, int toPosition, boolean result) {
+
+    }
+
+    @Override
     public int onGetSwipeReactionType(MyViewHolder holder, int position, int x, int y) {
         if (onCheckCanStartDrag(holder, position, x, y)) {
             return SwipeableItemConstants.REACTION_CAN_NOT_SWIPE_BOTH_H;
@@ -183,6 +193,11 @@ public class CityAdapter extends RecyclerView.Adapter<CityAdapter.MyViewHolder>
             //return SwipeableItemConstants.REACTION_CAN_SWIPE_BOTH_H;
             return SwipeableItemConstants.REACTION_CAN_SWIPE_LEFT;
         }
+    }
+
+    @Override
+    public void onSwipeItemStarted(MyViewHolder holder, int position) {
+
     }
 
     @Override

@@ -41,8 +41,11 @@ public class AMapLocationHelper {
     }
 
     public void stopLocation() {
+        mLocationClient.setLocationListener(null);
         mLocationClient.stopLocation();
-        //mLocationClient.onDestroy();
+        mLocationClient.onDestroy();
+        mLocationClient = null;
+        sInstance = null;
     }
 
 }

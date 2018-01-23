@@ -130,15 +130,6 @@ public class ManageActivity extends BaseActivity<ManagePresenter>
         mRecyclerView.setAdapter(mWrappedAdapter);  // requires *wrapped* adapter
         mRecyclerView.setItemAnimator(animator);
 
-        // additional decorations
-        //noinspection StatementWithEmptyBody
-        if (supportsViewElevation()) {
-            // Lollipop or later has native drop shadow feature. ItemShadowDecorator is not required.
-        } else {
-            mRecyclerView.addItemDecoration(new ItemShadowDecorator(
-                    (NinePatchDrawable) ContextCompat.getDrawable(getApplicationContext(),
-                            R.drawable.material_shadow_z1)));
-        }
         mRecyclerView.addItemDecoration(new SimpleListDividerDecorator(ContextCompat
                 .getDrawable(getApplicationContext(), R.drawable.list_divider_h), true));
 
@@ -249,10 +240,6 @@ public class ManageActivity extends BaseActivity<ManagePresenter>
         if (position >= 0) {
             mAdapter.notifyItemInserted(position);
         }
-    }
-
-    private boolean supportsViewElevation() {
-        return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP);
     }
 
     public void notifyItemChanged(int position) {

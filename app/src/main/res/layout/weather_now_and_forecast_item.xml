@@ -6,19 +6,9 @@
         android:layout_height="520dp"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/city_title_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="?attr/actionBarSize"
-            android:gravity="center_vertical"
-            android:paddingLeft="16dp"
-            android:textColor="@color/abc_primary_text_material_dark"
-            android:textSize="20dp" />
-
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="?attr/actionBarSize"
             android:gravity="center"
             android:orientation="vertical"
             android:paddingLeft="16dp">

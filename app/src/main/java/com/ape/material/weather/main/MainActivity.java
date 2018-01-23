@@ -68,7 +68,7 @@ public class MainActivity extends BaseActivity<MainPresenter>
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            mMainViewPager.setPadding(0, UiUtil.getStatusBarHeight(), 0, 0);
+            mMainViewPager.setPadding(0, UiUtil.getStatusBarHeight() + UiUtil.getActionBarHeight(), 0, 0);
             mAppBarLayout.setPadding(0, UiUtil.getStatusBarHeight(), 0, 0);
         }
         final int hourOfDay = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);

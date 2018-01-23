@@ -29,9 +29,31 @@ public class UiUtil {
         return (px / scale);
     }
 
+    /**
+     * sp转px
+     *
+     * @param context 上下文
+     * @param spValue sp值
+     * @return px值
+     */
+    public static int sp2px(Context context, float spValue) {
+        final float fontScale = context.getResources().getDisplayMetrics().scaledDensity;
+        return (int) (spValue * fontScale + 0.5f);
+    }
+
+
     public static int getStatusBarHeight() {
         final Resources res = Resources.getSystem();
         int id = Resources.getSystem().getIdentifier("status_bar_height", "dimen", "android");
+        if (id > 0) {
+            return res.getDimensionPixelSize(id);
+        }
+        return 0;
+    }
+
+    public static int getActionBarHeight() {
+        final Resources res = Resources.getSystem();
+        int id = Resources.getSystem().getIdentifier("action_bar_default_height", "dimen", "android");
         if (id > 0) {
             return res.getDimensionPixelSize(id);
         }

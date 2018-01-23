@@ -57,8 +57,6 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter>
     ScrollView mWWeatherScrollView;
     @BindView(R.id.w_PullRefreshLayout)
     PullRefreshLayout mWPullRefreshLayout;
-    @BindView(R.id.city_title_tv)
-    TextView mCityTitleTv;
 
     private OnDrawerTypeChangeListener mListener;
     private BaseDrawer.Type mWeatherType;
@@ -121,7 +119,6 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter>
     @Override
     public void onCityChange(City city) {
         mCity = city;
-        setTitle();
         if (getUserVisibleHint()) mListener.onCityChange(city);
         getWeather(city, false);
     }
@@ -169,7 +166,6 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter>
     @Override
     protected void initView() {
         mCity = getArgCity();
-        setTitle();
         mWPullRefreshLayout.setOnRefreshListener(this);
 
         if (mWWeatherScrollView != null)
@@ -179,12 +175,6 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter>
                     mWWeatherScrollView.scrollTo(0, 0);
                 }
             });
-    }
-
-    private void setTitle() {
-//        if (!mCity.isLocation())
-//            mCityTitleTv.setCompoundDrawables(null, null, null, null);
-//        mCityTitleTv.setText(TextUtils.isEmpty(mCity.getCity()) ? getString(R.string.auto_location) : mCity.getCity());
     }
 
     @Override

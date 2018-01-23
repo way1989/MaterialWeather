@@ -11,12 +11,12 @@ android {
         versionName VERSION_NAME
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "HEWEATHER_KEY", HEWEATHER_KEY
-
+        buildConfigField "String", "HEWEATHER_URL", HEWEATHER_FREE_URL
     }
-    signingConfigs {
-        release {
-            def filePrivateProperties = file("../private.properties")
-            if (filePrivateProperties.exists()) {
+    def filePrivateProperties = file("../public.properties")
+    if (filePrivateProperties.exists()) {
+        signingConfigs {
+            debug {
                 Properties propsPrivate = new Properties()
                 propsPrivate.load(new FileInputStream(filePrivateProperties))
 
@@ -32,11 +32,10 @@ android {
         variant.outputs.each { output ->//获取输出文件
             def file = output.outputFile//修改实例
             if (file != null && file.name.endsWith('-release.apk')) {//变种名以release.apk结尾时才修改名字
-                //def fileName = file.name.replace(file.name, "ApeScreenshot_V" + versionName + "_${buildTime()}.apk")
-                def fileName = file.name.replace(file.name, "MaterialWeather" + "_V" + variant.versionName + ".apk")
+                def fileName = file.name.replace(file.name, "MaterialWeather" + "_" + variant.versionName + ".apk")
                 output.outputFile = new File(file.parentFile, fileName)
             } else if (file != null && file.name.endsWith('-debug.apk')) {
-                def fileName = file.name.replace(file.name, "MaterialWeather-debug" + "_V" + variant.versionName + ".apk")
+                def fileName = file.name.replace(file.name, "MaterialWeather-debug" + "_" + variant.versionName + ".apk")
                 output.outputFile = new File(file.parentFile, fileName)
             }
         }
@@ -48,7 +47,6 @@ android {
             buildConfigField "boolean", "LOG_DEBUG", "true"
             //是否开启ACRA
             buildConfigField "boolean", "ACRA_ENABLED", "false"
-            buildConfigField "String", "HEWEATHER_URL", HEWEATHER_FREE_URL
             manifestPlaceholders = [amap_key: AMAP_KEY]
         }
         release {
@@ -56,10 +54,10 @@ android {
             buildConfigField "boolean", "LOG_DEBUG", "true"
             //是否开启ACRA
             buildConfigField "boolean", "ACRA_ENABLED", "true"
-            //buildConfigField "String", "HEWEATHER_URL", HEWEATHER_RELEASE_URL
-            buildConfigField "String", "HEWEATHER_URL", HEWEATHER_FREE_URL
             manifestPlaceholders = [amap_key: AMAP_KEY]
-            signingConfig signingConfigs.release
+            if (filePrivateProperties.exists()) {
+                signingConfig signingConfigs.debug
+            }
             shrinkResources false
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -104,14 +102,13 @@ dependencies {
     compile 'com.trello.rxlifecycle2:rxlifecycle-android:2.1.0'
     compile 'com.trello.rxlifecycle2:rxlifecycle-components:2.1.0'
 
-
     //retrofit
     compile 'com.squareup.retrofit2:retrofit:2.3.0'
     compile 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
     compile 'com.squareup.retrofit2:converter-gson:2.3.0'
 
-    compile ('com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.10.6@aar'){
-        transitive=true
+    compile('com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.10.6@aar') {
+        transitive = true
     }
 
     //loading layout

@@ -5,8 +5,14 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Paint.FontMetrics;
+import android.graphics.PixelFormat;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -41,6 +47,42 @@ public class UiUtil {
         return (int) (spValue * fontScale + 0.5f);
     }
 
+    public static Drawable zoomDrawable(Drawable drawable, int w, int h) {
+        if (drawable == null || w < 0 || h < 0)
+            return null;
+        int width = drawable.getIntrinsicWidth();
+        int height = drawable.getIntrinsicHeight();
+        // drawable转换成bitmap
+        Bitmap oldbmp = drawableToBitmap(drawable);
+        // 创建操作图片用的Matrix对象
+        Matrix matrix = new Matrix();
+        // 计算缩放比例
+        float sx = ((float) w / width);
+        float sy = ((float) h / height);
+        // 设置缩放比例
+        matrix.postScale(sx, sy);
+        // 建立新的bitmap，其内容是对原bitmap的缩放后的图
+        Bitmap newbmp = Bitmap.createBitmap(oldbmp, 0, 0, width, height, matrix, true);
+        return new BitmapDrawable(newbmp);
+    }
+
+    public static Bitmap drawableToBitmap(Drawable drawable) {
+        // 取 drawable 的长宽
+        int w = drawable.getIntrinsicWidth();
+        int h = drawable.getIntrinsicHeight();
+
+        // 取 drawable 的颜色格式
+        Bitmap.Config config = drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888
+                : Bitmap.Config.RGB_565;
+        // 建立对应 bitmap
+        Bitmap bitmap = Bitmap.createBitmap(w, h, config);
+        // 建立对应 bitmap 的画布
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, w, h);
+        // 把 drawable 内容画到画布中
+        drawable.draw(canvas);
+        return bitmap;
+    }
 
     public static int getStatusBarHeight() {
         final Resources res = Resources.getSystem();

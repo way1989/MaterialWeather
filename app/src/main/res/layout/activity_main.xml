@@ -32,8 +32,15 @@
             app:layout_scrollFlags="scroll|enterAlways"
             app:popupTheme="@style/AppTheme" />
     </android.support.design.widget.AppBarLayout>
-
-    <com.lwj.widget.viewpagerindicator.ViewPagerIndicator
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <com.ape.material.weather.widget.SimplePagerIndicator
+        android:id="@+id/indicator_spring"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"/>
+    </FrameLayout>
+<!--    <com.lwj.widget.viewpagerindicator.ViewPagerIndicator
         android:id="@+id/indicator_spring"
         android:layout_width="wrap_content"
         android:layout_height="12dp"
@@ -43,6 +50,6 @@
         app:distanceType="BY_DISTANCE"
         app:indicatorType="SPRING"
         app:radius="2dp"
-        app:selected_color="#FFFFFF" />
+        app:selected_color="#FFFFFF" />-->
 
 </RelativeLayout>

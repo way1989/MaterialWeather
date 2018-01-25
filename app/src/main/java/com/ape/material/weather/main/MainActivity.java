@@ -2,7 +2,6 @@ package com.ape.material.weather.main;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
@@ -34,7 +33,7 @@ import com.ape.material.weather.manage.ManageActivity;
 import com.ape.material.weather.util.RxBus;
 import com.ape.material.weather.util.RxEvent;
 import com.ape.material.weather.util.UiUtil;
-import com.lwj.widget.viewpagerindicator.ViewPagerIndicator;
+import com.ape.material.weather.widget.SimplePagerIndicator;
 import com.trello.rxlifecycle2.android.ActivityEvent;
 
 import java.util.ArrayList;
@@ -58,19 +57,19 @@ public class MainActivity extends BaseActivity<MainPresenter>
     @BindView(R.id.app_bar_layout)
     AppBarLayout mAppBarLayout;
     @BindView(R.id.indicator_spring)
-    ViewPagerIndicator mIndicator;
+    SimplePagerIndicator mIndicator;
     private MainFragmentPagerAdapter mAdapter;
-    private List<City> mCities;
+    private List<String> mCities = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            mMainViewPager.setPadding(0, UiUtil.getStatusBarHeight() + UiUtil.getActionBarHeight(), 0, 0);
-            mAppBarLayout.setPadding(0, UiUtil.getStatusBarHeight(), 0, 0);
-        }
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        mMainViewPager.setPadding(0, UiUtil.getStatusBarHeight() + UiUtil.getActionBarHeight(), 0, 0);
+        mAppBarLayout.setPadding(0, UiUtil.getStatusBarHeight(), 0, 0);
+        ((ViewGroup) mIndicator.getParent()).setPadding(0, UiUtil.getStatusBarHeight(), 0, 0);
+
         final int hourOfDay = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
         BaseDrawer.Type type;
         if (hourOfDay >= 7 && hourOfDay <= 18) {
@@ -91,7 +90,8 @@ public class MainActivity extends BaseActivity<MainPresenter>
                     public void accept(RxEvent.MainEvent mainEvent) throws Exception {
                         if (mainEvent.position >= 0 && mainEvent.position < mAdapter.getCount()) {
                             mMainViewPager.setCurrentItem(mainEvent.position);
-                            setTitle(getTitle(mCities.get(mainEvent.position)));
+                            mIndicator.notifyDataSetChanged();
+                            //setTitle(getTitle(mCities.get(mainEvent.position)));
                             return;
                         }
                         List<City> cities = mainEvent.cities;
@@ -108,6 +108,21 @@ public class MainActivity extends BaseActivity<MainPresenter>
                     }
 
                 });
+        setupNavigationIcon();
+    }
+
+    private void setupNavigationIcon() {
+        Drawable logo = getDrawable(R.drawable.ic_location_city);
+        logo = UiUtil.zoomDrawable(logo, UiUtil.dp2px(getApplicationContext(), 72), UiUtil.dp2px(getApplicationContext(), 72));
+        if (logo != null) {
+            mToolbar.setNavigationIcon(logo);
+            mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(MainActivity.this, ManageActivity.class));
+                }
+            });
+        }
     }
 
     @Override
@@ -120,8 +135,7 @@ public class MainActivity extends BaseActivity<MainPresenter>
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_manage:
-                startActivity(new Intent(this, ManageActivity.class));
+            case R.id.action_share:
                 return true;
           /*  case R.id.action_share:
                 return true;
@@ -165,17 +179,18 @@ public class MainActivity extends BaseActivity<MainPresenter>
     @Override
     public void onCityChange(List<City> cities) {
         if (cities != null && !cities.isEmpty()) {
-            mCities = new ArrayList<>(cities);
             List<BaseFragment> weatherFragmentList = new ArrayList<>();
+            mCities.clear();
             for (City city : cities) {
                 Log.i(TAG, "city = " + city.getCity());
                 weatherFragmentList.add(WeatherFragment.makeInstance(city));
+                mCities.add(TextUtils.isEmpty(city.getCity()) ? "unknown" : city.getCity());
             }
             if (mAdapter == null) {
-                mAdapter = new MainFragmentPagerAdapter(getSupportFragmentManager(), weatherFragmentList);
+                mAdapter = new MainFragmentPagerAdapter(getSupportFragmentManager(), weatherFragmentList, mCities);
             } else {
                 //刷新fragment
-                mAdapter.setFragments(getSupportFragmentManager(), weatherFragmentList);
+                mAdapter.setFragments(getSupportFragmentManager(), weatherFragmentList, mCities);
             }
             mMainViewPager.setAdapter(mAdapter);
             mMainViewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
@@ -183,12 +198,13 @@ public class MainActivity extends BaseActivity<MainPresenter>
                 public void onPageSelected(int position) {
                     super.onPageSelected(position);
                     mDynamicWeatherView.setDrawerType(mAdapter.getItem(position).getDrawerType());
-                    setTitle(getTitle(mCities.get(position)));
+                    //setTitle(getTitle(mCities.get(position)));
                 }
             });
             mIndicator.setViewPager(mMainViewPager);
-            mIndicator.setVisibility(mCities.size() > 1 ? View.VISIBLE : View.GONE);
-            setTitle(getTitle(mCities.get(0)));
+            mIndicator.notifyDataSetChanged();
+            //mIndicator.setVisibility(mCities.size() > 1 ? View.VISIBLE : View.GONE);
+            //setTitle(getTitle(mCities.get(0)));
         }
     }
 
@@ -226,20 +242,30 @@ public class MainActivity extends BaseActivity<MainPresenter>
 
     @Override
     public void onCityChange(City city) {
-        setTitle(getTitle(city));
+        reloadCity();
+//        int index = mCities.indexOf("unknown");
+//
+//        if (index >= 0) {
+//            mCities.remove(index);
+//            mCities.add(index, city.getCity());
+//            mAdapter.updateTitles(mCities);
+//        }
+//        mIndicator.notifyDataSetChanged();
+        //setTitle(getTitle(city));
     }
 
     public static class MainFragmentPagerAdapter extends FragmentPagerAdapter {
 
         private List<BaseFragment> mFragmentList;
+        private List<String> mTitleList;
 
-        MainFragmentPagerAdapter(FragmentManager fragmentManager, List<BaseFragment> fragmentList) {
+        MainFragmentPagerAdapter(FragmentManager fragmentManager, List<BaseFragment> fragmentList, List<String> titleList) {
             super(fragmentManager);
-            setFragments(fragmentManager, fragmentList);
+            setFragments(fragmentManager, fragmentList, titleList);
         }
 
         //刷新fragment
-        void setFragments(FragmentManager fm, List<BaseFragment> fragments) {
+        void setFragments(FragmentManager fm, List<BaseFragment> fragments, List<String> titleList) {
             if (this.mFragmentList != null) {
                 FragmentTransaction ft = fm.beginTransaction();
                 for (Fragment f : this.mFragmentList) {
@@ -249,6 +275,7 @@ public class MainActivity extends BaseActivity<MainPresenter>
                 fm.executePendingTransactions();
             }
             this.mFragmentList = fragments;
+            this.mTitleList = titleList;
             notifyDataSetChanged();
         }
 
@@ -259,10 +286,10 @@ public class MainActivity extends BaseActivity<MainPresenter>
             return fragment;
         }
 
-               /* @Override
+        @Override
         public CharSequence getPageTitle(int position) {
-            return mFragmentList.get(position).getTitle();
-        }*/
+            return mTitleList.get(position);
+        }
 
         @Override
         public int getCount() {
@@ -273,6 +300,10 @@ public class MainActivity extends BaseActivity<MainPresenter>
         public void destroyItem(ViewGroup container, int position, Object object) {
             container.removeView(((Fragment) object).getView());
             super.destroyItem(container, position, object);
+        }
+
+        public void updateTitles(List<String> cities) {
+            mTitleList = cities;
         }
     }
 }

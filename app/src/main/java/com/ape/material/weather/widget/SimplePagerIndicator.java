@@ -142,6 +142,7 @@ public class SimplePagerIndicator extends View implements ViewPager.OnPageChange
         for (int i = 0; i < count; i++) {
             titles.add(adapter.getPageTitle(i).toString());
         }
+        selectedPosition = mViewPager.getCurrentItem();
         invalidate();
     }
 

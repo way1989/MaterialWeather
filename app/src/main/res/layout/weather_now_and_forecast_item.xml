@@ -13,11 +13,13 @@
             android:orientation="vertical"
             android:paddingLeft="16dp">
 
-            <com.ape.material.weather.widget.FontTextView
+            <TextView
                 android:id="@+id/w_now_tmp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="-"
+                android:fontFamily="sans-serif-thin"
+                android:textStyle="normal"
                 android:textColor="@color/mxx_text_primary"
                 android:textSize="72dp" />
 

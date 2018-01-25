@@ -46,6 +46,6 @@
     <string name="city_exist">City is exist</string>
     <string name="weather_common_index_title">Common index</string>
     <string name="relocation_toast">new location city: %1$s</string>
-    <string name="weather_source_title">Powered by HeWeather</string>
+    <string name="weather_source_title">HeWeather</string>
 
 </resources>

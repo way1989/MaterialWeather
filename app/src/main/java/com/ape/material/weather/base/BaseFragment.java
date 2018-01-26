@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 
 import com.ape.material.weather.App;
 import com.ape.material.weather.AppComponent;
+import com.ape.material.weather.bean.HeWeather;
 import com.ape.material.weather.dynamicweather.BaseDrawer;
 import com.trello.rxlifecycle2.components.support.RxFragment;
 
@@ -90,4 +91,6 @@ public abstract class BaseFragment<T extends BasePresenter> extends RxFragment {
     protected abstract
     @LayoutRes
     int getLayoutId();
+
+    public abstract HeWeather getWeather();
 }

@@ -26,13 +26,16 @@ import com.ape.material.weather.R;
 import com.ape.material.weather.base.BaseActivity;
 import com.ape.material.weather.base.BaseFragment;
 import com.ape.material.weather.bean.City;
+import com.ape.material.weather.bean.HeWeather;
 import com.ape.material.weather.dynamicweather.BaseDrawer;
 import com.ape.material.weather.dynamicweather.DynamicWeatherView;
 import com.ape.material.weather.fragment.WeatherFragment;
 import com.ape.material.weather.manage.ManageActivity;
+import com.ape.material.weather.share.ShareActivity;
 import com.ape.material.weather.util.RxBus;
 import com.ape.material.weather.util.RxEvent;
 import com.ape.material.weather.util.UiUtil;
+import com.ape.material.weather.util.WeatherUtil;
 import com.ape.material.weather.widget.SimplePagerIndicator;
 import com.trello.rxlifecycle2.android.ActivityEvent;
 
@@ -59,6 +62,7 @@ public class MainActivity extends BaseActivity<MainPresenter>
     @BindView(R.id.indicator_spring)
     SimplePagerIndicator mIndicator;
     private MainFragmentPagerAdapter mAdapter;
+    private BaseFragment mCurrentFragment;
     private List<String> mCities = new ArrayList<>();
 
     @Override
@@ -112,17 +116,15 @@ public class MainActivity extends BaseActivity<MainPresenter>
     }
 
     private void setupNavigationIcon() {
-        Drawable logo = getDrawable(R.drawable.ic_location_city);
-        logo = UiUtil.zoomDrawable(logo, UiUtil.dp2px(getApplicationContext(), 72), UiUtil.dp2px(getApplicationContext(), 72));
-        if (logo != null) {
-            mToolbar.setNavigationIcon(logo);
+//        Drawable logo = getDrawable(R.drawable.ic_location_city);
+//        logo = UiUtil.zoomDrawable(logo, UiUtil.dp2px(getApplicationContext(), 72), UiUtil.dp2px(getApplicationContext(), 72));
+            mToolbar.setNavigationIcon(R.drawable.ic_location_city);
             mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     startActivity(new Intent(MainActivity.this, ManageActivity.class));
                 }
             });
-        }
     }
 
     @Override
@@ -136,6 +138,10 @@ public class MainActivity extends BaseActivity<MainPresenter>
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_share:
+                final HeWeather weather = mAdapter.getCurrentFragment().getWeather();
+                if (weather != null) {
+                    ShareActivity.start(this, WeatherUtil.getInstance().getShareMessage(weather));
+                }
                 return true;
           /*  case R.id.action_share:
                 return true;
@@ -258,6 +264,7 @@ public class MainActivity extends BaseActivity<MainPresenter>
 
         private List<BaseFragment> mFragmentList;
         private List<String> mTitleList;
+        private BaseFragment mCurrentFragment;
 
         MainFragmentPagerAdapter(FragmentManager fragmentManager, List<BaseFragment> fragmentList, List<String> titleList) {
             super(fragmentManager);
@@ -300,6 +307,16 @@ public class MainActivity extends BaseActivity<MainPresenter>
         public void destroyItem(ViewGroup container, int position, Object object) {
             container.removeView(((Fragment) object).getView());
             super.destroyItem(container, position, object);
+        }
+
+        @Override
+        public void setPrimaryItem(ViewGroup container, int position, Object object) {
+            super.setPrimaryItem(container, position, object);
+            mCurrentFragment = (BaseFragment) object;
+        }
+
+        public BaseFragment getCurrentFragment() {
+            return mCurrentFragment;
         }
 
         public void updateTitles(List<String> cities) {

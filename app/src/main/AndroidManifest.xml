@@ -63,6 +63,7 @@
                 android:authorities="com.ape.material.weather.City"/>
 
         <activity android:name=".search.SearchCityActivity"/>
+        <activity android:name=".share.ShareActivity" />
 
         <!--高德定位 -->
         <service android:name="com.amap.api.location.APSService" />

@@ -111,6 +111,11 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter>
     }
 
     @Override
+    public HeWeather getWeather() {
+        return mWeather;
+    }
+
+    @Override
     public void onWeatherChange(HeWeather weather) {
         mWeather = weather;
         updateWeatherUI();

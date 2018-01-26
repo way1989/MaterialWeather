@@ -15,7 +15,8 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.OvershootInterpolator;
 
-import com.liyu.fakeweather.utils.SizeUtils;
+import com.ape.material.weather.util.UiUtil;
+
 
 /**
  * Created by liyu on 2017/8/19.
@@ -57,7 +58,7 @@ public class OvercastType extends BaseWeatherType {
         measure = new PathMeasure();
         windSpeed = info.getWindSpeed();
         cloudPath = new Path();
-        cloudOffset = SizeUtils.dp2px(context, 32);
+        cloudOffset = UiUtil.dp2px(context, 32);
     }
 
     @Override

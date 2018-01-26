@@ -17,7 +17,8 @@ import android.graphics.Shader;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 
-import com.liyu.fakeweather.R;
+import com.ape.material.weather.R;
+
 
 /**
  * Created by liyu on 2017/8/19.

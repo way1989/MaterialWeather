@@ -10,7 +10,6 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.animation.AnimationUtils;
 
-import com.liyu.fakeweather.model.IFakeWeather;
 
 /**
  * Created by liyu on 2017/8/16.
@@ -24,7 +23,6 @@ public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Cal
     private BaseWeatherType weatherType;
     private int mViewWidth;
     private int mViewHeight;
-    private IFakeWeather originWeather;
     private SurfaceHolder holder;
 
     public DynamicWeatherView(Context context) {
@@ -85,14 +83,6 @@ public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Cal
             this.weatherType.startAnimation(this, fromColor);
         }
 
-    }
-
-    public IFakeWeather getOriginWeather() {
-        return originWeather;
-    }
-
-    public void setOriginWeather(IFakeWeather originWeather) {
-        this.originWeather = originWeather;
     }
 
     public BaseWeatherType getWeather() {

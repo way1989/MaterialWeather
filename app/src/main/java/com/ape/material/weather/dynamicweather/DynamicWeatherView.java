@@ -148,6 +148,7 @@ public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Cal
         // These are protected by the Thread's lock.
         boolean isRunning;
         private boolean suspended = false;
+
         public void setRunning(boolean running) {
             isRunning = running;
         }
@@ -161,6 +162,7 @@ public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Cal
 
             this.suspended = suspend;
         }
+
         @Override
         public void run() {
             while (isRunning) {

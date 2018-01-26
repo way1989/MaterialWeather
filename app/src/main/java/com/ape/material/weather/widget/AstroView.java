@@ -15,7 +15,6 @@ import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.ape.material.weather.App;
 import com.ape.material.weather.bean.HeWeather;
 import com.ape.material.weather.util.UiUtil;
 
@@ -59,7 +58,6 @@ public class AstroView extends View {
         if (isInEditMode()) {
             return;
         }
-        paint.setTypeface(App.getTypeface());
     }
 
     public void setData(HeWeather weather) {

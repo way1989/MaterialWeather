@@ -34,7 +34,7 @@
                 android:textSize="20dp" />
         </LinearLayout>
 
-        <com.ape.material.weather.widget.FontTextView
+        <TextView
             android:id="@+id/w_basic_update_loc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -43,6 +43,8 @@
             android:layout_marginBottom="228dp"
             android:layout_marginRight="8dp"
             android:text=""
+            android:fontFamily="sans-serif-light"
+            android:textStyle="normal"
             android:textColor="@color/w_text_secondary"
             android:textSize="12dp" />
 

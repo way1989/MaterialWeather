@@ -13,7 +13,6 @@ import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.ape.material.weather.App;
 import com.ape.material.weather.bean.HeWeather;
 import com.ape.material.weather.util.FormatUtil;
 
@@ -57,7 +56,6 @@ public class HourlyForecastView extends View {
         paint.setTextSize(12f * density);
         paint.setStyle(Style.FILL);
         paint.setTextAlign(Align.CENTER);
-        paint.setTypeface(App.getTypeface());
     }
 
     @Override

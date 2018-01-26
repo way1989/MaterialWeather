@@ -46,7 +46,7 @@
                     style="@style/todaydetail_info_title"
                     android:text="@string/pm2_5" />
 
-                <com.ape.material.weather.widget.FontTextView
+                <TextView
                     android:id="@+id/w_aqi_pm25"
                     style="@style/todaydetail_info_content"
                     android:text="--" />
@@ -63,7 +63,7 @@
                     style="@style/todaydetail_info_title"
                     android:text="@string/pm10" />
 
-                <com.ape.material.weather.widget.FontTextView
+                <TextView
                     android:id="@+id/w_aqi_pm10"
                     style="@style/todaydetail_info_content"
                     android:text="--" />
@@ -80,7 +80,7 @@
                     style="@style/todaydetail_info_title"
                     android:text="@string/so2" />
 
-                <com.ape.material.weather.widget.FontTextView
+                <TextView
                     android:id="@+id/w_aqi_so2"
                     style="@style/todaydetail_info_content"
                     android:text="--" />
@@ -97,7 +97,7 @@
                     style="@style/todaydetail_info_title"
                     android:text="@string/no2" />
 
-                <com.ape.material.weather.widget.FontTextView
+                <TextView
                     android:id="@+id/w_aqi_no2"
                     style="@style/todaydetail_info_content"
                     android:text="--" />

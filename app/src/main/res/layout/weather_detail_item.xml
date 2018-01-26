@@ -22,13 +22,15 @@
             android:gravity="center_horizontal"
             android:orientation="vertical">
 
-            <com.ape.material.weather.widget.FontTextView
+            <TextView
                 android:id="@+id/w_todaydetail_temp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:maxLines="1"
                 android:text="-°"
+                android:fontFamily="sans-serif-light"
+                android:textStyle="normal"
                 android:textColor="@color/w_text_primary"
                 android:textSize="52dp" />
 
@@ -41,13 +43,15 @@
                 android:src="@drawable/cond_icon_na"
                 android:visibility="gone" />
 
-            <com.ape.material.weather.widget.FontTextView
+            <TextView
                 android:id="@+id/w_todaydetail_bottomline"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:maxLines="1"
                 android:text="-"
+                android:fontFamily="sans-serif-light"
+                android:textStyle="normal"
                 android:textColor="@color/w_text_primary"
                 android:textSize="14dp" />
         </LinearLayout>
@@ -63,7 +67,7 @@
                     style="@style/todaydetail_info_title"
                     android:text="@string/feel_temp" />
 
-                <com.ape.material.weather.widget.FontTextView
+                <TextView
                     android:id="@+id/w_now_fl"
                     style="@style/todaydetail_info_content" />
             </LinearLayout>
@@ -79,7 +83,7 @@
                     style="@style/todaydetail_info_title"
                     android:text="@string/temp" />
 
-                <com.ape.material.weather.widget.FontTextView
+                <TextView
                     android:id="@+id/w_now_hum"
                     style="@style/todaydetail_info_content" />
             </LinearLayout>
@@ -95,7 +99,7 @@
                     style="@style/todaydetail_info_title"
                     android:text="@string/see_distance" />
 
-                <com.ape.material.weather.widget.FontTextView
+                <TextView
                     android:id="@+id/w_now_vis"
                     style="@style/todaydetail_info_content" />
             </LinearLayout>
@@ -111,7 +115,7 @@
                     style="@style/todaydetail_info_title"
                     android:text="@string/rain_size" />
 
-                <com.ape.material.weather.widget.FontTextView
+                <TextView
                     android:id="@+id/w_now_pcpn"
                     style="@style/todaydetail_info_content" />
             </LinearLayout>

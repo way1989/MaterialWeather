@@ -118,13 +118,13 @@ public class MainActivity extends BaseActivity<MainPresenter>
     private void setupNavigationIcon() {
 //        Drawable logo = getDrawable(R.drawable.ic_location_city);
 //        logo = UiUtil.zoomDrawable(logo, UiUtil.dp2px(getApplicationContext(), 72), UiUtil.dp2px(getApplicationContext(), 72));
-            mToolbar.setNavigationIcon(R.drawable.ic_location_city);
-            mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    startActivity(new Intent(MainActivity.this, ManageActivity.class));
-                }
-            });
+        mToolbar.setNavigationIcon(R.drawable.ic_location_city);
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, ManageActivity.class));
+            }
+        });
     }
 
     @Override

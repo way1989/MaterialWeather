@@ -7,8 +7,6 @@ import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.MainThreadDisposable;
 
-import static com.ape.material.weather.util.Preconditions.checkMainThread;
-
 /**
  * Created by android on 18-1-23.
  */

@@ -270,7 +270,7 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter>
 
     private void setTextViewString(int textViewId, String str) {
 
-        TextView tv = (TextView) rootView.findViewById(textViewId);
+        TextView tv = rootView.findViewById(textViewId);
         if (tv != null) {
             tv.setText(str);
         } else {

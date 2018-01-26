@@ -22,6 +22,7 @@ public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Cal
     private BaseDrawer.Type curType = BaseDrawer.Type.DEFAULT;
     private int mWidth, mHeight;
     private SurfaceHolder holder;
+    private Context mContext;
 
     public DynamicWeatherView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -29,6 +30,7 @@ public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Cal
     }
 
     private void init(Context context) {
+        mContext = context.getApplicationContext();
         curDrawerAlpha = 0f;
         mDrawThread = new DrawThread();
         holder = getHolder();
@@ -56,7 +58,7 @@ public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Cal
         // UiUtil.toastDebug(getContext(), "setDrawerType->" + type.name());
         if (type != curType) {
             curType = type;
-            setDrawer(BaseDrawer.makeDrawerByType(getContext(), curType));
+            setDrawer(BaseDrawer.makeDrawerByType(mContext, curType));
         }
 
     }

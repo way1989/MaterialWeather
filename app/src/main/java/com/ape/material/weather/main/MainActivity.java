@@ -17,7 +17,6 @@ import android.text.style.DynamicDrawableSpan;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 
@@ -37,11 +36,13 @@ import com.ape.material.weather.util.RxEvent;
 import com.ape.material.weather.util.UiUtil;
 import com.ape.material.weather.util.WeatherUtil;
 import com.ape.material.weather.widget.SimplePagerIndicator;
+import com.jakewharton.rxbinding2.support.v7.widget.RxToolbar;
 import com.trello.rxlifecycle2.android.ActivityEvent;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -83,7 +84,7 @@ public class MainActivity extends BaseActivity<MainPresenter>
         }
         mDynamicWeatherView.setDrawerType(type);
         setSupportActionBar(mToolbar);
-        setTitle("");
+        setupToolBar();
 
         reloadCity();//加载城市列表
         RxBus.getInstance().toObservable(RxEvent.MainEvent.class)
@@ -112,19 +113,37 @@ public class MainActivity extends BaseActivity<MainPresenter>
                     }
 
                 });
-        setupNavigationIcon();
     }
 
-    private void setupNavigationIcon() {
-//        Drawable logo = getDrawable(R.drawable.ic_location_city);
-//        logo = UiUtil.zoomDrawable(logo, UiUtil.dp2px(getApplicationContext(), 72), UiUtil.dp2px(getApplicationContext(), 72));
+    private void setupToolBar() {
+        setTitle("");
         mToolbar.setNavigationIcon(R.drawable.ic_location_city);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, ManageActivity.class));
-            }
-        });
+        RxToolbar.navigationClicks(mToolbar)
+                .throttleFirst(1, TimeUnit.SECONDS)
+                .subscribe(new Consumer<Object>() {
+                    @Override
+                    public void accept(Object o) throws Exception {
+                        startActivity(new Intent(MainActivity.this, ManageActivity.class));
+                    }
+                });
+        RxToolbar.itemClicks(mToolbar)
+                .throttleFirst(1, TimeUnit.SECONDS)
+                .subscribe(new Consumer<MenuItem>() {
+                    @Override
+                    public void accept(MenuItem menuItem) throws Exception {
+                        onMenuItemClick(menuItem);
+                    }
+                });
+    }
+
+    private void onMenuItemClick(MenuItem menuItem) {
+        switch (menuItem.getItemId()) {
+            case R.id.action_share:
+                final HeWeather weather = mAdapter.getCurrentFragment().getWeather();
+                if (weather != null) {
+                    ShareActivity.start(MainActivity.this, WeatherUtil.getInstance().getShareMessage(weather));
+                }
+        }
     }
 
     @Override
@@ -133,24 +152,6 @@ public class MainActivity extends BaseActivity<MainPresenter>
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_share:
-                final HeWeather weather = mAdapter.getCurrentFragment().getWeather();
-                if (weather != null) {
-                    ShareActivity.start(this, WeatherUtil.getInstance().getShareMessage(weather));
-                }
-                return true;
-          /*  case R.id.action_share:
-                return true;
-            case R.id.action_settings:
-                return true;*/
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
 
     @Override
     protected void onResume() {

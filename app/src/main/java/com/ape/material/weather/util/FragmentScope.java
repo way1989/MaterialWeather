@@ -4,7 +4,7 @@ package com.ape.material.weather.util;
  * Created by android on 16-11-25.
  */
 
-import com.ape.material.weather.AppComponent;
+import com.ape.material.weather.dagger2.AppComponent;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;

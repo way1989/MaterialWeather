@@ -12,42 +12,29 @@
        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
        See the License for the specific language governing permissions and
        limitations under the License.
---><!-- NOTE: should use FrameLayout or RelativeLayout for parent of the "@id/container" view (for Android 2.3 compatibility) -->
+-->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/list_item_height"
-    android:background="@drawable/bg_swipe_item_neutral">
+    android:background="@color/bg_item_normal_state"
+    android:foreground="?attr/selectableItemBackground">
 
-    <FrameLayout
-        android:id="@+id/container"
+    <ImageView
+        android:id="@+id/drag_handle"
+        android:layout_width="32dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="top|start"
+        android:scaleType="center"
+        android:src="@drawable/ic_view_headline_black_24dp" />
+
+
+    <TextView
+        android:id="@android:id/text1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/bg_item_normal_state"
-        android:clickable="true"
-        android:foreground="?attr/selectableItemBackground"
-        tools:ignore="UselessParent">
-
-        <!-- NOTE: the drag handle should set android:clickable=true not to propagate click events to the parent views -->
-        <View
-            android:id="@+id/drag_handle"
-            android:layout_width="32dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="top|left"
-            android:background="#20000000"
-            android:clickable="true" />
-
-        <TextView
-            android:id="@android:id/text1"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="top|left"
-            android:paddingLeft="16dp"
-            android:layout_marginLeft="32dp"
-            android:layout_marginRight="32dp"
-            android:gravity="left|center_vertical"
-            tools:ignore="RtlHardcoded" />
-
-    </FrameLayout>
+        android:layout_gravity="top|start"
+        android:layout_marginEnd="36dp"
+        android:layout_marginStart="36dp"
+        android:gravity="start|center_vertical" />
 
 </FrameLayout>

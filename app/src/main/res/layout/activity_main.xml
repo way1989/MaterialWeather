@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.ape.material.weather.main.MainActivity">
+    tools:context="com.ape.material.weather.activity.MainActivity">
 
     <com.ape.material.weather.dynamicweather.DynamicWeatherView
         android:id="@+id/dynamic_weather_view"

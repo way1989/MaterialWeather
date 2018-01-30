@@ -1,4 +1,4 @@
-package com.ape.material.weather.search;
+package com.ape.material.weather.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -7,6 +7,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.internal.view.SupportMenuItem;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -17,27 +18,31 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
-import com.ape.material.weather.AppComponent;
 import com.ape.material.weather.BuildConfig;
 import com.ape.material.weather.R;
-import com.ape.material.weather.base.BaseActivity;
+import com.ape.material.weather.adapter.SearchAdapter;
 import com.ape.material.weather.bean.City;
 import com.ape.material.weather.util.AppConstant;
-import com.h6ah4i.android.widget.advrecyclerview.decoration.SimpleListDividerDecorator;
+import com.ape.material.weather.util.RxSchedulers;
+import com.ape.material.weather.widget.SimpleListDividerDecorator;
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.jakewharton.rxbinding2.support.v7.widget.RxSearchView;
+import com.trello.rxlifecycle2.android.ActivityEvent;
 import com.weavey.loading.lib.LoadingLayout;
 
 import java.util.List;
 
 import butterknife.BindView;
+import io.reactivex.functions.Consumer;
 
-public class SearchCityActivity extends BaseActivity<SearchPresenter> implements SearchContract.View,
-        SearchView.OnQueryTextListener, View.OnTouchListener, SearchAdapter.OnItemClickListener {
+public class SearchCityActivity extends BaseActivity implements
+        SearchView.OnQueryTextListener, View.OnTouchListener {
     private static final String TAG = "SearchCityActivity";
     @BindView(R.id.recyclerview)
     RecyclerView mRecyclerview;
     @BindView(R.id.loading_layout)
     LoadingLayout mLoadingLayout;
-    private SearchAdapter adapter;
+    private SearchAdapter mSearchAdapter;
     private SearchView mSearchView;
     private InputMethodManager mImm;
     private String queryString;
@@ -45,19 +50,25 @@ public class SearchCityActivity extends BaseActivity<SearchPresenter> implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        final ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
         mImm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         mRecyclerview.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new SearchAdapter(this);
-        mRecyclerview.setAdapter(adapter);
+        mSearchAdapter = new SearchAdapter(R.layout.item_city);
+        mSearchAdapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
+        mSearchAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                final City city = mSearchAdapter.getItem(position);
+                SearchCityActivity.this.onItemClick(city);
+            }
+        });
+        mRecyclerview.setAdapter(mSearchAdapter);
         mRecyclerview.addItemDecoration(new SimpleListDividerDecorator(ContextCompat
                 .getDrawable(getApplicationContext(), R.drawable.list_divider_h), true));
-    }
-
-    @Override
-    protected void initPresenter(AppComponent appComponent) {
-        super.initPresenter(appComponent);
-        DaggerSearchComponent.builder().appComponent(appComponent).searchPresenterModule(new SearchPresenterModule(this)).build().inject(this);
+        //RxSearchView.
     }
 
     @Override
@@ -114,10 +125,25 @@ public class SearchCityActivity extends BaseActivity<SearchPresenter> implements
         }
         queryString = query;
         if (queryString.trim().equals("")) {
-            adapter.clear();
+            mSearchAdapter.setNewData(null);
             mLoadingLayout.setStatus(LoadingLayout.Empty);
         } else {
-            mPresenter.search(queryString);
+            //mPresenter.search(queryString);
+            mViewModel.search(queryString)
+                    .compose(this.<List<City>>bindUntilEvent(ActivityEvent.DESTROY))
+                    .compose(RxSchedulers.<List<City>>io_main())
+                    .subscribe(new Consumer<List<City>>() {
+                        @Override
+                        public void accept(List<City> cities) throws Exception {
+                            onSearchResult(cities);
+                        }
+                    }, new Consumer<Throwable>() {
+                        @Override
+                        public void accept(Throwable throwable) throws Exception {
+                            Log.e(TAG, "accept: search city ", throwable);
+                            onSearchError(throwable);
+                        }
+                    });
             mLoadingLayout.setStatus(LoadingLayout.Loading);
         }
     }
@@ -143,28 +169,25 @@ public class SearchCityActivity extends BaseActivity<SearchPresenter> implements
         }
     }
 
-    @Override
     public void onSearchResult(List<City> cities) {
         Log.d(TAG, "onSearchResult... city size = " + cities.size());
         if (cities.isEmpty()) {
-            adapter.clear();
+            mSearchAdapter.setNewData(null);
             mLoadingLayout.setStatus(LoadingLayout.Empty);
         } else {
-            adapter.updateSearchResults(cities);
+            mSearchAdapter.setNewData(cities);
             mLoadingLayout.setStatus(LoadingLayout.Success);
         }
     }
 
-    @Override
     public void onSearchError(Throwable e) {
         Log.d(TAG, "onSearchError... e = " + e.getMessage());
-        adapter.clear();
+        mSearchAdapter.setNewData(null);
         mLoadingLayout.setStatus(LoadingLayout.Empty);
         if (BuildConfig.LOG_DEBUG)
             Snackbar.make(mRecyclerview, e.getMessage(), Snackbar.LENGTH_LONG).show();
     }
 
-    @Override
     public void onSaveCitySucceed(City city) {
         Log.d(TAG, "onSaveCitySucceed city");
         if (city == null) {
@@ -177,9 +200,22 @@ public class SearchCityActivity extends BaseActivity<SearchPresenter> implements
         finish();
     }
 
-    @Override
-    public void onItemClick(City city) {
+    public void onItemClick(final City city) {
         Log.d(TAG, "onItemClick city = " + city.getCity());
-        mPresenter.addOrUpdateCity(city);
+        //mPresenter.addOrUpdateCity(city);
+        mViewModel.addOrUpdateCity(city)
+                .compose(this.<Boolean>bindUntilEvent(ActivityEvent.DESTROY))
+                .compose(RxSchedulers.<Boolean>io_main())
+                .subscribe(new Consumer<Boolean>() {
+                    @Override
+                    public void accept(Boolean result) throws Exception {
+                        onSaveCitySucceed(result ? city : null);
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        Log.e(TAG, "accept: addOrUpdateCity city = " + city, throwable);
+                    }
+                });
     }
 }

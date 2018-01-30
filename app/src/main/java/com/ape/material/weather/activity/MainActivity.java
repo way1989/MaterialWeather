@@ -1,4 +1,4 @@
-package com.ape.material.weather.main;
+package com.ape.material.weather.activity;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -20,19 +20,17 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 
-import com.ape.material.weather.AppComponent;
 import com.ape.material.weather.R;
-import com.ape.material.weather.base.BaseActivity;
-import com.ape.material.weather.base.BaseFragment;
 import com.ape.material.weather.bean.City;
 import com.ape.material.weather.bean.HeWeather;
 import com.ape.material.weather.dynamicweather.BaseDrawer;
 import com.ape.material.weather.dynamicweather.DynamicWeatherView;
+import com.ape.material.weather.fragment.BaseFragment;
 import com.ape.material.weather.fragment.WeatherFragment;
-import com.ape.material.weather.manage.ManageActivity;
 import com.ape.material.weather.share.ShareActivity;
 import com.ape.material.weather.util.RxBus;
 import com.ape.material.weather.util.RxEvent;
+import com.ape.material.weather.util.RxSchedulers;
 import com.ape.material.weather.util.UiUtil;
 import com.ape.material.weather.util.WeatherUtil;
 import com.ape.material.weather.widget.SimplePagerIndicator;
@@ -49,8 +47,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 
 
-public class MainActivity extends BaseActivity<MainPresenter>
-        implements MainContract.View, WeatherFragment.OnDrawerTypeChangeListener {
+public class MainActivity extends BaseActivity
+        implements WeatherFragment.OnDrawerTypeChangeListener {
     private static final String TAG = "MainActivity";
     @BindView(R.id.dynamic_weather_view)
     DynamicWeatherView mDynamicWeatherView;
@@ -176,14 +174,6 @@ public class MainActivity extends BaseActivity<MainPresenter>
         return R.layout.activity_main;
     }
 
-    @Override
-    protected void initPresenter(AppComponent appComponent) {
-        super.initPresenter(appComponent);
-        DaggerMainComponent.builder().appComponent(appComponent)
-                .mainPresenterModule(new MainPresenterModule(this)).build().inject(this);
-    }
-
-    @Override
     public void onCityChange(List<City> cities) {
         if (cities != null && !cities.isEmpty()) {
             List<BaseFragment> weatherFragmentList = new ArrayList<>();
@@ -237,9 +227,23 @@ public class MainActivity extends BaseActivity<MainPresenter>
         return spannableString;
     }
 
-    @Override
     public void reloadCity() {
-        mPresenter.getCities();
+        //mPresenter.getCities();
+        mViewModel.getCities()
+                .compose(RxSchedulers.<List<City>>io_main())
+                .compose(this.<List<City>>bindUntilEvent(ActivityEvent.DESTROY))
+                .subscribe(new Consumer<List<City>>() {
+                    @Override
+                    public void accept(List<City> cities) throws Exception {
+                        Log.d(TAG, "accept: cities = " + cities.size());
+                        onCityChange(cities);
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        Log.d(TAG, "accept: throwable = " + throwable);
+                    }
+                });
     }
 
     @Override

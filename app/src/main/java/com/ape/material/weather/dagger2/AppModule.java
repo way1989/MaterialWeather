@@ -1,8 +1,10 @@
-package com.ape.material.weather;
+package com.ape.material.weather.dagger2;
 
+import android.app.Application;
 import android.content.Context;
 import android.os.Environment;
 
+import com.ape.material.weather.BuildConfig;
 import com.ape.material.weather.data.IRepositoryManager;
 import com.ape.material.weather.data.RepositoryManager;
 import com.ape.material.weather.util.AppConstant;
@@ -30,16 +32,22 @@ import retrofit2.converter.gson.GsonConverterFactory;
 @Module
 public final class AppModule {
 
-    private final Context mContext;
+    private final Application mApplication;
 
-    AppModule(Context context) {
-        mContext = context;
+    public AppModule(Application application) {
+        mApplication = application;
+    }
+
+    @Provides
+    @Singleton
+    Application provideApplication() {
+        return mApplication;
     }
 
     @Provides
     @Singleton
     Context provideContext() {
-        return mContext;
+        return mApplication.getApplicationContext();
     }
 
     @Provides

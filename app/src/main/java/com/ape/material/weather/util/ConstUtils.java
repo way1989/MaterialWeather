@@ -96,15 +96,18 @@ public class ConstUtils {
      * 正则：IP地址
      */
     public static final String REGEX_IP = "((2[0-4]\\d|25[0-5]|[01]?\\d\\d?)\\.){3}(2[0-4]\\d|25[0-5]|[01]?\\d\\d?)";
+
     private ConstUtils() {
         throw new UnsupportedOperationException("u can't instantiate me...");
     }
+
     public enum MemoryUnit {
         BYTE,
         KB,
         MB,
         GB
     }
+
     public enum TimeUnit {
         MSEC,
         SEC,

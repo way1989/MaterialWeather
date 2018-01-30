@@ -13,22 +13,23 @@ import android.view.View;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.ape.material.weather.AppComponent;
 import com.ape.material.weather.BuildConfig;
 import com.ape.material.weather.R;
-import com.ape.material.weather.base.BaseFragment;
 import com.ape.material.weather.bean.City;
 import com.ape.material.weather.bean.HeWeather;
 import com.ape.material.weather.dynamicweather.BaseDrawer;
 import com.ape.material.weather.util.DeviceUtil;
 import com.ape.material.weather.util.FormatUtil;
+import com.ape.material.weather.util.RxSchedulers;
 import com.ape.material.weather.widget.AqiView;
 import com.ape.material.weather.widget.AstroView;
 import com.ape.material.weather.widget.DailyForecastView;
 import com.ape.material.weather.widget.HourlyForecastView;
 import com.ape.material.weather.widget.PullRefreshLayout;
+import com.trello.rxlifecycle2.android.FragmentEvent;
 
 import butterknife.BindView;
+import io.reactivex.functions.Consumer;
 import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.OnNeverAskAgain;
 import permissions.dispatcher.OnPermissionDenied;
@@ -41,8 +42,7 @@ import permissions.dispatcher.RuntimePermissions;
  */
 
 @RuntimePermissions
-public class WeatherFragment extends BaseFragment<WeatherPresenter>
-        implements WeatherContract.View, PullRefreshLayout.OnRefreshListener {
+public class WeatherFragment extends BaseFragment implements PullRefreshLayout.OnRefreshListener {
     private static final String TAG = "WeatherFragment";
     private static final String ARG_KEY = "city";
     @BindView(R.id.w_dailyForecastView)
@@ -90,12 +90,6 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter>
 //        mPresenter.getWeather(mCity.getAreaId(), true);
     }
 
-    @Override
-    protected void initPresenter(AppComponent appComponent) {
-        super.initPresenter(appComponent);
-        DaggerWeatherComponent.builder().appComponent(appComponent).weatherPresenterModule(new WeatherPresenterModule(this)).build().inject(this);
-    }
-
     private City getArgCity() {
         return (City) getArguments().getSerializable(ARG_KEY);
     }
@@ -115,20 +109,17 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter>
         return mWeather;
     }
 
-    @Override
     public void onWeatherChange(HeWeather weather) {
         mWeather = weather;
         updateWeatherUI();
     }
 
-    @Override
     public void onCityChange(City city) {
         mCity = city;
         if (getUserVisibleHint()) mListener.onCityChange(city);
         getWeather(city, false);
     }
 
-    @Override
     public void showErrorTip(String msg) {
         mWPullRefreshLayout.setRefreshing(false);
         if (BuildConfig.LOG_DEBUG)
@@ -165,7 +156,21 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter>
             return;
         }
 
-        mPresenter.getWeather(city.getAreaId(), force);
+        //mPresenter.getWeather(city.getAreaId(), force);
+        mViewModel.getWeather(city.getAreaId(), force)
+                .compose(this.<HeWeather>bindUntilEvent(FragmentEvent.DESTROY_VIEW))
+                .compose(RxSchedulers.<HeWeather>io_main())
+                .subscribe(new Consumer<HeWeather>() {
+                    @Override
+                    public void accept(HeWeather heWeather) throws Exception {
+                        onWeatherChange(heWeather);
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        showErrorTip(throwable.getMessage());
+                    }
+                });
     }
 
     @Override
@@ -242,7 +247,7 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter>
                         : getString(R.string.weather_ug_m3, no2));
             } else {
                 setTextViewString(R.id.w_now_cond_text, w.getNow().getCond().getTxt());
-                rootView.findViewById(R.id.air_quality_item).setVisibility(View.GONE);
+                mRootView.findViewById(R.id.air_quality_item).setVisibility(View.GONE);
             }
             if (w.getSuggestion() != null) {
                 setTextViewString(R.id.w_suggestion_comf, w.getSuggestion().getComf().getTxt());
@@ -260,7 +265,7 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter>
                 setTextViewString(R.id.w_suggestion_tarv_brf, w.getSuggestion().getTrav().getBrf());
                 setTextViewString(R.id.w_suggestion_uv_brf, w.getSuggestion().getUv().getBrf());
             } else {
-                rootView.findViewById(R.id.index_item).setVisibility(View.GONE);
+                mRootView.findViewById(R.id.index_item).setVisibility(View.GONE);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -270,7 +275,7 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter>
 
     private void setTextViewString(int textViewId, String str) {
 
-        TextView tv = rootView.findViewById(textViewId);
+        TextView tv = mRootView.findViewById(textViewId);
         if (tv != null) {
             tv.setText(str);
         } else {
@@ -284,7 +289,21 @@ public class WeatherFragment extends BaseFragment<WeatherPresenter>
 
     @NeedsPermission({Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
     void getLocation() {
-        mPresenter.getLocation();
+        //mPresenter.getLocation();
+        mViewModel.getLocation()
+                .compose(this.<City>bindUntilEvent(FragmentEvent.DESTROY_VIEW))
+                .compose(RxSchedulers.<City>io_main())
+                .subscribe(new Consumer<City>() {
+                    @Override
+                    public void accept(City city) throws Exception {
+                        onCityChange(city);
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        showErrorTip(throwable.getMessage());
+                    }
+                });
     }
 
     @Override

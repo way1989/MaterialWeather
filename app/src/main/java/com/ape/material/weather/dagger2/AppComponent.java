@@ -1,5 +1,6 @@
-package com.ape.material.weather;
+package com.ape.material.weather.dagger2;
 
+import android.app.Application;
 import android.content.Context;
 
 import com.ape.material.weather.data.IRepositoryManager;
@@ -18,4 +19,6 @@ public interface AppComponent {
     IRepositoryManager repositoryManager();
 
     Context getContext();
+
+    Application getApplication();
 }

@@ -1,11 +1,15 @@
-package com.ape.material.weather.base;
+package com.ape.material.weather.activity;
 
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
+import android.support.annotation.Nullable;
 import android.view.MenuItem;
 
 import com.ape.material.weather.App;
-import com.ape.material.weather.AppComponent;
+import com.ape.material.weather.dagger2.AppComponent;
+import com.ape.material.weather.dagger2.DaggerWeatherComponent;
+import com.ape.material.weather.dagger2.WeatherModule;
+import com.ape.material.weather.dagger2.WeatherViewModel;
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 
 import javax.inject.Inject;
@@ -13,15 +17,15 @@ import javax.inject.Inject;
 import butterknife.ButterKnife;
 
 /**
- * Created by android on 16-11-10.
+ * Created by android on 18-1-30.
  */
 
-public abstract class BaseActivity<T extends BasePresenter> extends RxAppCompatActivity {
+public abstract class BaseActivity extends RxAppCompatActivity {
     @Inject
-    protected T mPresenter;
+    protected WeatherViewModel mViewModel;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutId());
         ButterKnife.bind(this);
@@ -40,18 +44,12 @@ public abstract class BaseActivity<T extends BasePresenter> extends RxAppCompatA
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (mPresenter != null) {
-            mPresenter.unSubscribe();
-        }
-    }
-
     /**
      * should override this method when use MVP
      */
     protected void initPresenter(AppComponent appComponent) {
+        DaggerWeatherComponent.builder().appComponent(appComponent)
+                .weatherModule(new WeatherModule(this)).build().inject(this);
     }
 
     /**

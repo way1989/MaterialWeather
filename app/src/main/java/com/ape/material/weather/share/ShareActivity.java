@@ -10,7 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ape.material.weather.R;
-import com.ape.material.weather.base.BaseActivity;
+import com.ape.material.weather.activity.BaseActivity;
 import com.ape.material.weather.util.RxSchedulers;
 import com.ape.material.weather.util.ShareUtils;
 

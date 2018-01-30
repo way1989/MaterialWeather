@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:isFirstVisible="true"
-    tools:context="com.ape.material.weather.manage.ManageActivity">
+    tools:context="com.ape.material.weather.activity.ManageActivity">
 
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"

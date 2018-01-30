@@ -35,6 +35,7 @@
         android:layout_gravity="top|start"
         android:layout_marginEnd="36dp"
         android:layout_marginStart="36dp"
+        style="?android:attr/textAppearanceMedium"
         android:gravity="start|center_vertical" />
 
 </FrameLayout>

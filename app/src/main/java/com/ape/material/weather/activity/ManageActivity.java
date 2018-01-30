@@ -14,11 +14,9 @@ import android.util.Log;
 import android.view.View;
 
 import com.ape.material.weather.R;
-import com.ape.material.weather.bean.City;
 import com.ape.material.weather.adapter.ManageAdapter;
+import com.ape.material.weather.bean.City;
 import com.ape.material.weather.util.AppConstant;
-import com.ape.material.weather.util.RxBus;
-import com.ape.material.weather.util.RxEvent;
 import com.ape.material.weather.util.RxSchedulers;
 import com.ape.material.weather.widget.SimpleListDividerDecorator;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -36,6 +34,8 @@ import butterknife.BindView;
 import io.reactivex.functions.Consumer;
 
 public class ManageActivity extends BaseActivity {
+    public static final String EXTRA_DATA_CHANGED = "extra_data_changed";
+    public static final String EXTRA_SELECTED_ITEM = "extra_selected_item";
     private static final String TAG = "ManageActivity";
     private static final int REQUEST_CODE_CITY = 0;
     @BindView(R.id.fab)
@@ -47,7 +47,8 @@ public class ManageActivity extends BaseActivity {
 
     private ManageAdapter mAdapter;
 
-    private boolean dataChanged;
+    private boolean mDataChanged;
+    private int mSelectedItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,10 +67,9 @@ public class ManageActivity extends BaseActivity {
                     }
                 });
         mAdapter = new ManageAdapter(R.layout.list_item_draggable, null);
-        mAdapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         mRecyclerView.addItemDecoration(new SimpleListDividerDecorator(ContextCompat
-                .getDrawable(getApplicationContext(), R.drawable.list_divider_h), true));
+                .getDrawable(getApplicationContext(), R.drawable.list_divider_h), false));
         mRecyclerView.setAdapter(mAdapter);
 
         ItemDragAndSwipeCallback itemDragAndSwipeCallback = new ItemDragAndSwipeCallback(mAdapter) {
@@ -113,23 +113,8 @@ public class ManageActivity extends BaseActivity {
             @Override
             public void onItemDragEnd(RecyclerView.ViewHolder viewHolder, int pos) {
                 if (dragStartPosition != pos) {
-                    dataChanged = true;
-                    mViewModel.swapCity(mAdapter.getData())
-                            .compose(ManageActivity.this.<Boolean>bindUntilEvent(ActivityEvent.DESTROY))
-                            .compose(RxSchedulers.<Boolean>io_main())
-                            .subscribe(new Consumer<Boolean>() {
-                                @Override
-                                public void accept(Boolean aBoolean) throws Exception {
-                                    RxEvent.MainEvent event = new RxEvent.MainEvent(mAdapter.getData(), Integer.MIN_VALUE);
-                                    RxBus.getInstance().post(event);
-                                }
-                            }, new Consumer<Throwable>() {
-                                @Override
-                                public void accept(Throwable throwable) throws Exception {
-
-                                }
-                            });
-
+                    mDataChanged = true;
+                    onItemSwap();
                 }
             }
         });
@@ -150,10 +135,8 @@ public class ManageActivity extends BaseActivity {
             @Override
             public void onItemSwiped(RecyclerView.ViewHolder viewHolder, int pos) {
                 City city = mAdapter.getItem(pos);
+                mDataChanged = true;
                 onItemRemoved(city);
-                //DataSupport.deleteAll(WeatherCity.class, "cityName = ?", adapter.getItem(pos).getCityName());
-
-                dataChanged = true;
             }
 
             @Override
@@ -165,13 +148,61 @@ public class ManageActivity extends BaseActivity {
         mAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                Log.d(TAG, "onItemClick: city = " + mAdapter.getItem(position).getCity());
-                //selectedItem = position;
-                RxBus.getInstance().post(new RxEvent.MainEvent(null, position));
-                finish();
+                Log.d(TAG, "onItemClick: city = " + mAdapter.getItem(position));
+                mSelectedItem = position;
+                onBackPressed();
             }
         });
+        getCities();
+    }
 
+    @Override
+    public void onBackPressed() {
+        Intent i = new Intent();
+        i.putExtra(EXTRA_SELECTED_ITEM, mSelectedItem);
+        i.putExtra(EXTRA_DATA_CHANGED, mDataChanged);
+        setResult(RESULT_OK, i);
+        mSelectedItem = -1;
+        mDataChanged = false;
+        super.onBackPressed();
+    }
+
+    private void onItemSwap() {
+        final List<City> data = mAdapter.getData();
+        mViewModel.swapCity(data)
+                .compose(ManageActivity.this.<Boolean>bindUntilEvent(ActivityEvent.DESTROY))
+                .compose(RxSchedulers.<Boolean>io_main())
+                .subscribe(new Consumer<Boolean>() {
+                    @Override
+                    public void accept(Boolean result) throws Exception {
+                        Log.d(TAG, "accept: onItemSwap result = " + result);
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        Log.e(TAG, "accept: onItemSwap...", throwable);
+                    }
+                });
+    }
+
+    public void onItemRemoved(final City city) {
+        mViewModel.deleteCity(city)
+                .compose(this.<Boolean>bindUntilEvent(ActivityEvent.DESTROY))
+                .compose(RxSchedulers.<Boolean>io_main())
+                .subscribe(new Consumer<Boolean>() {
+                    @Override
+                    public void accept(Boolean result) throws Exception {
+                        Snackbar.make(mRecyclerView, city.getCity() + " 删除成功!",
+                                Snackbar.LENGTH_LONG).show();
+                        Log.d(TAG, "accept: onItemRemoved city = " + city.getCity()
+                                + " result = " + result);
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        Log.e(TAG, "accept: onItemRemoved...", throwable);
+                    }
+                });
     }
 
     @Override
@@ -180,42 +211,10 @@ public class ManageActivity extends BaseActivity {
         if (requestCode == REQUEST_CODE_CITY && resultCode == RESULT_OK) {
             City city = (City) data.getSerializableExtra(AppConstant.ARG_CITY_KEY);
             if (city != null) {
+                mDataChanged = true;
                 mAdapter.addData(city);
-                RxEvent.MainEvent event = new RxEvent.MainEvent(mAdapter.getData(), Integer.MIN_VALUE);
-                RxBus.getInstance().post(event);
             }
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        getCities();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    public void onItemRemoved(final City city) {
-        if (city == null) return;
-        mViewModel.deleteCity(city)
-                .compose(this.<Boolean>bindUntilEvent(ActivityEvent.DESTROY))
-                .compose(RxSchedulers.<Boolean>io_main())
-                .subscribe(new Consumer<Boolean>() {
-                    @Override
-                    public void accept(Boolean aBoolean) throws Exception {
-                        Snackbar.make(mRecyclerView, city.getCity() + " 删除成功!",
-                                Snackbar.LENGTH_LONG).show();
-                        onCityModify();
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-
-                    }
-                });
     }
 
     @Override
@@ -232,16 +231,11 @@ public class ManageActivity extends BaseActivity {
         mAdapter.setNewData(cities);
     }
 
-    public void onCityModify() {
-        RxEvent.MainEvent event = new RxEvent.MainEvent(mAdapter.getData(), Integer.MIN_VALUE);
-        RxBus.getInstance().post(event);
-    }
-
     public void showLoading() {
         mLoadingLayout.setStatus(LoadingLayout.Loading);
     }
 
-    void getCities() {
+    private void getCities() {
         showLoading();
         mViewModel.getCities()
                 .compose(this.<List<City>>bindUntilEvent(ActivityEvent.DESTROY))

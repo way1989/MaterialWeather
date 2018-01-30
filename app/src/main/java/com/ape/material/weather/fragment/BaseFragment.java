@@ -9,12 +9,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.ape.material.weather.App;
-import com.ape.material.weather.dagger2.AppComponent;
 import com.ape.material.weather.bean.HeWeather;
-import com.ape.material.weather.dynamicweather.BaseDrawer;
+import com.ape.material.weather.dagger2.AppComponent;
 import com.ape.material.weather.dagger2.DaggerWeatherComponent;
 import com.ape.material.weather.dagger2.WeatherModule;
 import com.ape.material.weather.dagger2.WeatherViewModel;
+import com.ape.material.weather.dynamicweather.BaseDrawer;
 import com.trello.rxlifecycle2.components.support.RxFragment;
 
 import javax.inject.Inject;

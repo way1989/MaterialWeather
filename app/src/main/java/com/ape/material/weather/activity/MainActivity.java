@@ -28,8 +28,6 @@ import com.ape.material.weather.dynamicweather.DynamicWeatherView;
 import com.ape.material.weather.fragment.BaseFragment;
 import com.ape.material.weather.fragment.WeatherFragment;
 import com.ape.material.weather.share.ShareActivity;
-import com.ape.material.weather.util.RxBus;
-import com.ape.material.weather.util.RxEvent;
 import com.ape.material.weather.util.RxSchedulers;
 import com.ape.material.weather.util.UiUtil;
 import com.ape.material.weather.util.WeatherUtil;
@@ -43,13 +41,13 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 
 
 public class MainActivity extends BaseActivity
         implements WeatherFragment.OnDrawerTypeChangeListener {
     private static final String TAG = "MainActivity";
+    private static final int REQUEST_CODE_CITY = 0;
     @BindView(R.id.dynamic_weather_view)
     DynamicWeatherView mDynamicWeatherView;
     @BindView(R.id.main_view_pager)
@@ -63,6 +61,7 @@ public class MainActivity extends BaseActivity
     private MainFragmentPagerAdapter mAdapter;
     private BaseFragment mCurrentFragment;
     private List<String> mCities = new ArrayList<>();
+    private int mSelectItem = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,32 +84,6 @@ public class MainActivity extends BaseActivity
         setupToolBar();
 
         reloadCity();//加载城市列表
-        RxBus.getInstance().toObservable(RxEvent.MainEvent.class)
-                .observeOn(AndroidSchedulers.mainThread())
-                .compose(this.<RxEvent.MainEvent>bindUntilEvent(ActivityEvent.DESTROY))
-                .subscribe(new Consumer<RxEvent.MainEvent>() {
-                    @Override
-                    public void accept(RxEvent.MainEvent mainEvent) throws Exception {
-                        if (mainEvent.position >= 0 && mainEvent.position < mAdapter.getCount()) {
-                            mMainViewPager.setCurrentItem(mainEvent.position);
-                            mIndicator.notifyDataSetChanged();
-                            //setTitle(getTitle(mCities.get(mainEvent.position)));
-                            return;
-                        }
-                        List<City> cities = mainEvent.cities;
-                        if (cities != null) {
-                            onCityChange(cities);
-                        } else {
-                            reloadCity();
-                        }
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-                        throwable.printStackTrace();
-                    }
-
-                });
     }
 
     private void setupToolBar() {
@@ -121,7 +94,7 @@ public class MainActivity extends BaseActivity
                 .subscribe(new Consumer<Object>() {
                     @Override
                     public void accept(Object o) throws Exception {
-                        startActivity(new Intent(MainActivity.this, ManageActivity.class));
+                        startActivityForResult(new Intent(MainActivity.this, ManageActivity.class), REQUEST_CODE_CITY);
                     }
                 });
         RxToolbar.itemClicks(mToolbar)
@@ -149,6 +122,21 @@ public class MainActivity extends BaseActivity
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_CITY && resultCode == RESULT_OK) {
+            final boolean changed = data.getBooleanExtra(ManageActivity.EXTRA_DATA_CHANGED, false);
+            mSelectItem = data.getIntExtra(ManageActivity.EXTRA_SELECTED_ITEM, -1);
+            if (changed) {
+                reloadCity();
+            } else if (mSelectItem >= 0 && mSelectItem < mAdapter.getCount()) {
+                mMainViewPager.setCurrentItem(mSelectItem);
+                mSelectItem = -1;
+            }
+        }
     }
 
     @Override
@@ -195,13 +183,14 @@ public class MainActivity extends BaseActivity
                 public void onPageSelected(int position) {
                     super.onPageSelected(position);
                     mDynamicWeatherView.setDrawerType(mAdapter.getItem(position).getDrawerType());
-                    //setTitle(getTitle(mCities.get(position)));
                 }
             });
             mIndicator.setViewPager(mMainViewPager);
             mIndicator.notifyDataSetChanged();
-            //mIndicator.setVisibility(mCities.size() > 1 ? View.VISIBLE : View.GONE);
-            //setTitle(getTitle(mCities.get(0)));
+            if (mSelectItem >= 0 && mSelectItem < mAdapter.getCount()) {
+                mMainViewPager.setCurrentItem(mSelectItem);
+                mSelectItem = -1;
+            }
         }
     }
 
@@ -228,7 +217,6 @@ public class MainActivity extends BaseActivity
     }
 
     public void reloadCity() {
-        //mPresenter.getCities();
         mViewModel.getCities()
                 .compose(RxSchedulers.<List<City>>io_main())
                 .compose(this.<List<City>>bindUntilEvent(ActivityEvent.DESTROY))
@@ -254,15 +242,6 @@ public class MainActivity extends BaseActivity
     @Override
     public void onCityChange(City city) {
         reloadCity();
-//        int index = mCities.indexOf("unknown");
-//
-//        if (index >= 0) {
-//            mCities.remove(index);
-//            mCities.add(index, city.getCity());
-//            mAdapter.updateTitles(mCities);
-//        }
-//        mIndicator.notifyDataSetChanged();
-        //setTitle(getTitle(city));
     }
 
     public static class MainFragmentPagerAdapter extends FragmentPagerAdapter {
@@ -324,8 +303,5 @@ public class MainActivity extends BaseActivity
             return mCurrentFragment;
         }
 
-        public void updateTitles(List<String> cities) {
-            mTitleList = cities;
-        }
     }
 }

@@ -39,7 +39,7 @@ import io.reactivex.functions.Consumer;
 public class SearchCityActivity extends BaseActivity implements View.OnTouchListener {
     private static final String TAG = "SearchCityActivity";
     @BindView(R.id.recyclerview)
-    RecyclerView mRecyclerview;
+    RecyclerView mRecyclerView;
     @BindView(R.id.loading_layout)
     LoadingLayout mLoadingLayout;
     private SearchAdapter mSearchAdapter;
@@ -54,7 +54,7 @@ public class SearchCityActivity extends BaseActivity implements View.OnTouchList
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
         mInputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        mRecyclerview.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mSearchAdapter = new SearchAdapter(R.layout.item_city);
         mSearchAdapter.openLoadAnimation(BaseQuickAdapter.SLIDEIN_BOTTOM);
         mSearchAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
@@ -64,9 +64,9 @@ public class SearchCityActivity extends BaseActivity implements View.OnTouchList
                 SearchCityActivity.this.onItemClick(city);
             }
         });
-        mRecyclerview.setAdapter(mSearchAdapter);
-        mRecyclerview.addItemDecoration(new SimpleListDividerDecorator(ContextCompat
-                .getDrawable(getApplicationContext(), R.drawable.list_divider_h), true));
+        mRecyclerView.setAdapter(mSearchAdapter);
+        mRecyclerView.addItemDecoration(new SimpleListDividerDecorator(ContextCompat
+                .getDrawable(getApplicationContext(), R.drawable.list_divider_h), false));
     }
 
     @Override
@@ -165,13 +165,13 @@ public class SearchCityActivity extends BaseActivity implements View.OnTouchList
         mSearchAdapter.setNewData(null);
         mLoadingLayout.setStatus(LoadingLayout.Empty);
         if (BuildConfig.LOG_DEBUG)
-            Snackbar.make(mRecyclerview, e.getMessage(), Snackbar.LENGTH_LONG).show();
+            Snackbar.make(mRecyclerView, e.getMessage(), Snackbar.LENGTH_LONG).show();
     }
 
     public void onSaveCitySucceed(City city) {
-        Log.d(TAG, "onSaveCitySucceed city");
+        Log.d(TAG, "onSaveCitySucceed city = " + city);
         if (city == null) {
-            Snackbar.make(mRecyclerview, R.string.city_exist, Snackbar.LENGTH_LONG).show();
+            Snackbar.make(mRecyclerView, R.string.city_exist, Snackbar.LENGTH_LONG).show();
             return;
         }
         Intent intent = new Intent();
@@ -182,6 +182,7 @@ public class SearchCityActivity extends BaseActivity implements View.OnTouchList
 
     public void onItemClick(final City city) {
         Log.d(TAG, "onItemClick city = " + city.getCity());
+        hideInputManager();
         mViewModel.addOrUpdateCity(city)
                 .compose(this.<Boolean>bindUntilEvent(ActivityEvent.DESTROY))
                 .compose(RxSchedulers.<Boolean>io_main())

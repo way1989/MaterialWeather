@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -15,17 +16,22 @@ import com.ape.material.weather.BuildConfig;
 import com.ape.material.weather.R;
 import com.ape.material.weather.bean.City;
 import com.ape.material.weather.bean.HeWeather;
-import com.ape.material.weather.dynamicweather.BaseDrawer;
 import com.ape.material.weather.util.DeviceUtil;
 import com.ape.material.weather.util.FormatUtil;
+import com.ape.material.weather.util.RxImage;
 import com.ape.material.weather.util.RxSchedulers;
+import com.ape.material.weather.util.ShareUtils;
 import com.ape.material.weather.widget.AqiView;
 import com.ape.material.weather.widget.AstroView;
 import com.ape.material.weather.widget.DailyForecastView;
 import com.ape.material.weather.widget.HourlyForecastView;
-import com.ape.material.weather.widget.PullRefreshLayout;
+import com.ape.material.weather.widget.dynamic.BaseWeatherType;
+import com.ape.material.weather.widget.dynamic.ShortWeatherInfo;
+import com.ape.material.weather.widget.dynamic.TypeUtil;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.trello.rxlifecycle2.android.FragmentEvent;
+
+import java.io.File;
 
 import butterknife.BindView;
 import io.reactivex.disposables.Disposable;
@@ -35,7 +41,7 @@ import io.reactivex.functions.Consumer;
  * Created by android on 16-11-10.
  */
 
-public class WeatherFragment extends BaseFragment implements PullRefreshLayout.OnRefreshListener {
+public class WeatherFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
     private static final String TAG = "WeatherFragment";
     private static final String ARG_KEY = "city";
     @BindView(R.id.w_dailyForecastView)
@@ -49,10 +55,10 @@ public class WeatherFragment extends BaseFragment implements PullRefreshLayout.O
     @BindView(R.id.w_WeatherScrollView)
     ScrollView mWWeatherScrollView;
     @BindView(R.id.w_PullRefreshLayout)
-    PullRefreshLayout mWPullRefreshLayout;
+    SwipeRefreshLayout mWPullRefreshLayout;
 
     private OnDrawerTypeChangeListener mListener;
-    private BaseDrawer.Type mWeatherType;
+    private BaseWeatherType mWeatherType;
     private City mCity;
     private HeWeather mWeather;
 
@@ -88,13 +94,37 @@ public class WeatherFragment extends BaseFragment implements PullRefreshLayout.O
     }
 
     @Override
-    public BaseDrawer.Type getDrawerType() {
+    public BaseWeatherType getDrawerType() {
+//        if (mWeatherType == null)
+//            return new DefaultType(getContext());
         return mWeatherType;
     }
 
     @Override
     protected int getLayoutId() {
         return R.layout.fragment_weather;
+    }
+
+    @Override
+    public void onShareItemClick() {
+        if (getUserVisibleHint() && mWWeatherScrollView != null) {
+            mWWeatherScrollView.scrollTo(0, 0);
+            RxImage.saveText2ImageObservable(mWWeatherScrollView)
+                    .compose(RxSchedulers.<File>io_main())
+                    .compose(RxSchedulers.<File>io_main())
+                    .subscribe(new Consumer<File>() {
+                        @Override
+                        public void accept(File file) throws Exception {
+                            Log.d(TAG, "onShareItemClick onNext: file = " + file);
+                            ShareUtils.shareImage(getActivity(), file, "分享到");
+                        }
+                    }, new Consumer<Throwable>() {
+                        @Override
+                        public void accept(Throwable throwable) throws Exception {
+                            Log.e(TAG, "onShareItemClick onError: ", throwable);
+                        }
+                    });
+        }
     }
 
     @Override
@@ -141,10 +171,10 @@ public class WeatherFragment extends BaseFragment implements PullRefreshLayout.O
                 getWeather(mCity, false);
                 return;
             }
-            if (DeviceUtil.isGPSProviderEnabled(getContext())) {
-                showErrorTip(getString(R.string.gps_disabled_toast));
-                return;
-            }
+//            if (DeviceUtil.isGPSProviderEnabled(getContext())) {
+//                showErrorTip(getString(R.string.gps_disabled_toast));
+//                return;
+//            }
             new RxPermissions(getActivity()).request(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
                     .subscribe(new Consumer<Boolean>() {
                         @Override
@@ -219,7 +249,14 @@ public class WeatherFragment extends BaseFragment implements PullRefreshLayout.O
             return;
         }
         try {
-            mWeatherType = FormatUtil.convertWeatherType(weather);
+            ShortWeatherInfo info = new ShortWeatherInfo();
+            info.setCode(weather.getWeather().getNow().getCond().getCode());
+            info.setWindSpeed(weather.getWeather().getNow().getWind().getSpd());
+            info.setSunrise(weather.getWeather().getDaily_forecast().get(0).getAstro().getSr());
+            info.setSunset(weather.getWeather().getDaily_forecast().get(0).getAstro().getSs());
+            info.setMoonrise(weather.getWeather().getDaily_forecast().get(0).getAstro().getMr());
+            info.setMoonset(weather.getWeather().getDaily_forecast().get(0).getAstro().getMs());
+            mWeatherType = TypeUtil.getType(getActivity(), info);
             if (getUserVisibleHint()) mListener.onDrawerTypeChange(mWeatherType);
 
             HeWeather.HeWeather5Bean w = weather.getWeather();
@@ -342,7 +379,7 @@ public class WeatherFragment extends BaseFragment implements PullRefreshLayout.O
     }
 
     public interface OnDrawerTypeChangeListener {
-        void onDrawerTypeChange(BaseDrawer.Type type);
+        void onDrawerTypeChange(BaseWeatherType type);
 
         void onCityChange(City city);
     }

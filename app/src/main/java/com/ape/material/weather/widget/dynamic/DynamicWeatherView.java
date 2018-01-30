@@ -61,7 +61,8 @@ public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Cal
                     if (weatherType != null) {
                         weatherType.onSizeChanged(mContext, mViewWidth, mViewHeight);
                     }
-                    weatherType.startAnimation(DynamicWeatherView.this, fromColor);
+                    if (weatherType != null)
+                        weatherType.startAnimation(DynamicWeatherView.this, fromColor);
                 }
 
                 @Override
@@ -77,9 +78,7 @@ public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Cal
         } else {
             fromColor = type.getColor();
             this.weatherType = type;
-            if (this.weatherType != null) {
-                this.weatherType.onSizeChanged(mContext, mViewWidth, mViewHeight);
-            }
+            this.weatherType.onSizeChanged(mContext, mViewWidth, mViewHeight);
             this.weatherType.startAnimation(this, fromColor);
         }
 

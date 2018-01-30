@@ -58,7 +58,7 @@ public class DailyForecastView extends View {
     }
 
     private void init() {
-        paint.setColor(Color.WHITE);
+        paint.setColor(Color.BLACK);
         paint.setStrokeWidth(1f * density);
         paint.setTextSize(12f * density);
         paint.setStyle(Style.FILL);

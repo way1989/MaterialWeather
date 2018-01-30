@@ -1,6 +1,5 @@
-package com.ape.material.weather.share;
+package com.ape.material.weather.util;
 
-import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -17,14 +16,13 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.functions.Function;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by android on 18-1-26.
  */
 
 public class RxImage {
-    public static Observable<File> saveText2ImageObservable(final Activity context, final ScrollView view) {
+    public static Observable<File> saveText2ImageObservable(final ScrollView view) {
         return Observable.create(new ObservableOnSubscribe<Bitmap>() {
 
             @Override
@@ -57,7 +55,7 @@ public class RxImage {
                 return file;
             }
 
-        }).subscribeOn(Schedulers.io());
+        });
     }
 
 

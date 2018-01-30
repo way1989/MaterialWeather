@@ -7,7 +7,7 @@
     <color name="window_background">#ff131719</color>
 
     <color name="mxx_white_background">#ffefeff4</color>
-    <color name="w_divider">#30ffffff</color>
+    <color name="w_divider">#ff6d6d72</color>
     <color name="w_divider_secondary">#10ffffff</color>
 
     <color name="mxx_cell_divider">#ffd5d6d9</color>
@@ -16,8 +16,9 @@
     <color name="mxx_text_primary">#ffffffff</color>
     <color name="mxx_text_secondary">#ffeeeeee</color>
     <color name="w_text_title">#ccffffff</color>
-    <color name="w_text_primary">#ffffffff</color>
-    <color name="w_text_secondary">#88ffffff</color>
+    <color name="w_text_primary">#ff000000</color>
+    <color name="w_text_secondary">#88000000</color>
+    <color name="w_text_secondary_white">#80ffffff</color>
     <color name="mxx_cell_text_description">#ff6d6d72</color>
     <color name="mxx_cell_text_title">#ffffffff</color>
     <color name="mxx_theme">#ff007aff</color>

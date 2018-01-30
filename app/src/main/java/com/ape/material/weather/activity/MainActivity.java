@@ -22,21 +22,17 @@ import android.view.WindowManager;
 
 import com.ape.material.weather.R;
 import com.ape.material.weather.bean.City;
-import com.ape.material.weather.bean.HeWeather;
-import com.ape.material.weather.dynamicweather.BaseDrawer;
-import com.ape.material.weather.dynamicweather.DynamicWeatherView;
 import com.ape.material.weather.fragment.BaseFragment;
 import com.ape.material.weather.fragment.WeatherFragment;
-import com.ape.material.weather.share.ShareActivity;
 import com.ape.material.weather.util.RxSchedulers;
 import com.ape.material.weather.util.UiUtil;
-import com.ape.material.weather.util.WeatherUtil;
 import com.ape.material.weather.widget.SimplePagerIndicator;
+import com.ape.material.weather.widget.dynamic.BaseWeatherType;
+import com.ape.material.weather.widget.dynamic.DynamicWeatherView;
 import com.jakewharton.rxbinding2.support.v7.widget.RxToolbar;
 import com.trello.rxlifecycle2.android.ActivityEvent;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -59,7 +55,6 @@ public class MainActivity extends BaseActivity
     @BindView(R.id.indicator_spring)
     SimplePagerIndicator mIndicator;
     private MainFragmentPagerAdapter mAdapter;
-    private BaseFragment mCurrentFragment;
     private List<String> mCities = new ArrayList<>();
     private int mSelectItem = 0;
 
@@ -72,14 +67,6 @@ public class MainActivity extends BaseActivity
         mAppBarLayout.setPadding(0, UiUtil.getStatusBarHeight(), 0, 0);
         ((ViewGroup) mIndicator.getParent()).setPadding(0, UiUtil.getStatusBarHeight(), 0, 0);
 
-        final int hourOfDay = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
-        BaseDrawer.Type type;
-        if (hourOfDay >= 7 && hourOfDay <= 18) {
-            type = BaseDrawer.Type.UNKNOWN_D;
-        } else {
-            type = BaseDrawer.Type.UNKNOWN_N;
-        }
-        mDynamicWeatherView.setDrawerType(type);
         setSupportActionBar(mToolbar);
         setupToolBar();
 
@@ -110,9 +97,10 @@ public class MainActivity extends BaseActivity
     private void onMenuItemClick(MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case R.id.action_share:
-                final HeWeather weather = mAdapter.getCurrentFragment().getWeather();
-                if (weather != null) {
-                    ShareActivity.start(MainActivity.this, WeatherUtil.getInstance().getShareMessage(weather));
+                BaseFragment currentFragment = mAdapter.getCurrentFragment();
+                Log.d(TAG, "onMenuItemClick: id = share... currentFragment = " + currentFragment);
+                if (currentFragment != null) {
+                    currentFragment.onShareItemClick();
                 }
         }
     }
@@ -182,7 +170,9 @@ public class MainActivity extends BaseActivity
                 @Override
                 public void onPageSelected(int position) {
                     super.onPageSelected(position);
-                    mDynamicWeatherView.setDrawerType(mAdapter.getItem(position).getDrawerType());
+                    BaseWeatherType type = mAdapter.getItem(position).getDrawerType();
+                    if (type != null)
+                        mDynamicWeatherView.setType(type);
                 }
             });
             mIndicator.setViewPager(mMainViewPager);
@@ -235,8 +225,8 @@ public class MainActivity extends BaseActivity
     }
 
     @Override
-    public void onDrawerTypeChange(BaseDrawer.Type type) {
-        mDynamicWeatherView.setDrawerType(type);
+    public void onDrawerTypeChange(BaseWeatherType type) {
+        mDynamicWeatherView.setType(type);
     }
 
     @Override

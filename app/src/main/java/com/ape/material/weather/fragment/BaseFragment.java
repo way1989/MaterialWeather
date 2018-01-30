@@ -14,7 +14,7 @@ import com.ape.material.weather.dagger2.AppComponent;
 import com.ape.material.weather.dagger2.DaggerWeatherComponent;
 import com.ape.material.weather.dagger2.WeatherModule;
 import com.ape.material.weather.dagger2.WeatherViewModel;
-import com.ape.material.weather.dynamicweather.BaseDrawer;
+import com.ape.material.weather.widget.dynamic.BaseWeatherType;
 import com.trello.rxlifecycle2.components.support.RxFragment;
 
 import javax.inject.Inject;
@@ -79,7 +79,7 @@ public abstract class BaseFragment extends RxFragment {
 
     //public abstract String getTitle();
 
-    public abstract BaseDrawer.Type getDrawerType();
+    public abstract BaseWeatherType getDrawerType();
 
     /**
      * should override this method when use MVP
@@ -99,4 +99,6 @@ public abstract class BaseFragment extends RxFragment {
     int getLayoutId();
 
     public abstract HeWeather getWeather();
+
+    public abstract void onShareItemClick();
 }

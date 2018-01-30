@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.ape.material.weather.widget.PullRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/w_PullRefreshLayout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                              android:id="@+id/w_PullRefreshLayout"
+                                              android:layout_width="match_parent"
+                                              android:layout_height="match_parent">
 
     <ScrollView
         android:id="@+id/w_WeatherScrollView"
@@ -18,39 +18,40 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
             <!-- 当前天气与预报-->
-            <include layout="@layout/weather_now_and_forecast_item" />
+            <include layout="@layout/weather_now_and_forecast_item"/>
 
             <!--24h预报 -->
             <include
                 android:id="@+id/hours_forecast_item"
-                layout="@layout/weather_hours_forecast_item" />
+                layout="@layout/weather_hours_forecast_item"/>
             <!-- 详细信息 -->
             <include
                 android:id="@+id/detail_item"
-                layout="@layout/weather_detail_item" />
+                layout="@layout/weather_detail_item"/>
 
             <!-- 空气质量 -->
             <include
                 android:id="@+id/air_quality_item"
-                layout="@layout/weather_air_quality_item" />
+                layout="@layout/weather_air_quality_item"/>
             <!-- 太阳和风速 -->
             <include
                 android:id="@+id/astro_item"
-                layout="@layout/weather_astro_item" />
+                layout="@layout/weather_astro_item"/>
 
             <!--生活指数 -->
             <include
                 android:id="@+id/index_item"
-                layout="@layout/weather_index_item" />
+                layout="@layout/weather_index_item"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
+                android:background="@android:color/white"
                 android:gravity="center"
                 android:text="@string/weather_source_title"
                 android:textColor="@color/w_text_secondary"
-                android:textSize="12dp" />
+                android:textSize="12dp"/>
         </com.ape.material.weather.widget.FirstMatchInScrollViewLinearLayout>
     </ScrollView>
 
-</com.ape.material.weather.widget.PullRefreshLayout>
+</android.support.v4.widget.SwipeRefreshLayout>

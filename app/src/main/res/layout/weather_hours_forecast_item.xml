@@ -3,16 +3,17 @@
     <!--24h预报 -->
     <TextView
         style="@style/w_section_title"
-        android:text="@string/weather_hours_forecast_title" />
+        android:text="@string/weather_hours_forecast_title"/>
 
     <com.ape.material.weather.widget.HourlyForecastView
         android:id="@+id/w_hourlyForecastView"
         android:layout_width="match_parent"
-        android:layout_height="144dp" />
+        android:layout_height="144dp"
+        android:background="@android:color/white"/>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/w_divider_size"
         android:layout_marginTop="0dp"
-        android:background="@color/w_divider" />
+        android:background="@color/w_divider"/>
 </merge>

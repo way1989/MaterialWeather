@@ -12,10 +12,10 @@ import retrofit2.Retrofit;
 
 @Singleton
 public class RepositoryManager implements IRepositoryManager {
-    private Lazy<Retrofit> mRetrofit;
-    private Lazy<RxCache> mRxCache;
     private final Map<String, Object> mRetrofitServiceCache = new HashMap<>();
     private final Map<String, Object> mCacheServiceCache = new HashMap<>();
+    private Lazy<Retrofit> mRetrofit;
+    private Lazy<RxCache> mRxCache;
 
     @Inject
     public RepositoryManager(Lazy<Retrofit> retrofit, Lazy<RxCache> rxCache) {

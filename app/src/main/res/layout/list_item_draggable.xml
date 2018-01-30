@@ -14,10 +14,10 @@
        limitations under the License.
 -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="@dimen/list_item_height"
-    android:background="@color/bg_item_normal_state"
-    android:foreground="?attr/selectableItemBackground">
+             android:layout_width="match_parent"
+             android:layout_height="@dimen/list_item_height"
+             android:background="@color/bg_item_normal_state"
+             android:foreground="?attr/selectableItemBackground">
 
     <ImageView
         android:id="@+id/drag_handle"
@@ -25,17 +25,17 @@
         android:layout_height="match_parent"
         android:layout_gravity="top|start"
         android:scaleType="center"
-        android:src="@drawable/ic_view_headline_black_24dp" />
+        android:src="@drawable/ic_view_headline_black_24dp"/>
 
 
     <TextView
         android:id="@android:id/text1"
+        style="?android:attr/textAppearanceMedium"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="top|start"
         android:layout_marginEnd="36dp"
         android:layout_marginStart="36dp"
-        style="?android:attr/textAppearanceMedium"
-        android:gravity="start|center_vertical" />
+        android:gravity="start|center_vertical"/>
 
 </FrameLayout>

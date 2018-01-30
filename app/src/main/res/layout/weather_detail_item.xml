@@ -3,11 +3,12 @@
 
     <TextView
         style="@style/w_section_title"
-        android:text="@string/weather_detail_title" />
+        android:text="@string/weather_detail_title"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@android:color/white"
         android:divider="@drawable/divider_linearlayout"
         android:orientation="horizontal"
         android:paddingBottom="0dp"
@@ -27,12 +28,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:fontFamily="sans-serif-light"
                 android:maxLines="1"
                 android:text="-°"
-                android:fontFamily="sans-serif-light"
-                android:textStyle="normal"
                 android:textColor="@color/w_text_primary"
-                android:textSize="52dp" />
+                android:textSize="52dp"
+                android:textStyle="normal"/>
 
             <ImageView
                 android:id="@+id/w_todaydetail_cond_imageview"
@@ -41,19 +42,19 @@
                 android:layout_gravity="center"
                 android:scaleType="center"
                 android:src="@drawable/cond_icon_na"
-                android:visibility="gone" />
+                android:visibility="gone"/>
 
             <TextView
                 android:id="@+id/w_todaydetail_bottomline"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:fontFamily="sans-serif-light"
                 android:maxLines="1"
                 android:text="-"
-                android:fontFamily="sans-serif-light"
-                android:textStyle="normal"
                 android:textColor="@color/w_text_primary"
-                android:textSize="14dp" />
+                android:textSize="14dp"
+                android:textStyle="normal"/>
         </LinearLayout>
 
         <LinearLayout
@@ -65,59 +66,59 @@
 
                 <TextView
                     style="@style/todaydetail_info_title"
-                    android:text="@string/feel_temp" />
+                    android:text="@string/feel_temp"/>
 
                 <TextView
                     android:id="@+id/w_now_fl"
-                    style="@style/todaydetail_info_content" />
+                    style="@style/todaydetail_info_content"/>
             </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/w_divider_size_secondary"
-                android:background="@color/w_divider_secondary" />
+                android:background="@color/w_divider_secondary"/>
 
             <LinearLayout style="@style/todaydetail_info_layout">
 
                 <TextView
                     style="@style/todaydetail_info_title"
-                    android:text="@string/temp" />
+                    android:text="@string/temp"/>
 
                 <TextView
                     android:id="@+id/w_now_hum"
-                    style="@style/todaydetail_info_content" />
+                    style="@style/todaydetail_info_content"/>
             </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/w_divider_size_secondary"
-                android:background="@color/w_divider_secondary" />
+                android:background="@color/w_divider_secondary"/>
 
             <LinearLayout style="@style/todaydetail_info_layout">
 
                 <TextView
                     style="@style/todaydetail_info_title"
-                    android:text="@string/see_distance" />
+                    android:text="@string/see_distance"/>
 
                 <TextView
                     android:id="@+id/w_now_vis"
-                    style="@style/todaydetail_info_content" />
+                    style="@style/todaydetail_info_content"/>
             </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/w_divider_size_secondary"
-                android:background="@color/w_divider_secondary" />
+                android:background="@color/w_divider_secondary"/>
 
             <LinearLayout style="@style/todaydetail_info_layout">
 
                 <TextView
                     style="@style/todaydetail_info_title"
-                    android:text="@string/rain_size" />
+                    android:text="@string/rain_size"/>
 
                 <TextView
                     android:id="@+id/w_now_pcpn"
-                    style="@style/todaydetail_info_content" />
+                    style="@style/todaydetail_info_content"/>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
@@ -125,5 +126,5 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/w_divider_size"
-        android:background="@color/w_divider" />
+        android:background="@color/w_divider"/>
 </merge>

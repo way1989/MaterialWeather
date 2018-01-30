@@ -65,10 +65,6 @@
             android:name=".activity.SearchCityActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden|adjustNothing" />
-        <activity
-            android:name=".share.ShareActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustNothing" />
 
         <!--高德定位 -->
         <service android:name="com.amap.api.location.APSService" />

@@ -84,17 +84,17 @@ public class AstroView extends View {
         if (this.todayForecast == null || this.now == null) {
             return;
         }
-        paint.setColor(Color.WHITE);
+        paint.setColor(Color.BLACK);
         float textSize = paint.getTextSize();
         try {
             paint.setStrokeWidth(density);
             paint.setStyle(Style.STROKE);
             // draw sun path
-            paint.setColor(0x55ffffff);
+            paint.setColor(0x55000000);
             paint.setPathEffect(dashPathEffect);
             canvas.drawPath(sunPath, paint);
             paint.setPathEffect(null);
-            paint.setColor(Color.WHITE);
+            paint.setColor(Color.BLACK);
             int saveCount = canvas.save();
             canvas.translate(width / 2f - fanPillerHeight * 1f, textSize + sunArcHeight - fanPillerHeight);
             // draw wind text

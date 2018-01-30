@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:fitsSystemWindows="true"
-    android:orientation="vertical">
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:fitsSystemWindows="true"
+              android:orientation="vertical">
 
     <ScrollView
         android:id="@+id/share_container"
@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/weibo_background"
             android:lineSpacingExtra="16dp"
-            android:textSize="14sp" />
+            android:textSize="14sp"/>
     </ScrollView>
 
 </LinearLayout>

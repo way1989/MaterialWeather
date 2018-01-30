@@ -45,7 +45,7 @@ public class AqiView extends View {
         if (aqiCity == null) {
             textPaint.setStyle(Style.FILL);
             textPaint.setTextSize(lineSize * 1.25f);
-            textPaint.setColor(0xaaffffff);
+            textPaint.setColor(0xaa000000);
             canvas.drawText("暂无数据", w / 2f, h / 2f, textPaint);
             return;
         }
@@ -56,12 +56,12 @@ public class AqiView extends View {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        // canvas.drawColor(0x33ffffff);
+        // canvas.drawColor(0x33000000);
 
         float aqiArcRadius = lineSize * 4f;
         textPaint.setStyle(Style.STROKE);
         textPaint.setStrokeWidth(lineSize * 1);
-        textPaint.setColor(0x55ffffff);
+        textPaint.setColor(0x55000000);
         rectF.set(-aqiArcRadius, -aqiArcRadius, aqiArcRadius, aqiArcRadius);
         final int saveCount = canvas.save();
         canvas.translate(w / 2f, h / 2f);
@@ -72,23 +72,23 @@ public class AqiView extends View {
                 textPaint);
         if (currAqiPercent >= 0f) {
             // draw aqi aqiPercent arc
-            textPaint.setColor(0x99ffffff);
+            textPaint.setColor(0x99000000);
             canvas.drawArc(rectF, startAngle, sweepAngle * currAqiPercent, false, textPaint);
             // draw aqi arc center circle
-            textPaint.setColor(0xffffffff);
+            textPaint.setColor(0xff000000);
             textPaint.setStrokeWidth(lineSize / 8f);
             canvas.drawCircle(0, 0, lineSize / 3f, textPaint);
             // draw aqi number and text
             textPaint.setStyle(Style.FILL);
             textPaint.setTextSize(lineSize * 1.5f);
-            textPaint.setColor(0xffffffff);
+            textPaint.setColor(0xff000000);
             try {
                 canvas.drawText(aqiCity.getAqi() + "", 0, lineSize * 3, textPaint);
             } catch (Exception e) {
                 e.printStackTrace();
             }
             textPaint.setTextSize(lineSize * 1f);
-            textPaint.setColor(0x88ffffff);
+            textPaint.setColor(0x88000000);
             try {
                 canvas.drawText(aqiCity.getQlty() + "", 0, lineSize * 4.25f, textPaint);
             } catch (Exception e) {
@@ -98,7 +98,7 @@ public class AqiView extends View {
             // draw the aqi line
             canvas.rotate(startAngle + sweepAngle * currAqiPercent - 180f);
             textPaint.setStyle(Style.STROKE);
-            textPaint.setColor(0xffffffff);
+            textPaint.setColor(0xff000000);
             float startX = lineSize / 3f;
             canvas.drawLine(-startX, 0, -lineSize * 4.5f, 0, textPaint);
         }

@@ -48,6 +48,7 @@ public class LocationObservable extends Observable<AMapLocation> {
         public void onLocationChanged(AMapLocation aMapLocation) {
             if (!isDisposed()) {
                 observer.onNext(aMapLocation);
+                observer.onComplete();
             }
         }
     }

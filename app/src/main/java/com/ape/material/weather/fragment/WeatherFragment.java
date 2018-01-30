@@ -1,9 +1,7 @@
 package com.ape.material.weather.fragment;
 
 import android.Manifest;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -26,22 +24,17 @@ import com.ape.material.weather.widget.AstroView;
 import com.ape.material.weather.widget.DailyForecastView;
 import com.ape.material.weather.widget.HourlyForecastView;
 import com.ape.material.weather.widget.PullRefreshLayout;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.trello.rxlifecycle2.android.FragmentEvent;
 
 import butterknife.BindView;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
-import permissions.dispatcher.NeedsPermission;
-import permissions.dispatcher.OnNeverAskAgain;
-import permissions.dispatcher.OnPermissionDenied;
-import permissions.dispatcher.OnShowRationale;
-import permissions.dispatcher.PermissionRequest;
-import permissions.dispatcher.RuntimePermissions;
 
 /**
  * Created by android on 16-11-10.
  */
 
-@RuntimePermissions
 public class WeatherFragment extends BaseFragment implements PullRefreshLayout.OnRefreshListener {
     private static final String TAG = "WeatherFragment";
     private static final String ARG_KEY = "city";
@@ -116,7 +109,13 @@ public class WeatherFragment extends BaseFragment implements PullRefreshLayout.O
 
     public void onCityChange(City city) {
         mCity = city;
-        if (getUserVisibleHint()) mListener.onCityChange(city);
+        if (!getUserVisibleHint()) {
+            return;
+        }
+        if (!TextUtils.equals(mCity.getAreaId(), city.getAreaId())
+                || !TextUtils.equals(mCity.getCity(), city.getCity())) {
+            mListener.onCityChange(city);
+        }
         getWeather(city, false);
     }
 
@@ -128,36 +127,57 @@ public class WeatherFragment extends BaseFragment implements PullRefreshLayout.O
 
     @Override
     public void loadDataFirstTime() {
-        if (mWPullRefreshLayout == null || getActivity() == null) return;
+        if (getActivity() == null || mCity == null) {
+            Log.e(TAG, "loadDataFirstTime: ", new Throwable("something is null..."));
+            return;
+        }
 
-        mWPullRefreshLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                mWPullRefreshLayout.setRefreshing(true);
+        if (mCity.isLocation()) {
+            if (!DeviceUtil.hasInternet(getContext())) {
+                if (TextUtils.isEmpty(mCity.getAreaId())) {
+                    showErrorTip(getString(R.string.no_internet_toast));
+                    return;
+                }
                 getWeather(mCity, false);
+                return;
             }
-        });
+            if (DeviceUtil.isGPSProviderEnabled(getContext())) {
+                showErrorTip(getString(R.string.gps_disabled_toast));
+                return;
+            }
+            new RxPermissions(getActivity()).request(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
+                    .subscribe(new Consumer<Boolean>() {
+                        @Override
+                        public void accept(Boolean granted) throws Exception {
+                            if (granted) {
+                                getLocation();
+                            } else {
+                                onNeverAskAgain();
+                            }
+                        }
+                    });
+        } else {
+            getWeather(mCity, false);
+        }
+
     }
 
     private void getWeather(City city, boolean force) {
         Log.i(TAG, "getWeather... city = " + city + ", areaId = " + city.getAreaId()
                 + ", request location = "
                 + (city.isLocation() && TextUtils.isEmpty(city.getAreaId())));
-        if (city.isLocation() && TextUtils.isEmpty(city.getAreaId())) {
-            if (!DeviceUtil.hasInternet(getContext())) {
-                showErrorTip(getString(R.string.no_internet_toast));
-                return;
-            }
-            if (DeviceUtil.isGPSProviderEnabled(getContext())) {
-                WeatherFragmentPermissionsDispatcher.getLocationWithCheck(this);
-            } else {
-                showErrorTip(getString(R.string.gps_disabled_toast));
-            }
-            return;
-        }
-
-        //mPresenter.getWeather(city.getAreaId(), force);
         mViewModel.getWeather(city.getAreaId(), force)
+                .doOnSubscribe(new Consumer<Disposable>() {
+                    @Override
+                    public void accept(Disposable disposable) throws Exception {
+                        mWPullRefreshLayout.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                mWPullRefreshLayout.setRefreshing(true);
+                            }
+                        });
+                    }
+                })
                 .compose(this.<HeWeather>bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .compose(RxSchedulers.<HeWeather>io_main())
                 .subscribe(new Consumer<HeWeather>() {
@@ -287,15 +307,26 @@ public class WeatherFragment extends BaseFragment implements PullRefreshLayout.O
         Snackbar.make(mWPullRefreshLayout, msg, Snackbar.LENGTH_SHORT).show();
     }
 
-    @NeedsPermission({Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
     void getLocation() {
-        //mPresenter.getLocation();
+        Log.d(TAG, "getLocation: ");
         mViewModel.getLocation()
+                .doOnSubscribe(new Consumer<Disposable>() {
+                    @Override
+                    public void accept(Disposable disposable) throws Exception {
+                        mWPullRefreshLayout.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                mWPullRefreshLayout.setRefreshing(true);
+                            }
+                        });
+                    }
+                })
                 .compose(this.<City>bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .compose(RxSchedulers.<City>io_main())
                 .subscribe(new Consumer<City>() {
                     @Override
                     public void accept(City city) throws Exception {
+                        Log.d(TAG, "accept: getLocation city = " + city);
                         onCityChange(city);
                     }
                 }, new Consumer<Throwable>() {
@@ -306,35 +337,6 @@ public class WeatherFragment extends BaseFragment implements PullRefreshLayout.O
                 });
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        WeatherFragmentPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
-    }
-
-    @OnShowRationale({Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
-    void onShowRational(final PermissionRequest request) {
-        new AlertDialog.Builder(getActivity()).setTitle(R.string.permission_title)
-                .setMessage(R.string.permission_message).setCancelable(false)
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        request.proceed();
-                    }
-                }).setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                request.cancel();
-            }
-        }).show();
-    }
-
-    @OnPermissionDenied({Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
-    void onPermissionDenied() {
-        Snackbar.make(mWWeatherScrollView, R.string.permission_denied, Snackbar.LENGTH_SHORT).show();
-    }
-
-    @OnNeverAskAgain({Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
     void onNeverAskAgain() {
         Snackbar.make(mWWeatherScrollView, R.string.permission_never_ask_again, Snackbar.LENGTH_SHORT).show();
     }

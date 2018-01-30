@@ -84,11 +84,11 @@ dependencies {
     annotationProcessor "com.jakewharton:butterknife-compiler:$rootProject.butterknifeVersion"
 
     //permission dispatcher
-    implementation 'com.github.hotchemi:permissionsdispatcher:2.4.0', {
-        // if you don't use android.app.Fragment you can exclude support for them
-        exclude module: "support-v13"
-    }
-    annotationProcessor 'com.github.hotchemi:permissionsdispatcher-processor:2.4.0'
+//    implementation 'com.github.hotchemi:permissionsdispatcher:2.4.0', {
+//        // if you don't use android.app.Fragment you can exclude support for them
+//        exclude module: "support-v13"
+//    }
+//    annotationProcessor 'com.github.hotchemi:permissionsdispatcher-processor:2.4.0'
 
     //rxjava
     implementation 'io.reactivex.rxjava2:rxjava:2.1.6'
@@ -132,7 +132,7 @@ dependencies {
     implementation 'com.jakewharton.rxbinding2:rxbinding:2.0.0'
     implementation 'com.jakewharton.rxbinding2:rxbinding-appcompat-v7:2.0.0'
 
-    //implementation 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.5@aar'
+    implementation 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.5@aar'
     //implementation 'com.github.LinweiJ:ViewPagerIndicator:0.0.2'
 
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.34'

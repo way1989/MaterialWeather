@@ -5,12 +5,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.internal.view.SupportMenuItem;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,12 +30,13 @@ import com.trello.rxlifecycle2.android.ActivityEvent;
 import com.weavey.loading.lib.LoadingLayout;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 
-public class SearchCityActivity extends BaseActivity implements
-        SearchView.OnQueryTextListener, View.OnTouchListener {
+public class SearchCityActivity extends BaseActivity implements View.OnTouchListener {
     private static final String TAG = "SearchCityActivity";
     @BindView(R.id.recyclerview)
     RecyclerView mRecyclerview;
@@ -44,8 +44,7 @@ public class SearchCityActivity extends BaseActivity implements
     LoadingLayout mLoadingLayout;
     private SearchAdapter mSearchAdapter;
     private SearchView mSearchView;
-    private InputMethodManager mImm;
-    private String queryString;
+    private InputMethodManager mInputMethodManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,10 +53,10 @@ public class SearchCityActivity extends BaseActivity implements
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        mImm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        mInputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         mRecyclerview.setLayoutManager(new LinearLayoutManager(this));
         mSearchAdapter = new SearchAdapter(R.layout.item_city);
-        mSearchAdapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
+        mSearchAdapter.openLoadAnimation(BaseQuickAdapter.SLIDEIN_BOTTOM);
         mSearchAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
@@ -68,7 +67,6 @@ public class SearchCityActivity extends BaseActivity implements
         mRecyclerview.setAdapter(mSearchAdapter);
         mRecyclerview.addItemDecoration(new SimpleListDividerDecorator(ContextCompat
                 .getDrawable(getApplicationContext(), R.drawable.list_divider_h), true));
-        //RxSearchView.
     }
 
     @Override
@@ -79,57 +77,46 @@ public class SearchCityActivity extends BaseActivity implements
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
         getMenuInflater().inflate(R.menu.menu_search, menu);
-        SupportMenuItem searchMenuItem = (SupportMenuItem) menu.findItem(R.id.menu_search);
-        mSearchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
-
-        mSearchView.setOnQueryTextListener(this);
+        MenuItem searchMenuItem = menu.findItem(R.id.menu_search);
+        mSearchView = (SearchView) searchMenuItem.getActionView();
         mSearchView.setQueryHint(getString(R.string.search_city));
-
         //mSearchView.setIconifiedByDefault(false);
         //mSearchView.setIconified(false);
+        searchMenuItem.expandActionView();
 
-        MenuItemCompat.setOnActionExpandListener(searchMenuItem,
-                new MenuItemCompat.OnActionExpandListener() {
-                    @Override
-                    public boolean onMenuItemActionExpand(MenuItem item) {
-                        return true;
-                    }
+        searchMenuItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                return true;
+            }
 
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                finish();
+                return true;
+            }
+        });
+
+        RxSearchView.queryTextChanges(mSearchView)
+                .debounce(500, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<CharSequence>() {
                     @Override
-                    public boolean onMenuItemActionCollapse(MenuItem item) {
-                        finish();
-                        return false;
+                    public void accept(CharSequence charSequence) throws Exception {
+                        search(charSequence.toString());
                     }
                 });
-
-        menu.findItem(R.id.menu_search).expandActionView();
         return super.onCreateOptionsMenu(menu);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public boolean onQueryTextSubmit(String query) {
-        Log.d(TAG, "onQueryTextSubmit... query = " + query);
-        hideInputManager();
-        search(query);
-        return true;
-    }
 
     private void search(String query) {
-        if (query.equals(queryString)) {
-            return;
-        }
-        queryString = query;
-        if (queryString.trim().equals("")) {
-            mSearchAdapter.setNewData(null);
+        if (TextUtils.isEmpty(query) || query.trim().equals("")) {
             mLoadingLayout.setStatus(LoadingLayout.Empty);
+            mSearchAdapter.setNewData(null);
         } else {
-            //mPresenter.search(queryString);
-            mViewModel.search(queryString)
+            mLoadingLayout.setStatus(LoadingLayout.Loading);
+            mViewModel.search(query)
                     .compose(this.<List<City>>bindUntilEvent(ActivityEvent.DESTROY))
                     .compose(RxSchedulers.<List<City>>io_main())
                     .subscribe(new Consumer<List<City>>() {
@@ -144,14 +131,7 @@ public class SearchCityActivity extends BaseActivity implements
                             onSearchError(throwable);
                         }
                     });
-            mLoadingLayout.setStatus(LoadingLayout.Loading);
         }
-    }
-
-    @Override
-    public boolean onQueryTextChange(String newText) {
-        search(newText);
-        return true;
     }
 
     @Override
@@ -162,8 +142,8 @@ public class SearchCityActivity extends BaseActivity implements
 
     public void hideInputManager() {
         if (mSearchView != null) {
-            if (mImm != null) {
-                mImm.hideSoftInputFromWindow(mSearchView.getWindowToken(), 0);
+            if (mInputMethodManager != null) {
+                mInputMethodManager.hideSoftInputFromWindow(mSearchView.getWindowToken(), 0);
             }
             mSearchView.clearFocus();
         }
@@ -202,7 +182,6 @@ public class SearchCityActivity extends BaseActivity implements
 
     public void onItemClick(final City city) {
         Log.d(TAG, "onItemClick city = " + city.getCity());
-        //mPresenter.addOrUpdateCity(city);
         mViewModel.addOrUpdateCity(city)
                 .compose(this.<Boolean>bindUntilEvent(ActivityEvent.DESTROY))
                 .compose(RxSchedulers.<Boolean>io_main())

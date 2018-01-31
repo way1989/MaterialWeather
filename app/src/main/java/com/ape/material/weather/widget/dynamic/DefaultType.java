@@ -31,6 +31,8 @@ public class DefaultType extends BaseWeatherType {
     @Override
     public void endAnimation(DynamicWeatherView dynamicWeatherView, Animator.AnimatorListener listener) {
         super.endAnimation(dynamicWeatherView, listener);
-        listener.onAnimationEnd(null);
+        if (listener != null) {
+            listener.onAnimationEnd(null);
+        }
     }
 }

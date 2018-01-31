@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Camera;
@@ -37,15 +38,15 @@ public class SandstormType extends BaseWeatherType {
     private float φ;
     private Shader shader;
 
-    public SandstormType(Context context) {
-        super(context);
+    public SandstormType(Resources resources) {
+        super(resources);
         setColor(0xFFE99E3C);
         mPathFront = new Path();
         mPathRear = new Path();
         mPaint = new Paint();
         mMatrix = new Matrix();
         camera = new Camera();
-        mBitmap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.ic_sanstorm_ground);
+        mBitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_sanstorm_ground);
     }
 
     @Override

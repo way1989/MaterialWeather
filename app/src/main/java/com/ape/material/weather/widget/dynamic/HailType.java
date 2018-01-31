@@ -3,6 +3,7 @@ package com.ape.material.weather.widget.dynamic;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -29,8 +30,8 @@ public class HailType extends BaseWeatherType {
     private Paint mPaint;
     private Hail hail;
 
-    public HailType(Context context) {
-        super(context);
+    public HailType(Resources resources) {
+        super(resources);
         setColor(0xFF0CB399);
         mPaint = new Paint();
         mPaint.setAntiAlias(true);
@@ -38,7 +39,7 @@ public class HailType extends BaseWeatherType {
         mPaint.setStrokeWidth(5);
         hails = new ArrayList<>();
         matrix = new Matrix();
-        bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_hail_ground);
+        bitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_hail_ground);
     }
 
     @Override

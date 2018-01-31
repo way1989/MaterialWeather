@@ -1,6 +1,7 @@
 package com.ape.material.weather.widget.dynamic;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.text.TextUtils;
 
 /**
@@ -9,11 +10,11 @@ import android.text.TextUtils;
 
 public class TypeUtil {
 
-    public static BaseWeatherType getType(Context context, ShortWeatherInfo info) {
+    public static BaseWeatherType getType(Resources context, ShortWeatherInfo info) {
         return getHeWeatherType(context, info);
     }
 
-    private static BaseWeatherType getHeWeatherType(Context context, ShortWeatherInfo info) {
+    private static BaseWeatherType getHeWeatherType(Resources context, ShortWeatherInfo info) {
         if (info != null && TextUtils.isDigitsOnly(info.getCode())) {
             int code = Integer.parseInt(info.getCode());
             if (code == 100) {//晴

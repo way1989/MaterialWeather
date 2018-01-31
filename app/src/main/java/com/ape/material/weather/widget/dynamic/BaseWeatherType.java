@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -17,17 +18,13 @@ import java.util.Random;
 
 public abstract class BaseWeatherType implements WeatherHandler {
     protected int color;
-    protected int dynamicColor;
-    private Context mContext;
+    private int dynamicColor;
+    protected Resources mResources;
     private int mWidth;
     private int mHeight;
 
-    public BaseWeatherType(Context context) {
-        mContext = context;
-    }
-
-    public Context getContext() {
-        return mContext;
+    public BaseWeatherType(Resources resources) {
+        mResources = resources;
     }
 
     public int getWidth() {
@@ -76,7 +73,7 @@ public abstract class BaseWeatherType implements WeatherHandler {
     }
 
     @Override
-    public void onSizeChanged(Context context, int w, int h) {
+    public void onSizeChanged(int w, int h) {
         mWidth = w;
         mHeight = h;
         generateElements();
@@ -94,7 +91,7 @@ public abstract class BaseWeatherType implements WeatherHandler {
     }
 
     public int dp2px(float dpValue) {
-        final float scale = mContext.getResources().getDisplayMetrics().density;
+        final float scale = mResources.getDisplayMetrics().density;
         return (int) (dpValue * scale + 0.5f);
     }
 }

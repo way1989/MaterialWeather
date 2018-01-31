@@ -44,10 +44,10 @@ public class LocationUtil {
                         }
                         String city = "";
                         if (aMapLocation.getErrorCode() == 0) {
-                            city = aMapLocation.getDistrict();
-                            if (TextUtils.isEmpty(city)) {
+//                            city = aMapLocation.getDistrict();
+//                            if (TextUtils.isEmpty(city)) {
                                 city = aMapLocation.getCity();
-                            }
+//                            }
                             Log.d(TAG, "onLocationChanged: city = " + city + ", district = " + aMapLocation.getDistrict());
                             if (!TextUtils.isEmpty(city)) {
                                 return city;

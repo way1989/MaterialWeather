@@ -3,6 +3,7 @@ package com.ape.material.weather.widget.dynamic;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
@@ -47,8 +48,8 @@ public class OvercastType extends BaseWeatherType {
 
     private float cloudOffset = 0;
 
-    public OvercastType(Context context, ShortWeatherInfo info) {
-        super(context);
+    public OvercastType(Resources resources, ShortWeatherInfo info) {
+        super(resources);
         setColor(0xFF6D8DB1);
         mPathFront = new Path();
         mPathRear = new Path();
@@ -58,7 +59,7 @@ public class OvercastType extends BaseWeatherType {
         measure = new PathMeasure();
         windSpeed = info.getWindSpeed();
         cloudPath = new Path();
-        cloudOffset = UiUtil.dp2px(context, 32);
+        cloudOffset = dp2px(32);
     }
 
     @Override

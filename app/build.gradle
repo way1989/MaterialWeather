@@ -115,23 +115,31 @@ dependencies {
     implementation "com.google.dagger:dagger:$rootProject.daggerVersion"
     annotationProcessor "com.google.dagger:dagger-compiler:$rootProject.daggerVersion"
 
+    //leakcanary
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
     releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
     testImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
 
+    //Blockcanary
+    debugCompile 'com.github.markzhai:blockcanary-android:1.5.0'
+    releaseCompile 'com.github.markzhai:blockcanary-no-op:1.5.0'
+
+    //sqliteonweb
     debugImplementation 'io.github.skyhacker2:sqliteonweb:1.0.2'
     releaseImplementation 'io.github.skyhacker2:sqliteonweb-no-op:1.0.2'
 
     //高德定位
-    implementation 'com.amap.api:location:latest.integration'
+    implementation 'com.amap.api:location:3.7.0'
 
     //rxcache
     implementation "com.github.VictorAlbertos.RxCache:runtime:1.8.1-2.x"
     implementation 'com.github.VictorAlbertos.Jolyglot:gson:0.0.4'
 
+    //rxbinding
     implementation 'com.jakewharton.rxbinding2:rxbinding:2.0.0'
     implementation 'com.jakewharton.rxbinding2:rxbinding-appcompat-v7:2.0.0'
 
+    //rxpermissions
     implementation 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.5@aar'
     //implementation 'com.github.LinweiJ:ViewPagerIndicator:0.0.2'
 
@@ -143,4 +151,10 @@ dependencies {
     //implementation "android.arch.lifecycle:viewmodel:1.1.0"
     // alternatively, just LiveData
     //implementation "android.arch.lifecycle:livedata:1.1.0"
+
+    // Room (use 1.1.0-alpha1 for latest alpha)
+    implementation "android.arch.persistence.room:runtime:1.0.0"
+    annotationProcessor "android.arch.persistence.room:compiler:1.0.0"
+    // RxJava support for Room
+    implementation "android.arch.persistence.room:rxjava2:1.0.0"
 }

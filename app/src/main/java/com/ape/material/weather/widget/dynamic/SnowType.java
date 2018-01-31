@@ -3,6 +3,7 @@ package com.ape.material.weather.widget.dynamic;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -36,8 +37,8 @@ public class SnowType extends BaseWeatherType {
     private Snow snow;
     private int snowLevel = SNOW_LEVEL_1;
 
-    public SnowType(Context context, @SnowLevel int snowLevel) {
-        super(context);
+    public SnowType(Resources resources, @SnowLevel int snowLevel) {
+        super(resources);
         setColor(0xFF62B1FF);
         this.snowLevel = snowLevel;
         mPaint = new Paint();
@@ -46,7 +47,7 @@ public class SnowType extends BaseWeatherType {
         mPaint.setStrokeWidth(5);
         mSnows = new ArrayList<>();
         matrix = new Matrix();
-        bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_snow_ground);
+        bitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_snow_ground);
     }
 
     @Override

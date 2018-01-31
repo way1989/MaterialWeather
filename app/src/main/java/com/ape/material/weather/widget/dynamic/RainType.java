@@ -3,6 +3,7 @@ package com.ape.material.weather.widget.dynamic;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -65,8 +66,8 @@ public class RainType extends BaseWeatherType {
 
     private SnowType.Snow snow;
 
-    public RainType(Context context, @RainLevel int rainLevel, @WindLevel int windLevel) {
-        super(context);
+    public RainType(Resources resources, @RainLevel int rainLevel, @WindLevel int windLevel) {
+        super(resources);
         setColor(0xFF6188DA);
         this.rainLevel = rainLevel;
         this.windLevel = windLevel;
@@ -78,7 +79,7 @@ public class RainType extends BaseWeatherType {
         mRains = new ArrayList<>();
         mSnows = new ArrayList<>();
         matrix = new Matrix();
-        bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_rain_ground);
+        bitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_rain_ground);
         mDstFlash1 = new Path();
         flashPathMeasure1 = new PathMeasure();
 

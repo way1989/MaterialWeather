@@ -95,8 +95,9 @@ public class WeatherFragment extends BaseFragment implements SwipeRefreshLayout.
 
     @Override
     public BaseWeatherType getDrawerType() {
-//        if (mWeatherType == null)
-//            return new DefaultType(getContext());
+        if (mWeather != null && mWeather.isOK()) {
+            mWeatherType = TypeUtil.getType(getResources(), getShortWeatherInfo(mWeather));
+        }
         return mWeatherType;
     }
 
@@ -137,16 +138,15 @@ public class WeatherFragment extends BaseFragment implements SwipeRefreshLayout.
         updateWeatherUI();
     }
 
-    public void onCityChange(City city) {
-        mCity = city;
-        if (!getUserVisibleHint()) {
-            return;
+    public void onLocationChange(City city) {
+        if (getUserVisibleHint()) {
+            if (!TextUtils.equals(mCity.getAreaId(), city.getAreaId())
+                    || !TextUtils.equals(mCity.getCity(), city.getCity())) {
+                mListener.onLocationChange(city);
+            }
+            mCity = city;
+            getWeather(city, true);
         }
-        if (!TextUtils.equals(mCity.getAreaId(), city.getAreaId())
-                || !TextUtils.equals(mCity.getCity(), city.getCity())) {
-            mListener.onCityChange(city);
-        }
-        getWeather(city, false);
     }
 
     public void showErrorTip(String msg) {
@@ -158,44 +158,20 @@ public class WeatherFragment extends BaseFragment implements SwipeRefreshLayout.
     @Override
     public void loadDataFirstTime() {
         if (getActivity() == null || mCity == null) {
+            showErrorTip("city is null");
             Log.e(TAG, "loadDataFirstTime: ", new Throwable("something is null..."));
             return;
         }
-
         if (mCity.isLocation()) {
-            if (!DeviceUtil.hasInternet(getContext())) {
-                if (TextUtils.isEmpty(mCity.getAreaId())) {
-                    showErrorTip(getString(R.string.no_internet_toast));
-                    return;
-                }
-                getWeather(mCity, false);
-                return;
-            }
-//            if (DeviceUtil.isGPSProviderEnabled(getContext())) {
-//                showErrorTip(getString(R.string.gps_disabled_toast));
-//                return;
-//            }
-            new RxPermissions(getActivity()).request(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
-                    .subscribe(new Consumer<Boolean>() {
-                        @Override
-                        public void accept(Boolean granted) throws Exception {
-                            if (granted) {
-                                getLocation();
-                            } else {
-                                onNeverAskAgain();
-                            }
-                        }
-                    });
+            getLocation();
         } else {
             getWeather(mCity, false);
         }
-
     }
 
     private void getWeather(City city, boolean force) {
         Log.i(TAG, "getWeather... city = " + city + ", areaId = " + city.getAreaId()
-                + ", request location = "
-                + (city.isLocation() && TextUtils.isEmpty(city.getAreaId())));
+                + ", request location = " + city.isLocation());
         mViewModel.getWeather(city.getAreaId(), force)
                 .doOnSubscribe(new Consumer<Disposable>() {
                     @Override
@@ -221,6 +197,7 @@ public class WeatherFragment extends BaseFragment implements SwipeRefreshLayout.
                         showErrorTip(throwable.getMessage());
                     }
                 });
+
     }
 
     @Override
@@ -239,7 +216,11 @@ public class WeatherFragment extends BaseFragment implements SwipeRefreshLayout.
 
     @Override
     public void onRefresh() {
-        getWeather(mCity, true);
+        if (mCity.isLocation() && DeviceUtil.hasInternet(getContext())) {
+            getLocation();
+        } else {
+            getWeather(mCity, true);
+        }
     }
 
     private void updateWeatherUI() {
@@ -249,14 +230,8 @@ public class WeatherFragment extends BaseFragment implements SwipeRefreshLayout.
             return;
         }
         try {
-            ShortWeatherInfo info = new ShortWeatherInfo();
-            info.setCode(weather.getWeather().getNow().getCond().getCode());
-            info.setWindSpeed(weather.getWeather().getNow().getWind().getSpd());
-            info.setSunrise(weather.getWeather().getDaily_forecast().get(0).getAstro().getSr());
-            info.setSunset(weather.getWeather().getDaily_forecast().get(0).getAstro().getSs());
-            info.setMoonrise(weather.getWeather().getDaily_forecast().get(0).getAstro().getMr());
-            info.setMoonset(weather.getWeather().getDaily_forecast().get(0).getAstro().getMs());
-            mWeatherType = TypeUtil.getType(getActivity(), info);
+            ShortWeatherInfo info = getShortWeatherInfo(weather);
+            mWeatherType = TypeUtil.getType(getResources(), info);
             if (getUserVisibleHint()) mListener.onDrawerTypeChange(mWeatherType);
 
             HeWeather.HeWeather5Bean w = weather.getWeather();
@@ -330,6 +305,18 @@ public class WeatherFragment extends BaseFragment implements SwipeRefreshLayout.
         }
     }
 
+    @NonNull
+    private ShortWeatherInfo getShortWeatherInfo(HeWeather weather) {
+        ShortWeatherInfo info = new ShortWeatherInfo();
+        info.setCode(weather.getWeather().getNow().getCond().getCode());
+        info.setWindSpeed(weather.getWeather().getNow().getWind().getSpd());
+        info.setSunrise(weather.getWeather().getDaily_forecast().get(0).getAstro().getSr());
+        info.setSunset(weather.getWeather().getDaily_forecast().get(0).getAstro().getSs());
+        info.setMoonrise(weather.getWeather().getDaily_forecast().get(0).getAstro().getMr());
+        info.setMoonset(weather.getWeather().getDaily_forecast().get(0).getAstro().getMs());
+        return info;
+    }
+
     private void setTextViewString(int textViewId, String str) {
 
         TextView tv = mRootView.findViewById(textViewId);
@@ -344,8 +331,25 @@ public class WeatherFragment extends BaseFragment implements SwipeRefreshLayout.
         Snackbar.make(mWPullRefreshLayout, msg, Snackbar.LENGTH_SHORT).show();
     }
 
-    void getLocation() {
-        Log.d(TAG, "getLocation: ");
+    private void getLocation() {
+        Log.d(TAG, "getLocation: start...");
+        new RxPermissions(getActivity())
+                .request(Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION)
+                .subscribe(new Consumer<Boolean>() {
+                    @Override
+                    public void accept(Boolean granted) throws Exception {
+                        if (granted) {
+                            requestLocation();
+                        } else {
+                            onNeverAskAgain();
+                        }
+                    }
+                });
+    }
+
+    private void requestLocation() {
+        Log.d(TAG, "requestLocation: mViewModel = " + mViewModel);
         mViewModel.getLocation()
                 .doOnSubscribe(new Consumer<Disposable>() {
                     @Override
@@ -358,13 +362,13 @@ public class WeatherFragment extends BaseFragment implements SwipeRefreshLayout.
                         });
                     }
                 })
-                .compose(this.<City>bindUntilEvent(FragmentEvent.DESTROY_VIEW))
+                .compose(WeatherFragment.this.<City>bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .compose(RxSchedulers.<City>io_main())
                 .subscribe(new Consumer<City>() {
                     @Override
                     public void accept(City city) throws Exception {
                         Log.d(TAG, "accept: getLocation city = " + city);
-                        onCityChange(city);
+                        onLocationChange(city);
                     }
                 }, new Consumer<Throwable>() {
                     @Override
@@ -381,7 +385,7 @@ public class WeatherFragment extends BaseFragment implements SwipeRefreshLayout.
     public interface OnDrawerTypeChangeListener {
         void onDrawerTypeChange(BaseWeatherType type);
 
-        void onCityChange(City city);
+        void onLocationChange(City city);
     }
 
 }

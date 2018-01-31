@@ -2,6 +2,7 @@ package com.ape.material.weather.widget.dynamic;
 
 import android.animation.Animator;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 
 /**
@@ -11,8 +12,8 @@ import android.graphics.Canvas;
 
 public class DefaultType extends BaseWeatherType {
 
-    public DefaultType(Context context) {
-        super(context);
+    public DefaultType(Resources resources) {
+        super(resources);
         setColor(0xFF51C0F8);
     }
 

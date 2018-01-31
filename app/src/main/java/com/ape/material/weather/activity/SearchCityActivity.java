@@ -36,7 +36,7 @@ import butterknife.BindView;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 
-public class SearchCityActivity extends BaseActivity implements View.OnTouchListener {
+public class SearchCityActivity extends BaseActivity implements MenuItem.OnActionExpandListener, View.OnTouchListener {
     private static final String TAG = "SearchCityActivity";
     @BindView(R.id.recyclerview)
     RecyclerView mRecyclerView;
@@ -84,18 +84,7 @@ public class SearchCityActivity extends BaseActivity implements View.OnTouchList
         //mSearchView.setIconified(false);
         searchMenuItem.expandActionView();
 
-        searchMenuItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
-            @Override
-            public boolean onMenuItemActionExpand(MenuItem item) {
-                return true;
-            }
-
-            @Override
-            public boolean onMenuItemActionCollapse(MenuItem item) {
-                finish();
-                return true;
-            }
-        });
+        searchMenuItem.setOnActionExpandListener(this);
 
         RxSearchView.queryTextChanges(mSearchView)
                 .debounce(500, TimeUnit.MILLISECONDS)
@@ -197,5 +186,16 @@ public class SearchCityActivity extends BaseActivity implements View.OnTouchList
                         Log.e(TAG, "accept: addOrUpdateCity city = " + city, throwable);
                     }
                 });
+    }
+
+    @Override
+    public boolean onMenuItemActionExpand(MenuItem item) {
+        return false;
+    }
+
+    @Override
+    public boolean onMenuItemActionCollapse(MenuItem item) {
+        finish();
+        return true;
     }
 }

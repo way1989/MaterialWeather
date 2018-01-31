@@ -17,8 +17,7 @@ import android.view.animation.AnimationUtils;
 
 public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Callback {
 
-    int fromColor;
-    private Context mContext;
+    private int fromColor;
     private DrawThread mDrawThread;
     private BaseWeatherType weatherType;
     private int mViewWidth;
@@ -35,8 +34,7 @@ public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Cal
 
     public DynamicWeatherView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        mContext = context;
-        weatherType = new DefaultType(context);
+        weatherType = new DefaultType(context.getResources());
         holder = getHolder();
         holder.addCallback(this);
         holder.setFormat(PixelFormat.RGBA_8888);
@@ -59,7 +57,7 @@ public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Cal
                     fromColor = weatherType.getColor();
                     weatherType = type;
                     if (weatherType != null) {
-                        weatherType.onSizeChanged(mContext, mViewWidth, mViewHeight);
+                        weatherType.onSizeChanged(mViewWidth, mViewHeight);
                     }
                     if (weatherType != null)
                         weatherType.startAnimation(DynamicWeatherView.this, fromColor);
@@ -78,7 +76,7 @@ public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Cal
         } else {
             fromColor = type.getColor();
             this.weatherType = type;
-            this.weatherType.onSizeChanged(mContext, mViewWidth, mViewHeight);
+            this.weatherType.onSizeChanged(mViewWidth, mViewHeight);
             this.weatherType.startAnimation(this, fromColor);
         }
 
@@ -94,7 +92,7 @@ public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Cal
         mViewWidth = w;
         mViewHeight = h;
         if (weatherType != null) {
-            weatherType.onSizeChanged(mContext, w, h);
+            weatherType.onSizeChanged(w, h);
         }
     }
 

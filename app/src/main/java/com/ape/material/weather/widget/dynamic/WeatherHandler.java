@@ -1,6 +1,5 @@
 package com.ape.material.weather.widget.dynamic;
 
-import android.content.Context;
 import android.graphics.Canvas;
 
 /**
@@ -10,5 +9,5 @@ import android.graphics.Canvas;
 public interface WeatherHandler {
     void onDrawElements(Canvas canvas);
 
-    void onSizeChanged(Context context, int width, int height);
+    void onSizeChanged(int width, int height);
 }

@@ -162,7 +162,7 @@ public class WeatherFragment extends BaseFragment implements SwipeRefreshLayout.
             Log.e(TAG, "loadDataFirstTime: ", new Throwable("something is null..."));
             return;
         }
-        if (mCity.isLocation()) {
+        if (mCity.getIsLocation() == 1) {
             getLocation();
         } else {
             getWeather(mCity, false);
@@ -171,7 +171,7 @@ public class WeatherFragment extends BaseFragment implements SwipeRefreshLayout.
 
     private void getWeather(City city, boolean force) {
         Log.i(TAG, "getWeather... city = " + city + ", areaId = " + city.getAreaId()
-                + ", request location = " + city.isLocation());
+                + ", request location = " + city.getIsLocation());
         mViewModel.getWeather(city.getAreaId(), force)
                 .doOnSubscribe(new Consumer<Disposable>() {
                     @Override
@@ -216,7 +216,7 @@ public class WeatherFragment extends BaseFragment implements SwipeRefreshLayout.
 
     @Override
     public void onRefresh() {
-        if (mCity.isLocation() && DeviceUtil.hasInternet(getContext())) {
+        if (mCity.getIsLocation() == 1 && DeviceUtil.hasInternet(getContext())) {
             getLocation();
         } else {
             getWeather(mCity, true);

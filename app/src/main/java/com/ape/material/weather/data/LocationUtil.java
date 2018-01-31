@@ -7,6 +7,8 @@ import android.util.Log;
 import com.amap.api.location.AMapLocation;
 import com.ape.material.weather.BuildConfig;
 import com.ape.material.weather.api.ApiService;
+import com.ape.material.weather.api.CityDao;
+import com.ape.material.weather.api.CityDatabase;
 import com.ape.material.weather.bean.City;
 import com.ape.material.weather.bean.HeCity;
 import com.ape.material.weather.util.AMapLocationHelper;
@@ -46,7 +48,7 @@ public class LocationUtil {
                         if (aMapLocation.getErrorCode() == 0) {
 //                            city = aMapLocation.getDistrict();
 //                            if (TextUtils.isEmpty(city)) {
-                                city = aMapLocation.getCity();
+                            city = aMapLocation.getCity();
 //                            }
                             Log.d(TAG, "onLocationChanged: city = " + city + ", district = " + aMapLocation.getDistrict());
                             if (!TextUtils.isEmpty(city)) {
@@ -84,8 +86,10 @@ public class LocationUtil {
                                         HeCity.HeWeather5Bean.BasicBean basicBean = heCity.getHeWeather5().get(0).getBasic();
                                         City city = new City(basicBean.getCity(), basicBean.getCnty(),
                                                 basicBean.getId(), basicBean.getLat(), basicBean.getLon(), basicBean.getProv());
-                                        city.setLocation(true);
-                                        DBUtil.updateCity(context, city, true);
+                                        city.setIsLocation(1);
+                                        CityDao cityDao = repositoryManager.obtainRoomDatabase(CityDatabase.class, CityDatabase.DATABASE_NAME).cityDao();
+                                        cityDao.update(city);
+                                        //DBUtil.updateCity(context, city, true);
                                         return city;
                                     }
                                 });

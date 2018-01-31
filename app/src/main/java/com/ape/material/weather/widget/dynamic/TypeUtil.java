@@ -1,6 +1,5 @@
 package com.ape.material.weather.widget.dynamic;
 
-import android.content.Context;
 import android.content.res.Resources;
 import android.text.TextUtils;
 

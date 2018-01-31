@@ -44,7 +44,7 @@ import io.reactivex.functions.Consumer;
 public class MainActivity extends BaseActivity
         implements WeatherFragment.OnDrawerTypeChangeListener {
     private static final String TAG = "MainActivity";
-    private static final String UNKNOWN_CITY = "unknown";
+    public static final String UNKNOWN_CITY = "unknown";
     private static final int REQUEST_CODE_CITY = 0;
     @BindView(R.id.dynamic_weather_view)
     DynamicWeatherView mDynamicWeatherView;
@@ -188,7 +188,7 @@ public class MainActivity extends BaseActivity
 
     private SpannableString getTitle(City city) {
         final String name = TextUtils.isEmpty(city.getCity()) ? UNKNOWN_CITY : city.getCity();
-        if (!city.isLocation()) {
+        if (city.getIsLocation() != 1) {
             return new SpannableString(name);
         }
         DynamicDrawableSpan drawableSpan =
@@ -236,7 +236,7 @@ public class MainActivity extends BaseActivity
     public void onLocationChange(City city) {
         int index = -1;
         for (int i = 0; i < mCities.size(); i++) {
-            if (mCities.get(i).isLocation()) {
+            if (mCities.get(i).getIsLocation() == 1) {
                 index = i;
                 break;
             }

@@ -57,10 +57,6 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden|adjustNothing" />
 
-        <provider
-            android:name=".db.CityProvider"
-            android:authorities="com.ape.material.weather.City" />
-
         <activity
             android:name=".activity.SearchCityActivity"
             android:screenOrientation="portrait"

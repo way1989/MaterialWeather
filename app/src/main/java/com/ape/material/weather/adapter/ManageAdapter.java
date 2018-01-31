@@ -29,7 +29,7 @@ public class ManageAdapter extends BaseItemDraggableAdapter<City, BaseViewHolder
     protected void convert(BaseViewHolder helper, City item) {
         TextView tvName = helper.getView(android.R.id.text1);
         // set text
-        tvName.setText(item.isLocation() ? getSpannable(tvName.getContext(), item.getCity())
+        tvName.setText(item.getIsLocation() == 1 ? getSpannable(tvName.getContext(), item.getCity())
                 : item.getCity());
     }
 

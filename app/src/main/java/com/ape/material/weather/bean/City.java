@@ -1,26 +1,39 @@
 package com.ape.material.weather.bean;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.PrimaryKey;
+
 import java.io.Serializable;
+
 
 /**
  * Created by android on 16-11-10.
  */
-
+@Entity(tableName = "city")
 public class City implements Serializable {
     private static final long serialVersionUID = -1233425412975945445L;
+    @PrimaryKey(autoGenerate = true)
+    private long _id;
     private String city;
     private String country;
     private String areaId;
+    @ColumnInfo(name = "latitude")
     private String lat;
+    @ColumnInfo(name = "longitude")
     private String lon;
+    @ColumnInfo(name = "province")
     private String prov;
-    private boolean isLocation;
+    private int isLocation;
+    @ColumnInfo(name = "orderIndex")
     private int index;
 
     public City() {
 
     }
 
+    @Ignore
     public City(String city, String country, String id, String lat, String lon, String prov) {
         this.city = city;
         this.country = country;
@@ -28,6 +41,14 @@ public class City implements Serializable {
         this.lat = lat;
         this.lon = lon;
         this.prov = prov;
+    }
+
+    public long get_id() {
+        return _id;
+    }
+
+    public void set_id(long _id) {
+        this._id = _id;
     }
 
     public String getCity() {
@@ -78,12 +99,12 @@ public class City implements Serializable {
         this.prov = prov;
     }
 
-    public boolean isLocation() {
+    public int getIsLocation() {
         return isLocation;
     }
 
-    public void setLocation(boolean location) {
-        isLocation = location;
+    public void setIsLocation(int isLocation) {
+        this.isLocation = isLocation;
     }
 
     public int getIndex() {

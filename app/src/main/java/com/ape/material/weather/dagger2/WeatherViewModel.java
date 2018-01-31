@@ -7,12 +7,14 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.ape.material.weather.BuildConfig;
+import com.ape.material.weather.activity.MainActivity;
 import com.ape.material.weather.api.ApiService;
 import com.ape.material.weather.api.CacheService;
+import com.ape.material.weather.api.CityDao;
+import com.ape.material.weather.api.CityDatabase;
 import com.ape.material.weather.bean.City;
 import com.ape.material.weather.bean.HeCity;
 import com.ape.material.weather.bean.HeWeather;
-import com.ape.material.weather.data.DBUtil;
 import com.ape.material.weather.data.IRepositoryManager;
 import com.ape.material.weather.data.LocationUtil;
 import com.ape.material.weather.util.ActivityScope;
@@ -76,9 +78,12 @@ public class WeatherViewModel extends AndroidViewModel {
         return Observable.create(new ObservableOnSubscribe<Boolean>() {
             @Override
             public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
-                boolean exist = DBUtil.isExist(getApplication(), city);
+                CityDao cityDao = mRepositoryManager.obtainRoomDatabase(CityDatabase.class, CityDatabase.DATABASE_NAME).cityDao();
+                boolean exist = cityDao.getCityByAreaId(city.getAreaId()) != null;
                 Log.d(TAG, "addCity... exist = " + exist);
-                e.onNext(!exist && DBUtil.addCity(getApplication(), city, false));
+                city.setIsLocation(0);
+                long id = cityDao.insert(city);
+                e.onNext(!exist && id > 0);
                 e.onComplete();
             }
         });
@@ -88,13 +93,16 @@ public class WeatherViewModel extends AndroidViewModel {
         return Observable.create(new ObservableOnSubscribe<List<City>>() {
             @Override
             public void subscribe(ObservableEmitter<List<City>> e) throws Exception {
-                ArrayList<City> cities = DBUtil.getCityFromCache(getApplication());
+                CityDao cityDao = mRepositoryManager.obtainRoomDatabase(CityDatabase.class, CityDatabase.DATABASE_NAME).cityDao();
+                List<City> cities = cityDao.getCityAll();
+                //DBUtil.getCityFromCache(getApplication());
                 if (cities.isEmpty()) {
                     City city = new City();
-                    city.setLocation(true);
+                    city.setIsLocation(1);
+                    city.setCity(MainActivity.UNKNOWN_CITY);
                     cities.add(city);
-
-                    DBUtil.insertAutoLocation(getApplication());
+                    cityDao.insert(city);
+                    //DBUtil.insertAutoLocation(getApplication());
                 }
                 e.onNext(cities);
                 e.onComplete();
@@ -106,10 +114,9 @@ public class WeatherViewModel extends AndroidViewModel {
         return Observable.create(new ObservableOnSubscribe<Boolean>() {
             @Override
             public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
-                for (int i = 0; i < cities.size(); i++) {
-                    City city = cities.get(i);
-                    DBUtil.updateIndex(getApplication(), city, i);
-                }
+                CityDao cityDao = mRepositoryManager.obtainRoomDatabase(CityDatabase.class, CityDatabase.DATABASE_NAME).cityDao();
+                cityDao.updateAll(cities);
+
                 e.onNext(true);
                 e.onComplete();
             }
@@ -120,18 +127,8 @@ public class WeatherViewModel extends AndroidViewModel {
         return Observable.create(new ObservableOnSubscribe<Boolean>() {
             @Override
             public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
-                boolean result = DBUtil.deleteCity(getApplication(), city);
-                e.onNext(result);
-                e.onComplete();
-            }
-        });
-    }
-
-    public Observable<Boolean> undoCity(final City city) {
-        return Observable.create(new ObservableOnSubscribe<Boolean>() {
-            @Override
-            public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
-                boolean result = DBUtil.undoCity(getApplication(), city);
+                CityDao cityDao = mRepositoryManager.obtainRoomDatabase(CityDatabase.class, CityDatabase.DATABASE_NAME).cityDao();
+                boolean result = cityDao.delete(city) > 0;
                 e.onNext(result);
                 e.onComplete();
             }

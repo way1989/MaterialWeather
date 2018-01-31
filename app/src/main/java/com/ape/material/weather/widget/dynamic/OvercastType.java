@@ -2,7 +2,6 @@ package com.ape.material.weather.widget.dynamic;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
-import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -15,8 +14,6 @@ import android.graphics.Shader;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.OvershootInterpolator;
-
-import com.ape.material.weather.util.UiUtil;
 
 
 /**

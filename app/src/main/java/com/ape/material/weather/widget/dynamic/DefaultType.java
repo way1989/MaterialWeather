@@ -1,7 +1,6 @@
 package com.ape.material.weather.widget.dynamic;
 
 import android.animation.Animator;
-import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 

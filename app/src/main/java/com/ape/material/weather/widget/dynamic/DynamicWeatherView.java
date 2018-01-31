@@ -140,6 +140,11 @@ public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Cal
         private boolean suspended = false;
 
         public void setRunning(boolean running) {
+            if (!running) {
+                synchronized (control) {
+                    control.notifyAll();
+                }
+            }
             isRunning = running;
         }
 
@@ -164,6 +169,9 @@ public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Cal
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
+                }
+                if (!isRunning) {
+                    return;
                 }
                 final long startTime = AnimationUtils.currentAnimationTimeMillis();
                 Canvas canvas = holder.lockCanvas();

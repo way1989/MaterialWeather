@@ -123,6 +123,7 @@ public class WeatherFragment extends BaseFragment implements SwipeRefreshLayout.
                         @Override
                         public void accept(Throwable throwable) throws Exception {
                             Log.e(TAG, "onShareItemClick onError: ", throwable);
+                            showErrorTip("share error:" + throwable.getMessage());
                         }
                     });
         }
@@ -162,7 +163,7 @@ public class WeatherFragment extends BaseFragment implements SwipeRefreshLayout.
             Log.e(TAG, "loadDataFirstTime: ", new Throwable("something is null..."));
             return;
         }
-        if (mCity.getIsLocation() == 1) {
+        if (mCity.getIsLocation() == 1 && TextUtils.isEmpty(mCity.getAreaId())) {
             getLocation();
         } else {
             getWeather(mCity, false);
@@ -216,7 +217,7 @@ public class WeatherFragment extends BaseFragment implements SwipeRefreshLayout.
 
     @Override
     public void onRefresh() {
-        if (mCity.getIsLocation() == 1 && DeviceUtil.hasInternet(getContext())) {
+        if (mCity.getIsLocation() == 1 && TextUtils.isEmpty(mCity.getAreaId())) {
             getLocation();
         } else {
             getWeather(mCity, true);

@@ -18,10 +18,10 @@ import io.reactivex.Flowable;
  */
 @Dao
 public interface CityDao {
-    @Query("SELECT * from city")
+    @Query("SELECT * from city ORDER BY orderIndex")
     public List<City> getCityAll();
 
-    @Query("SELECT * from city")
+    @Query("SELECT * from city ORDER BY orderIndex")
     public Flowable<List<City>> getCityFromCache();
 
     @Query("SELECT * from city where areaId = :areaId")

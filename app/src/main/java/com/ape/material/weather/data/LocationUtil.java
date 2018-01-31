@@ -88,7 +88,7 @@ public class LocationUtil {
                                                 basicBean.getId(), basicBean.getLat(), basicBean.getLon(), basicBean.getProv());
                                         city.setIsLocation(1);
                                         CityDao cityDao = repositoryManager.obtainRoomDatabase(CityDatabase.class, CityDatabase.DATABASE_NAME).cityDao();
-                                        cityDao.update(city);
+                                        cityDao.insert(city);
                                         //DBUtil.updateCity(context, city, true);
                                         return city;
                                     }

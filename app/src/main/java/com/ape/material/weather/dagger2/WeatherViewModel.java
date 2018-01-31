@@ -101,7 +101,7 @@ public class WeatherViewModel extends AndroidViewModel {
                     city.setIsLocation(1);
                     city.setCity(MainActivity.UNKNOWN_CITY);
                     cities.add(city);
-                    cityDao.insert(city);
+                    //cityDao.insert(city);
                     //DBUtil.insertAutoLocation(getApplication());
                 }
                 e.onNext(cities);
@@ -115,8 +115,11 @@ public class WeatherViewModel extends AndroidViewModel {
             @Override
             public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
                 CityDao cityDao = mRepositoryManager.obtainRoomDatabase(CityDatabase.class, CityDatabase.DATABASE_NAME).cityDao();
-                cityDao.updateAll(cities);
-
+                for (int i = 0; i < cities.size(); i++) {
+                    City city = cities.get(i);
+                    city.setIndex(i);
+                    cityDao.update(city);
+                }
                 e.onNext(true);
                 e.onComplete();
             }

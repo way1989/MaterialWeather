@@ -4,6 +4,7 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
 
 import java.io.Serializable;
 
@@ -14,10 +15,10 @@ import java.io.Serializable;
 @Entity(tableName = "city")
 public class City implements Serializable {
     private static final long serialVersionUID = -1233425412975945445L;
-    @PrimaryKey(autoGenerate = true)
-    private long _id;
     private String city;
     private String country;
+    @NonNull
+    @PrimaryKey()
     private String areaId;
     @ColumnInfo(name = "latitude")
     private String lat;
@@ -33,22 +34,13 @@ public class City implements Serializable {
 
     }
 
-    @Ignore
-    public City(String city, String country, String id, String lat, String lon, String prov) {
+    public City(String city, String country, @NonNull String id, String lat, String lon, String prov) {
         this.city = city;
         this.country = country;
         this.areaId = id;
         this.lat = lat;
         this.lon = lon;
         this.prov = prov;
-    }
-
-    public long get_id() {
-        return _id;
-    }
-
-    public void set_id(long _id) {
-        this._id = _id;
     }
 
     public String getCity() {

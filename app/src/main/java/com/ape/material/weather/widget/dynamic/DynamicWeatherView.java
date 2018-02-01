@@ -10,6 +10,8 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.animation.AnimationUtils;
 
+import java.lang.ref.WeakReference;
+
 
 /**
  * Created by liyu on 2017/8/16.
@@ -17,12 +19,11 @@ import android.view.animation.AnimationUtils;
 
 public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Callback {
 
-    private int fromColor;
+    private int mFromColor;
     private DrawThread mDrawThread;
-    private BaseWeatherType weatherType;
+    private BaseWeatherType mWeatherType;
     private int mViewWidth;
     private int mViewHeight;
-    private SurfaceHolder holder;
 
     public DynamicWeatherView(Context context) {
         this(context, null);
@@ -34,19 +35,19 @@ public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Cal
 
     public DynamicWeatherView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        weatherType = new DefaultType(context.getResources());
-        holder = getHolder();
+        mWeatherType = new DefaultType(context.getResources());
+        SurfaceHolder holder = getHolder();
         holder.addCallback(this);
         holder.setFormat(PixelFormat.RGBA_8888);
     }
 
     public int getColor() {
-        return weatherType.getColor();
+        return mWeatherType.getColor();
     }
 
     public void setType(final BaseWeatherType type) {
-        if (this.weatherType != null) {
-            this.weatherType.endAnimation(this, new Animator.AnimatorListener() {
+        if (mWeatherType != null) {
+            mWeatherType.endAnimation(this, new Animator.AnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animation) {
 
@@ -54,13 +55,14 @@ public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Cal
 
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    fromColor = weatherType.getColor();
-                    weatherType = type;
-                    if (weatherType != null) {
-                        weatherType.onSizeChanged(mViewWidth, mViewHeight);
+                    mFromColor = mWeatherType.getColor();
+                    mWeatherType = type;
+                    mDrawThread.setWeatherType(type);
+                    if (mWeatherType != null) {
+                        mWeatherType.onSizeChanged(mViewWidth, mViewHeight);
                     }
-                    if (weatherType != null)
-                        weatherType.startAnimation(DynamicWeatherView.this, fromColor);
+                    if (mWeatherType != null)
+                        mWeatherType.startAnimation(DynamicWeatherView.this, mFromColor);
                 }
 
                 @Override
@@ -74,16 +76,12 @@ public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Cal
                 }
             });
         } else {
-            fromColor = type.getColor();
-            this.weatherType = type;
-            this.weatherType.onSizeChanged(mViewWidth, mViewHeight);
-            this.weatherType.startAnimation(this, fromColor);
+            mFromColor = type.getColor();
+            mWeatherType = type;
+            mWeatherType.onSizeChanged(mViewWidth, mViewHeight);
+            mWeatherType.startAnimation(this, mFromColor);
         }
 
-    }
-
-    public BaseWeatherType getWeather() {
-        return weatherType;
     }
 
     @Override
@@ -91,8 +89,8 @@ public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Cal
         super.onSizeChanged(w, h, oldw, oldh);
         mViewWidth = w;
         mViewHeight = h;
-        if (weatherType != null) {
-            weatherType.onSizeChanged(w, h);
+        if (mWeatherType != null) {
+            mWeatherType.onSizeChanged(w, h);
         }
     }
 
@@ -111,17 +109,18 @@ public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Cal
     public void onDestroy() {
         mDrawThread.setRunning(false);
         getHolder().removeCallback(this);
-        if (this.weatherType != null) {
-            this.weatherType.endAnimation(this, null);
+        if (mWeatherType != null) {
+            mWeatherType.endAnimation(this, null);
         }
     }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        mDrawThread = new DrawThread();
+        mDrawThread = new DrawThread(holder);
+        mDrawThread.setWeatherType(mWeatherType);
         mDrawThread.setRunning(true);
         mDrawThread.start();
-        weatherType.startAnimation(this, weatherType.getColor());
+        mWeatherType.startAnimation(this, mWeatherType.getColor());
     }
 
     @Override
@@ -133,45 +132,62 @@ public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Cal
         mDrawThread.setRunning(false);
     }
 
-    private class DrawThread extends Thread {
+    private static class DrawThread extends Thread {
 
-        private final Object control = new Object();
-        private boolean isRunning = false;
-        private boolean suspended = false;
+        private final Object mObject = new Object();
+        WeakReference<SurfaceHolder> mSurfaceHolderWeakReference;
+        WeakReference<BaseWeatherType> mWeatherTypeWeakReference;
+        private boolean mIsRunning = false;
+        private boolean mSuspended = false;
 
-        public void setRunning(boolean running) {
-            if (!running) {
-                synchronized (control) {
-                    control.notifyAll();
-                }
-            }
-            isRunning = running;
+        DrawThread(SurfaceHolder holder) {
+            mSurfaceHolderWeakReference = new WeakReference<>(holder);
         }
 
-        public void setSuspend(boolean suspend) {
-            if (!suspend) {
-                synchronized (control) {
-                    control.notifyAll();
+        void setWeatherType(BaseWeatherType weatherType) {
+            if (mWeatherTypeWeakReference != null) {
+                mWeatherTypeWeakReference.clear();
+            }
+            mWeatherTypeWeakReference = new WeakReference<>(weatherType);
+        }
+
+        void setRunning(boolean running) {
+            if (!running) {
+                synchronized (mObject) {
+                    mObject.notifyAll();
                 }
             }
+            mIsRunning = running;
+        }
 
-            this.suspended = suspend;
+        void setSuspend(boolean suspend) {
+            if (!suspend) {
+                synchronized (mObject) {
+                    mObject.notifyAll();
+                }
+            }
+            this.mSuspended = suspend;
         }
 
         @Override
         public void run() {
-            while (isRunning) {
-                if (suspended) {
+            while (mIsRunning) {
+                if (mSuspended) {
                     try {
-                        synchronized (control) {
-                            control.wait();
+                        synchronized (mObject) {
+                            mObject.wait();
                         }
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                 }
-                if (!isRunning) {
+                if (!mIsRunning) {
                     return;
+                }
+                SurfaceHolder holder = mSurfaceHolderWeakReference.get();
+                BaseWeatherType weatherType = mWeatherTypeWeakReference.get();
+                if (holder == null || weatherType == null) {
+                    continue;
                 }
                 final long startTime = AnimationUtils.currentAnimationTimeMillis();
                 Canvas canvas = holder.lockCanvas();
@@ -180,7 +196,6 @@ public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Cal
                     holder.unlockCanvasAndPost(canvas);
                     final long drawTime = AnimationUtils.currentAnimationTimeMillis() - startTime;
                     final long needSleepTime = 16 - drawTime;
-                    System.out.print("fuck");
                     if (needSleepTime > 0) {
                         SystemClock.sleep(needSleepTime);
                     }
@@ -188,5 +203,6 @@ public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Cal
 
             }
         }
+
     }
 }

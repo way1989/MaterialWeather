@@ -58,7 +58,6 @@ public class WeatherFragment extends BaseFragment implements SwipeRefreshLayout.
     SwipeRefreshLayout mWPullRefreshLayout;
 
     private OnDrawerTypeChangeListener mListener;
-    private BaseWeatherType mWeatherType;
     private City mCity;
     private HeWeather mWeather;
 
@@ -91,14 +90,6 @@ public class WeatherFragment extends BaseFragment implements SwipeRefreshLayout.
 
     private City getArgCity() {
         return (City) getArguments().getSerializable(ARG_KEY);
-    }
-
-    @Override
-    public BaseWeatherType getDrawerType() {
-        if (mWeather != null && mWeather.isOK()) {
-            mWeatherType = TypeUtil.getType(getResources(), getShortWeatherInfo(mWeather));
-        }
-        return mWeatherType;
     }
 
     @Override
@@ -224,6 +215,13 @@ public class WeatherFragment extends BaseFragment implements SwipeRefreshLayout.
         }
     }
 
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+
+        changeDynamicWeather(mWeather);
+    }
+
     private void updateWeatherUI() {
         final HeWeather weather = mWeather;
         mWPullRefreshLayout.setRefreshing(false);
@@ -231,9 +229,7 @@ public class WeatherFragment extends BaseFragment implements SwipeRefreshLayout.
             return;
         }
         try {
-            ShortWeatherInfo info = getShortWeatherInfo(weather);
-            mWeatherType = TypeUtil.getType(getResources(), info);
-            if (getUserVisibleHint()) mListener.onDrawerTypeChange(mWeatherType);
+            changeDynamicWeather(weather);
 
             HeWeather.HeWeather5Bean w = weather.getWeather();
             mWDailyForecastView.setData(weather);
@@ -303,6 +299,13 @@ public class WeatherFragment extends BaseFragment implements SwipeRefreshLayout.
         } catch (Exception e) {
             e.printStackTrace();
             toast(mCity.getCity() + " Error\n" + e.toString());
+        }
+    }
+
+    private void changeDynamicWeather(HeWeather weather) {
+        if (getUserVisibleHint() && mWeather != null && mWeather.isOK()) {
+            BaseWeatherType type = TypeUtil.getType(getResources(), getShortWeatherInfo(weather));
+            mListener.onDrawerTypeChange(type);
         }
     }
 

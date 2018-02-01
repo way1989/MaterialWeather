@@ -1,6 +1,6 @@
 package com.ape.material.weather.widget.dynamic;
 
-import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.content.res.Resources;
@@ -214,8 +214,8 @@ public class SunnyType extends BaseWeatherType {
     }
 
     @Override
-    public void startAnimation(final DynamicWeatherView dynamicWeatherView, int fromColor) {
-        super.startAnimation(dynamicWeatherView, fromColor);
+    public void startAnimation(int fromColor) {
+        super.startAnimation(fromColor);
         sunPos = new float[2];
         sunTan = new float[2];
         moonPos = new float[2];
@@ -281,13 +281,10 @@ public class SunnyType extends BaseWeatherType {
             }
         });
         animatorCloud.start();
-
     }
 
     @Override
-    public void endAnimation(DynamicWeatherView dynamicWeatherView, Animator.AnimatorListener listener) {
-        super.endAnimation(dynamicWeatherView, null);
-
+    public void endAnimation(AnimatorListenerAdapter listener) {
         ValueAnimator animator1 = ValueAnimator.ofFloat(currentSunPosition, 1);
         animator1.setInterpolator(PathInterpolatorCompat.create(0.5f, 1));
         animator1.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {

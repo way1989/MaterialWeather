@@ -79,7 +79,6 @@ public abstract class BaseFragment extends RxFragment {
 
     //public abstract String getTitle();
 
-    public abstract BaseWeatherType getDrawerType();
 
     /**
      * should override this method when use MVP

@@ -1,6 +1,7 @@
 package com.ape.material.weather.widget.dynamic;
 
 import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.PixelFormat;
@@ -47,14 +48,10 @@ public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Cal
 
     public void setType(final BaseWeatherType type) {
         if (mWeatherType != null) {
-            mWeatherType.endAnimation(this, new Animator.AnimatorListener() {
-                @Override
-                public void onAnimationStart(Animator animation) {
-
-                }
-
+            mWeatherType.endAnimation(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
+                    super.onAnimationEnd(animation);
                     mFromColor = mWeatherType.getColor();
                     mWeatherType = type;
                     mDrawThread.setWeatherType(type);
@@ -62,24 +59,14 @@ public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Cal
                         mWeatherType.onSizeChanged(mViewWidth, mViewHeight);
                     }
                     if (mWeatherType != null)
-                        mWeatherType.startAnimation(DynamicWeatherView.this, mFromColor);
-                }
-
-                @Override
-                public void onAnimationCancel(Animator animation) {
-
-                }
-
-                @Override
-                public void onAnimationRepeat(Animator animation) {
-
+                        mWeatherType.startAnimation(mFromColor);
                 }
             });
         } else {
             mFromColor = type.getColor();
             mWeatherType = type;
             mWeatherType.onSizeChanged(mViewWidth, mViewHeight);
-            mWeatherType.startAnimation(this, mFromColor);
+            mWeatherType.startAnimation(mFromColor);
         }
 
     }
@@ -110,7 +97,7 @@ public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Cal
         mDrawThread.setRunning(false);
         getHolder().removeCallback(this);
         if (mWeatherType != null) {
-            mWeatherType.endAnimation(this, null);
+            mWeatherType.endAnimation(null);
         }
     }
 
@@ -120,7 +107,7 @@ public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Cal
         mDrawThread.setWeatherType(mWeatherType);
         mDrawThread.setRunning(true);
         mDrawThread.start();
-        mWeatherType.startAnimation(this, mWeatherType.getColor());
+        mWeatherType.startAnimation(mWeatherType.getColor());
     }
 
     @Override

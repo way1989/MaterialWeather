@@ -1,6 +1,6 @@
 package com.ape.material.weather.widget.dynamic;
 
-import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.content.res.Resources;
@@ -53,7 +53,7 @@ public abstract class BaseWeatherType implements WeatherHandler {
 
     public abstract void generateElements();
 
-    public void startAnimation(DynamicWeatherView dynamicWeatherView, int fromColor) {
+    public void startAnimation(int fromColor) {
         ValueAnimator animator = ValueAnimator.ofObject(new ArgbEvaluator(), fromColor, color);
         animator.setInterpolator(new LinearInterpolator());
         animator.setDuration(1000);
@@ -67,9 +67,7 @@ public abstract class BaseWeatherType implements WeatherHandler {
         animator.start();
     }
 
-    public void endAnimation(DynamicWeatherView dynamicWeatherView, Animator.AnimatorListener listener) {
-
-    }
+    public abstract void endAnimation(AnimatorListenerAdapter listener);
 
     @Override
     public void onSizeChanged(int w, int h) {

@@ -1,6 +1,6 @@
 package com.ape.material.weather.widget.dynamic;
 
-import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 
@@ -28,8 +28,7 @@ public class DefaultType extends BaseWeatherType {
     }
 
     @Override
-    public void endAnimation(DynamicWeatherView dynamicWeatherView, Animator.AnimatorListener listener) {
-        super.endAnimation(dynamicWeatherView, listener);
+    public void endAnimation(AnimatorListenerAdapter listener) {
         if (listener != null) {
             listener.onAnimationEnd(null);
         }

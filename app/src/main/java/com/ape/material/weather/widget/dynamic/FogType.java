@@ -1,6 +1,6 @@
 package com.ape.material.weather.widget.dynamic;
 
-import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.content.res.Resources;
@@ -80,8 +80,8 @@ public class FogType extends BaseWeatherType {
     }
 
     @Override
-    public void startAnimation(DynamicWeatherView dynamicWeatherView, int fromColor) {
-        super.startAnimation(dynamicWeatherView, fromColor);
+    public void startAnimation(int fromColor) {
+        super.startAnimation(fromColor);
         ValueAnimator animator = ValueAnimator.ofFloat(0, 1);
         animator.setDuration(6000);
         animator.setRepeatCount(-1);
@@ -122,9 +122,7 @@ public class FogType extends BaseWeatherType {
     }
 
     @Override
-    public void endAnimation(DynamicWeatherView dynamicWeatherView, Animator.AnimatorListener listener) {
-        super.endAnimation(dynamicWeatherView, listener);
-
+    public void endAnimation(AnimatorListenerAdapter listener) {
         ValueAnimator animator = ValueAnimator.ofFloat(fogFactor1, 0);
         animator.setInterpolator(new LinearInterpolator());
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {

@@ -1,6 +1,6 @@
 package com.ape.material.weather.widget.dynamic;
 
-import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -84,8 +84,8 @@ public class HailType extends BaseWeatherType {
     }
 
     @Override
-    public void startAnimation(DynamicWeatherView dynamicWeatherView, int fromColor) {
-        super.startAnimation(dynamicWeatherView, fromColor);
+    public void startAnimation(int fromColor) {
+        super.startAnimation(fromColor);
         ValueAnimator animator = ValueAnimator.ofFloat(-bitmap.getWidth() * 0.25f, getWidth() - bitmap.getWidth() * 0.25f);
         animator.setDuration(1000);
         animator.setRepeatCount(0);
@@ -101,8 +101,7 @@ public class HailType extends BaseWeatherType {
     }
 
     @Override
-    public void endAnimation(DynamicWeatherView dynamicWeatherView, Animator.AnimatorListener listener) {
-        super.endAnimation(dynamicWeatherView, listener);
+    public void endAnimation(AnimatorListenerAdapter listener) {
         ValueAnimator animator = ValueAnimator.ofFloat(getWidth() - bitmap.getWidth() * 0.25f, getWidth());
         animator.setDuration(1000);
         animator.setRepeatCount(0);

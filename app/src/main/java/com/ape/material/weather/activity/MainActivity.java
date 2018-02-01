@@ -18,6 +18,7 @@ import android.text.style.DynamicDrawableSpan;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 
@@ -59,17 +60,6 @@ public class MainActivity extends BaseActivity
     private MainFragmentPagerAdapter mAdapter;
     private List<City> mCities = new ArrayList<>();
     private int mSelectItem = 0;
-    private ViewPager.SimpleOnPageChangeListener mOnPageChangeListener = new ViewPager.SimpleOnPageChangeListener() {
-        @Override
-        public void onPageSelected(int position) {
-            super.onPageSelected(position);
-            final BaseWeatherType type = mAdapter.getItem(position).getDrawerType();
-            Log.d(TAG, "onPageSelected: position = " + position + ", type = " + type);
-            if (type != null) {
-                mDynamicWeatherView.setType(type);
-            }
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +80,6 @@ public class MainActivity extends BaseActivity
     private void setupViewPager() {
         mAdapter = new MainFragmentPagerAdapter(getSupportFragmentManager());
         mMainViewPager.setAdapter(mAdapter);
-        mMainViewPager.addOnPageChangeListener(mOnPageChangeListener);
         mIndicator.setViewPager(mMainViewPager);
     }
 
@@ -151,6 +140,7 @@ public class MainActivity extends BaseActivity
     @Override
     protected void onResume() {
         super.onResume();
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
         mDynamicWeatherView.onResume();
     }
 
@@ -163,7 +153,6 @@ public class MainActivity extends BaseActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mMainViewPager.removeOnPageChangeListener(mOnPageChangeListener);
         mDynamicWeatherView.onDestroy();
     }
 

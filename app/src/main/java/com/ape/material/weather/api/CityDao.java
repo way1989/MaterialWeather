@@ -21,6 +21,9 @@ public interface CityDao {
     @Query("SELECT * from city ORDER BY orderIndex")
     public List<City> getCityAll();
 
+    @Query("SELECT count(*) from city")
+    public int getCityCount();
+
     @Query("SELECT * from city ORDER BY orderIndex")
     public Flowable<List<City>> getCityFromCache();
 

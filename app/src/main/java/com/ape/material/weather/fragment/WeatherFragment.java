@@ -3,6 +3,7 @@ package com.ape.material.weather.fragment;
 import android.Manifest;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -220,6 +221,11 @@ public class WeatherFragment extends BaseFragment implements SwipeRefreshLayout.
         super.setUserVisibleHint(isVisibleToUser);
 
         changeDynamicWeather(mWeather);
+
+        if (!isVisibleToUser && mIsDataInitiated) {
+            mIsDataInitiated = mWeather == null || !mWeather.isOK()
+                    || (System.currentTimeMillis() - mWeather.getUpdateTime() > 30 * 60 * 1000);
+        }
     }
 
     private void updateWeatherUI() {
@@ -228,6 +234,7 @@ public class WeatherFragment extends BaseFragment implements SwipeRefreshLayout.
         if (weather == null || !weather.isOK()) {
             return;
         }
+        mWeather.setUpdateTime(System.currentTimeMillis());
         try {
             changeDynamicWeather(weather);
 

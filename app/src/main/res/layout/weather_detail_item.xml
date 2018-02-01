@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android">
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+       xmlns:tools="http://schemas.android.com/tools">
 
     <TextView
         style="@style/w_section_title"
@@ -12,8 +13,8 @@
         android:divider="@drawable/divider_linearlayout"
         android:orientation="horizontal"
         android:paddingBottom="0dp"
-        android:paddingLeft="0dp"
-        android:paddingRight="16dp"
+        android:paddingStart="0dp"
+        android:paddingEnd="16dp"
         android:showDividers="none">
 
         <LinearLayout
@@ -30,7 +31,7 @@
                 android:layout_gravity="center"
                 android:fontFamily="sans-serif-light"
                 android:maxLines="1"
-                android:text="-°"
+                tools:text="-°"
                 android:textColor="@color/w_text_primary"
                 android:textSize="52dp"
                 android:textStyle="normal"/>
@@ -51,7 +52,7 @@
                 android:layout_marginTop="8dp"
                 android:fontFamily="sans-serif-light"
                 android:maxLines="1"
-                android:text="-"
+                tools:text="-"
                 android:textColor="@color/w_text_primary"
                 android:textSize="14dp"
                 android:textStyle="normal"/>

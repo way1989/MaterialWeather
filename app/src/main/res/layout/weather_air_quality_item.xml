@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
+              xmlns:tools="http://schemas.android.com/tools"
               android:orientation="vertical">
 
     <TextView
@@ -15,8 +16,8 @@
         android:divider="@drawable/divider_linearlayout"
         android:orientation="horizontal"
         android:paddingBottom="0dp"
-        android:paddingLeft="0dp"
-        android:paddingRight="16dp"
+        android:paddingStart="0dp"
+        android:paddingEnd="16dp"
         android:showDividers="none">
 
         <com.ape.material.weather.widget.AqiView
@@ -31,7 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:gravity="center_horizontal"
-            android:text="-"
+            tools:text="-"
             android:textColor="@color/w_text_primary"
             android:textSize="22dp"
             android:visibility="gone"/>
@@ -50,7 +51,7 @@
                 <TextView
                     android:id="@+id/w_aqi_pm25"
                     style="@style/todaydetail_info_content"
-                    android:text="--"/>
+                    tools:text="--"/>
             </LinearLayout>
 
             <View
@@ -67,7 +68,7 @@
                 <TextView
                     android:id="@+id/w_aqi_pm10"
                     style="@style/todaydetail_info_content"
-                    android:text="--"/>
+                    tools:text="--"/>
             </LinearLayout>
 
             <View
@@ -84,7 +85,7 @@
                 <TextView
                     android:id="@+id/w_aqi_so2"
                     style="@style/todaydetail_info_content"
-                    android:text="--"/>
+                    tools:text="--"/>
             </LinearLayout>
 
             <View
@@ -101,7 +102,7 @@
                 <TextView
                     android:id="@+id/w_aqi_no2"
                     style="@style/todaydetail_info_content"
-                    android:text="--"/>
+                    tools:text="--"/>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

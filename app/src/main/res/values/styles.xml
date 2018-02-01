@@ -26,7 +26,9 @@
         <item name="android:layout_height">match_parent</item>
         <item name="android:textColor">@android:color/black</item>
         <item name="android:paddingTop">8dp</item>
+        <item name="android:gravity">start</item>
         <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
         <item name="android:paddingBottom">8dp</item>
         <item name="android:textSize">16dp</item>
         <item name="android:textStyle">normal</item>
@@ -56,7 +58,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:singleLine">true</item>
-        <item name="android:gravity">right</item>
+        <item name="android:gravity">end</item>
         <item name="android:ellipsize">end</item>
         <item name="android:textColor">@color/w_text_primary</item>
         <item name="android:textSize">14dp</item>
@@ -70,18 +72,18 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/w_text_primary</item>
         <item name="android:textSize">16dp</item>
-        <item name="android:layout_marginLeft">112dp</item>
+        <item name="android:layout_marginStart">112dp</item>
         <item name="android:singleLine">true</item>
         <item name="android:paddingBottom">0dp</item>
         <item name="android:paddingTop">6dp</item>
-        <item name="android:paddingLeft">0dp</item>
-        <item name="android:paddingRight">16dp</item>
+        <item name="android:paddingStart">0dp</item>
+        <item name="android:paddingEnd">16dp</item>
         <item name="android:textStyle">normal</item>
         <item name="android:fontFamily">sans-serif-light</item>
     </style>
 
     <style name="suggestion_title" parent="@style/suggestion_brf">
-        <item name="android:layout_marginLeft">56dp</item>
+        <item name="android:layout_marginStart">56dp</item>
     </style>
 
     <style name="suggestion_image">
@@ -96,8 +98,8 @@
     <style name="suggestion_divider">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/w_divider_size</item>
-        <item name="android:layout_marginLeft">72dp</item>
-        <item name="android:layout_marginRight">16dp</item>
+        <item name="android:layout_marginStart">72dp</item>
+        <item name="android:layout_marginEnd">16dp</item>
         <item name="android:background">@color/w_divider_secondary</item>
     </style>
 
@@ -108,9 +110,9 @@
         <item name="android:textSize">14dp</item>
         <item name="android:paddingTop">2dp</item>
         <item name="android:paddingBottom">6dp</item>
-        <item name="android:layout_marginLeft">56dp</item>
-        <item name="android:paddingLeft">0dp</item>
-        <item name="android:paddingRight">16dp</item>
+        <item name="android:layout_marginStart">56dp</item>
+        <item name="android:paddingStart">0dp</item>
+        <item name="android:paddingEnd">16dp</item>
         <item name="android:textStyle">normal</item>
         <item name="android:fontFamily">sans-serif-light</item>
     </style>

@@ -216,6 +216,7 @@ public class WeatherViewModel extends AndroidViewModel {
         return mRepositoryManager.obtainCacheService(CacheService.class)
                 .getWeather(mRepositoryManager.obtainRetrofitService(ApiService.class)
                                 .getWeather(BuildConfig.HEWEATHER_KEY, city, LANG),
-                        new DynamicKey(city), new EvictProvider(force));
+                        new DynamicKey(city), new EvictProvider(force))
+                .timeout(10, TimeUnit.SECONDS);
     }
 }

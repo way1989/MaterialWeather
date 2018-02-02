@@ -98,7 +98,5 @@ public abstract class BaseFragment extends RxFragment {
     @LayoutRes
     int getLayoutId();
 
-    public abstract HeWeather getWeather();
-
     public abstract void onShareItemClick();
 }

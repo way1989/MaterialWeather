@@ -325,7 +325,7 @@ public class SunnyType extends BaseWeatherType {
 
         AnimatorSet animSet = new AnimatorSet();
         animSet.play(animator1).with(animator2).with(animator3).with(animator4);
-        animSet.setDuration(1000);
+        animSet.setDuration(END_ANIM_DURATION);
         if (listener != null) {
             animSet.addListener(listener);
         }

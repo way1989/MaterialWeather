@@ -13,12 +13,18 @@ import android.graphics.Paint.FontMetrics;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.TextUtils;
+import android.text.style.DynamicDrawableSpan;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Toast;
+
+import com.ape.material.weather.R;
+import com.ape.material.weather.bean.City;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -154,5 +160,26 @@ public class UiUtil {
 
     public static void logDebug(String tag, String msg) {
         Log.d(tag, msg);
+    }
+
+    public static SpannableString getNameWithIcon(String name, final Drawable d) {
+        if (TextUtils.isEmpty(name)) {
+            return new SpannableString("");
+        }
+        DynamicDrawableSpan drawableSpan =
+                new DynamicDrawableSpan(DynamicDrawableSpan.ALIGN_BASELINE) {//基于文本基线,默认是文本底部
+                    @Override
+                    public Drawable getDrawable() {
+                        //Drawable d = getResources().getDrawable(R.drawable.ic_location_on_white_18dp);
+                        d.setBounds(0, 0, d.getIntrinsicWidth(), d.getIntrinsicHeight());
+                        return d;
+                    }
+                };
+        //ImageSpan imgSpan = new ImageSpan(getApplicationContext(), R.drawable.ic_location_on_white_18dp);
+
+        SpannableString spannableString = new SpannableString(name + " ");
+        spannableString.setSpan(drawableSpan, spannableString.length() - 1,
+                spannableString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return spannableString;
     }
 }

@@ -26,7 +26,7 @@ import com.ape.material.weather.R;
 
 public class HazeType extends BaseWeatherType {
 
-    Camera camera;
+    private Camera camera;
     private Paint mPaint;
     private Path mPathFront;
     private Path mPathRear;
@@ -35,7 +35,6 @@ public class HazeType extends BaseWeatherType {
     private Bitmap mBitmap;             // 箭头图片
     private Matrix mMatrix;             // 矩阵,用于对图片进行一些操作
     private float φ;
-    private Shader shader;
 
     public HazeType(Resources resources) {
         super(resources);
@@ -58,7 +57,7 @@ public class HazeType extends BaseWeatherType {
         clearCanvas(canvas);
         canvas.drawColor(getDynamicColor());
 
-        shader = new LinearGradient(0, getHeight(), getWidth(), getHeight(), 0x33ffffff, 0xccffffff, Shader.TileMode.CLAMP);
+        Shader shader = new LinearGradient(0, getHeight(), getWidth(), getHeight(), 0x33ffffff, 0xccffffff, Shader.TileMode.CLAMP);
         mPaint.setShader(shader);
 
         φ -= 0.05f;

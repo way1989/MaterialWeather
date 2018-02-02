@@ -30,6 +30,9 @@ public interface CityDao {
     @Query("SELECT * from city where areaId = :areaId")
     public City getCityByAreaId(String areaId);
 
+    @Query("SELECT * from city where isLocation = 1")
+    public City getCityByLocation();
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public long[] insertAll(List<City> cities);
 

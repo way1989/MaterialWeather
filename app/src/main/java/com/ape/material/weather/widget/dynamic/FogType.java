@@ -152,7 +152,7 @@ public class FogType extends BaseWeatherType {
 
         AnimatorSet animSet = new AnimatorSet();
         animSet.play(animator).with(animator2).with(animator3);
-        animSet.setDuration(1000);
+        animSet.setDuration(END_ANIM_DURATION);
         if (listener != null) {
             animSet.addListener(listener);
         }

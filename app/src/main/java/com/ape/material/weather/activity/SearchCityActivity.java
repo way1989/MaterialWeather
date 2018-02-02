@@ -55,7 +55,7 @@ public class SearchCityActivity extends BaseActivity implements MenuItem.OnActio
         }
         mInputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mSearchAdapter = new SearchAdapter(R.layout.item_city);
+        mSearchAdapter = new SearchAdapter(R.layout.item_search_city);
         mSearchAdapter.openLoadAnimation(BaseQuickAdapter.SLIDEIN_BOTTOM);
         mSearchAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override

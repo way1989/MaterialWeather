@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.view.View;
 import android.widget.ScrollView;
 
 import java.io.File;
@@ -27,7 +28,11 @@ public class RxImage {
 
             @Override
             public void subscribe(ObservableEmitter<Bitmap> e) throws Exception {
-                Bitmap bitmap = saveScrollViewToBitmap(view);
+                View v = view.getRootView();
+                v.setDrawingCacheEnabled(true);
+                v.buildDrawingCache();
+                Bitmap bitmap = v.getDrawingCache();
+                //Bitmap bitmap = saveScrollViewToBitmap(view);
                 if (bitmap == null) {
                     throw new Exception("无法生产图片!");
                 }

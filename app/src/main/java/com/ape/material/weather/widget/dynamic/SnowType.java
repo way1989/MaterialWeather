@@ -28,12 +28,11 @@ public class SnowType extends BaseWeatherType {
     public static final int SNOW_LEVEL_1 = 20;//小雪级别
     public static final int SNOW_LEVEL_2 = 40;//中雪级别
     public static final int SNOW_LEVEL_3 = 60;//大到暴雪级别
-    float transFactor;
-    Bitmap bitmap;
-    Matrix matrix;
+    private float transFactor;
+    private Bitmap bitmap;
+    private Matrix matrix;
     private ArrayList<Snow> mSnows;
     private Paint mPaint;
-    private Snow snow;
     private int snowLevel = SNOW_LEVEL_1;
 
     public SnowType(Resources resources, @SnowLevel int snowLevel) {
@@ -58,6 +57,7 @@ public class SnowType extends BaseWeatherType {
         matrix.postScale(0.25f, 0.25f);
         matrix.postTranslate(transFactor, getHeight() - bitmap.getHeight() * 0.23f);
         canvas.drawBitmap(bitmap, matrix, mPaint);
+        Snow snow;
         for (int i = 0; i < mSnows.size(); i++) {
             snow = mSnows.get(i);
             mPaint.setAlpha((int) (255 * ((float) snow.y / (float) getHeight())));
@@ -107,7 +107,7 @@ public class SnowType extends BaseWeatherType {
     @Override
     public void endAnimation(AnimatorListenerAdapter listener) {
         ValueAnimator animator = ValueAnimator.ofFloat(getWidth() - bitmap.getWidth() * 0.25f, getWidth());
-        animator.setDuration(1000);
+        animator.setDuration(END_ANIM_DURATION);
         animator.setRepeatCount(0);
         animator.setInterpolator(new AccelerateInterpolator());
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {

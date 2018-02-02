@@ -16,6 +16,8 @@ import java.util.Random;
  */
 
 public abstract class BaseWeatherType implements WeatherHandler {
+    protected static final long START_ANIM_DURATION = 3000L;
+    protected static final long END_ANIM_DURATION = 400L;
     protected int color;
     private int dynamicColor;
     protected Resources mResources;

@@ -16,6 +16,7 @@ import android.view.View;
 import com.ape.material.weather.R;
 import com.ape.material.weather.adapter.ManageAdapter;
 import com.ape.material.weather.bean.City;
+import com.ape.material.weather.bean.HeWeather;
 import com.ape.material.weather.util.AppConstant;
 import com.ape.material.weather.util.RxSchedulers;
 import com.ape.material.weather.widget.SimpleListDividerDecorator;
@@ -25,13 +26,17 @@ import com.chad.library.adapter.base.listener.OnItemDragListener;
 import com.chad.library.adapter.base.listener.OnItemSwipeListener;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.trello.rxlifecycle2.android.ActivityEvent;
+import com.trello.rxlifecycle2.android.FragmentEvent;
 import com.weavey.loading.lib.LoadingLayout;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 public class ManageActivity extends BaseActivity {
     public static final String EXTRA_DATA_CHANGED = "extra_data_changed";
@@ -66,7 +71,7 @@ public class ManageActivity extends BaseActivity {
                                 SearchCityActivity.class), REQUEST_CODE_CITY);
                     }
                 });
-        mAdapter = new ManageAdapter(R.layout.list_item_draggable, null);
+        mAdapter = new ManageAdapter(R.layout.item_manage_city, null);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         mRecyclerView.addItemDecoration(new SimpleListDividerDecorator(ContextCompat
                 .getDrawable(getApplicationContext(), R.drawable.list_divider_h), false));
@@ -213,13 +218,38 @@ public class ManageActivity extends BaseActivity {
             if (city != null) {
                 mDataChanged = true;
                 mAdapter.addData(city);
+                getWeather(city.getAreaId(), true);
             }
         }
     }
+    private void getWeather(String areaId, boolean force) {
+        Log.i(TAG, "getWeather... areaId = " + areaId);
+        mViewModel.getWeather(areaId, force)
+                .compose(this.<HeWeather>bindUntilEvent(ActivityEvent.DESTROY))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<HeWeather>() {
+                    @Override
+                    public void accept(HeWeather heWeather) throws Exception {
+                        Log.d(TAG, "getWeather: onNext weather isOK = " + heWeather.isOK());
+                        if (heWeather.isOK()) {
+                            String code = heWeather.getWeather().getNow().getCond().getCode();
+                            String codeTxt = heWeather.getWeather().getNow().getCond().getTxt();
+                            String tmp = heWeather.getWeather().getNow().getTmp();
+                            Log.d(TAG, "getWeather: codeTxt = " + codeTxt + ", code = " + code + ", tmp = " + tmp);
+                        }
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        Log.e(TAG, "getWeather onError: ", throwable);
+                    }
+                });
 
+    }
     @Override
     protected int getLayoutId() {
-        return R.layout.activity_manage_location;
+        return R.layout.activity_manage_city;
     }
 
     public void onCityChange(List<City> cities) {

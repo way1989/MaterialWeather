@@ -23,13 +23,13 @@ import android.view.animation.OvershootInterpolator;
 public class OvercastType extends BaseWeatherType {
 
     private static final int hillColor = 0xFF59789D; //山坡的颜色
-    PathMeasure measure;
+    private PathMeasure measure;
     private Paint mPaint;
     private Path mPathFront;                         // 近处的山坡
     private Path mPathRear;                          // 远处的山坡
     private Path fanPath = new Path();               // 旋转的风扇的扇叶
     private Path fanPillarPath = new Path();         // 旋转的风扇的柱子
-    private float fanPillerHeight;
+    private float fanPillarHeight;
     private float curRotate;                         // 旋转的风扇的角度
     private float[] pos;                             // 当前点的实际位置
     private float[] tan;                             // 当前点的tangent值,用于计算图片所需旋转的角度
@@ -113,7 +113,7 @@ public class OvercastType extends BaseWeatherType {
         int saveCount = canvas.save();
         measure.setPath(path, false);
         measure.getPosTan(getWidth() * location, pos, tan);
-        canvas.translate(pos[0], pos[1] - fanPillerHeight * scale);
+        canvas.translate(pos[0], pos[1] - fanPillarHeight * scale);
         canvas.scale(scale, scale);
         mPaint.setStyle(Paint.Style.FILL);
         mPaint.setColor(Color.WHITE);
@@ -157,10 +157,10 @@ public class OvercastType extends BaseWeatherType {
         fanPillarPath.reset();
         final float fanPillarSize = textSize * 0.20f;// 柱子的宽度
         fanPillarPath.moveTo(0, 0);
-        fanPillerHeight = textSize * 4f;// 柱子的高度
+        fanPillarHeight = textSize * 4f;// 柱子的高度
         fanPillarPath.lineTo(2, 0);
-        fanPillarPath.lineTo(fanPillarSize, fanPillerHeight);
-        fanPillarPath.lineTo(-fanPillarSize, fanPillerHeight);
+        fanPillarPath.lineTo(fanPillarSize, fanPillarHeight);
+        fanPillarPath.lineTo(-fanPillarSize, fanPillarHeight);
         fanPillarPath.lineTo(-2, 0);
         fanPillarPath.close();
     }
@@ -196,7 +196,7 @@ public class OvercastType extends BaseWeatherType {
     @Override
     public void endAnimation(AnimatorListenerAdapter listener) {
         ValueAnimator animator = ValueAnimator.ofFloat(1, -1);
-        animator.setDuration(1000);
+        animator.setDuration(END_ANIM_DURATION);
         animator.setRepeatCount(0);
         animator.setInterpolator(new AccelerateInterpolator());
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {

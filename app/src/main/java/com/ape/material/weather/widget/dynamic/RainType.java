@@ -11,6 +11,8 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PathMeasure;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.IntDef;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
@@ -36,19 +38,14 @@ public class RainType extends BaseWeatherType {
     public static final int WIND_LEVEL_1 = 20;//小风
     public static final int WIND_LEVEL_2 = 30;//中风
     public static final int WIND_LEVEL_3 = 45;//大风
-    float transFactor;
-    Bitmap bitmap;
-    Matrix matrix;
-    Path flash1;
-    Path flash2;
-    Path flash3;
-    Runnable flashRunnable;
-    boolean isFlashing = false;
-    boolean isSnowing = false;
-    DynamicWeatherView dynamicWeatherView;
+    private float transFactor;
+    private Bitmap bitmap;
+    private Matrix matrix;
+    private Runnable flashRunnable;
+    private boolean isFlashing = false;
+    private boolean isSnowing = false;
     private ArrayList<Rain> mRains;
     private Paint mPaint;
-    private Rain rain;
     private int rainLevel = RAIN_LEVEL_1;
     private int windLevel = WIND_LEVEL_1;
     private float mAnimatorValue;
@@ -62,8 +59,7 @@ public class RainType extends BaseWeatherType {
     private float mFlashLength3;
     private Path mDstFlash3;
     private ArrayList<SnowType.Snow> mSnows;
-
-    private SnowType.Snow snow;
+    private Handler mHandler = new Handler(Looper.getMainLooper());
 
     public RainType(Resources resources, @RainLevel int rainLevel, @WindLevel int windLevel) {
         super(resources);
@@ -121,6 +117,7 @@ public class RainType extends BaseWeatherType {
         matrix.postScale(0.2f, 0.2f);
         matrix.postTranslate(transFactor, getHeight() - bitmap.getHeight() * 0.2f + 2f);
         canvas.drawBitmap(bitmap, matrix, mPaint);
+        Rain rain;
         for (int i = 0; i < mRains.size(); i++) {
             rain = mRains.get(i);
             mPaint.setAlpha(rain.alpha);
@@ -137,6 +134,7 @@ public class RainType extends BaseWeatherType {
         }
         if (isSnowing) {
             mPaint.setStyle(Paint.Style.FILL);
+            SnowType.Snow snow;
             for (int i = 0; i < mSnows.size(); i++) {
                 snow = mSnows.get(i);
                 mPaint.setAlpha((int) (255 * (((float) snow.y - getHeight() / 2) / (float) getHeight())));
@@ -155,9 +153,9 @@ public class RainType extends BaseWeatherType {
     }
 
     private void createFlash(int x1, int y1) {
-        flash1 = new Path();
-        flash2 = new Path();
-        flash3 = new Path();
+        Path flash1 = new Path();
+        Path flash2 = new Path();
+        Path flash3 = new Path();
 
         flash1.moveTo(x1, y1);
         flash2.moveTo(x1, y1);
@@ -294,7 +292,6 @@ public class RainType extends BaseWeatherType {
     @Override
     public void startAnimation(int fromColor) {
         super.startAnimation(fromColor);
-        this.dynamicWeatherView = dynamicWeatherView;
         ValueAnimator animator = ValueAnimator.ofFloat(-bitmap.getWidth() * 0.2f, getWidth() - bitmap.getWidth() * 0.2f);
         animator.setDuration(1000);
         animator.setRepeatCount(0);
@@ -322,17 +319,17 @@ public class RainType extends BaseWeatherType {
                     }
                 });
                 animator2.start();
-                dynamicWeatherView.postDelayed(flashRunnable, 5000);
+                mHandler.postDelayed(flashRunnable, 5000);
             }
         };
-        dynamicWeatherView.post(flashRunnable);
+        mHandler.post(flashRunnable);
     }
 
     @Override
     public void endAnimation(AnimatorListenerAdapter listener) {
-        dynamicWeatherView.removeCallbacks(flashRunnable);
+        mHandler.removeCallbacks(flashRunnable);
         ValueAnimator animator = ValueAnimator.ofFloat(getWidth() - bitmap.getWidth() * 0.2f, getWidth());
-        animator.setDuration(1000);
+        animator.setDuration(END_ANIM_DURATION);
         animator.setRepeatCount(0);
         animator.setInterpolator(new AccelerateInterpolator());
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {

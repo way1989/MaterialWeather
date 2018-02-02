@@ -22,12 +22,11 @@ import java.util.ArrayList;
 
 public class HailType extends BaseWeatherType {
 
-    float transFactor;
-    Bitmap bitmap;
-    Matrix matrix;
+    private float transFactor;
+    private Bitmap bitmap;
+    private Matrix matrix;
     private ArrayList<Hail> hails;
     private Paint mPaint;
-    private Hail hail;
 
     public HailType(Resources resources) {
         super(resources);
@@ -51,6 +50,7 @@ public class HailType extends BaseWeatherType {
         matrix.postTranslate(transFactor, getHeight() - bitmap.getHeight() * 0.25f);
         canvas.drawBitmap(bitmap, matrix, mPaint);
 
+        Hail hail;
         for (int i = 0; i < hails.size(); i++) {
             hail = hails.get(i);
             mPaint.setAlpha((int) (255 * ((float) hail.y / (float) getHeight())));
@@ -103,7 +103,7 @@ public class HailType extends BaseWeatherType {
     @Override
     public void endAnimation(AnimatorListenerAdapter listener) {
         ValueAnimator animator = ValueAnimator.ofFloat(getWidth() - bitmap.getWidth() * 0.25f, getWidth());
-        animator.setDuration(1000);
+        animator.setDuration(END_ANIM_DURATION);
         animator.setRepeatCount(0);
         animator.setInterpolator(new AccelerateInterpolator());
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {

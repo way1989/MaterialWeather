@@ -26,7 +26,7 @@ import com.ape.material.weather.R;
 
 public class SandstormType extends BaseWeatherType {
 
-    Camera camera;
+    private Camera camera;
     private Paint mPaint;
     private Path mPathFront;
     private Path mPathRear;
@@ -35,7 +35,6 @@ public class SandstormType extends BaseWeatherType {
     private Bitmap mBitmap;             // 箭头图片
     private Matrix mMatrix;             // 矩阵,用于对图片进行一些操作
     private float φ;
-    private Shader shader;
 
     public SandstormType(Resources resources) {
         super(resources);
@@ -58,7 +57,7 @@ public class SandstormType extends BaseWeatherType {
         clearCanvas(canvas);
         canvas.drawColor(getDynamicColor());
 
-        shader = new LinearGradient(0, getHeight(), getWidth(), getHeight(), 0x33ffffff, 0xccffffff, Shader.TileMode.CLAMP);
+        Shader shader = new LinearGradient(0, getHeight(), getWidth(), getHeight(), 0x33ffffff, 0xccffffff, Shader.TileMode.CLAMP);
         mPaint.setShader(shader);
 
         φ -= 0.05f;
@@ -120,9 +119,9 @@ public class SandstormType extends BaseWeatherType {
     @Override
     public void startAnimation(int fromColor) {
         super.startAnimation(fromColor);
-        ValueAnimator animator1 = ValueAnimator.ofFloat(0, 1);
-        animator1.setInterpolator(new OvershootInterpolator());
-        animator1.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+        ValueAnimator animator = ValueAnimator.ofFloat(0, 1);
+        animator.setInterpolator(new OvershootInterpolator());
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 speed = (float) animation.getAnimatedValue() * 32;
@@ -131,7 +130,7 @@ public class SandstormType extends BaseWeatherType {
         });
 
         AnimatorSet animSet = new AnimatorSet();
-        animSet.play(animator1);
+        animSet.play(animator);
         animSet.setDuration(1000);
         animSet.start();
 
@@ -151,7 +150,7 @@ public class SandstormType extends BaseWeatherType {
 
         AnimatorSet animSet = new AnimatorSet();
         animSet.play(animator1);
-        animSet.setDuration(1000);
+        animSet.setDuration(END_ANIM_DURATION);
         if (listener != null) {
             animSet.addListener(listener);
         }

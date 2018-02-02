@@ -2,9 +2,11 @@ package com.ape.material.weather.dagger2;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
+import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MenuItem;
 
 import com.amap.api.location.AMapLocation;
 import com.ape.material.weather.BuildConfig;
@@ -17,7 +19,6 @@ import com.ape.material.weather.bean.City;
 import com.ape.material.weather.bean.HeCity;
 import com.ape.material.weather.bean.HeWeather;
 import com.ape.material.weather.data.IRepositoryManager;
-import com.ape.material.weather.util.AMapLocationHelper;
 import com.ape.material.weather.util.ActivityScope;
 import com.ape.material.weather.util.RxLocation;
 
@@ -32,7 +33,7 @@ import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.ObservableSource;
 import io.reactivex.functions.Function;
-import io.reactivex.functions.Predicate;
+import io.reactivex.schedulers.Schedulers;
 import io.rx_cache2.DynamicKey;
 import io.rx_cache2.EvictProvider;
 
@@ -42,8 +43,11 @@ import io.rx_cache2.EvictProvider;
 @ActivityScope
 public class WeatherViewModel extends AndroidViewModel {
     private static final String TAG = "WeatherViewModel";
+    private static final long TIMEOUT_DURATION = 20L;//20s timeout
     private static final String LANG = "zh-cn";
     private IRepositoryManager mRepositoryManager;//用于管理网络请求层,以及数据缓存层
+
+    private MutableLiveData<MenuItem> mMenuItemMutableLiveData = new MutableLiveData<>();
 
     @Inject
     public WeatherViewModel(@NonNull Application application, IRepositoryManager manager) {
@@ -51,9 +55,16 @@ public class WeatherViewModel extends AndroidViewModel {
         mRepositoryManager = manager;
     }
 
+    public void setMenuItem(MenuItem menuItem) {
+        mMenuItemMutableLiveData.setValue(menuItem);
+    }
+
+    public MutableLiveData<MenuItem> getMenuItemMutableLiveData(){
+        return mMenuItemMutableLiveData;
+    }
+
     public Observable<List<City>> search(String query) {
-        return mRepositoryManager.obtainRetrofitService(ApiService.class)
-                .searchCity(BuildConfig.HEWEATHER_KEY, query)
+        return search(mRepositoryManager, query)
                 .map(new Function<HeCity, List<City>>() {
                     @Override
                     public List<City> apply(HeCity heCity) throws Exception {
@@ -83,7 +94,7 @@ public class WeatherViewModel extends AndroidViewModel {
         return Observable.create(new ObservableOnSubscribe<Boolean>() {
             @Override
             public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
-                CityDao cityDao = mRepositoryManager.obtainRoomDatabase(CityDatabase.class, CityDatabase.DATABASE_NAME).cityDao();
+                CityDao cityDao = getDB(mRepositoryManager);
                 final boolean exist = cityDao.getCityByAreaId(city.getAreaId()) != null;
                 Log.d(TAG, "addCity... exist = " + exist);
                 long id = -1;
@@ -102,16 +113,13 @@ public class WeatherViewModel extends AndroidViewModel {
         return Observable.create(new ObservableOnSubscribe<List<City>>() {
             @Override
             public void subscribe(ObservableEmitter<List<City>> e) throws Exception {
-                CityDao cityDao = mRepositoryManager.obtainRoomDatabase(CityDatabase.class, CityDatabase.DATABASE_NAME).cityDao();
+                CityDao cityDao = getDB(mRepositoryManager);
                 List<City> cities = cityDao.getCityAll();
-                //DBUtil.getCityFromCache(getApplication());
                 if (cities.isEmpty()) {
                     City city = new City();
                     city.setIsLocation(1);
                     city.setCity(MainActivity.UNKNOWN_CITY);
                     cities.add(city);
-                    //cityDao.insert(city);
-                    //DBUtil.insertAutoLocation(getApplication());
                 }
                 e.onNext(cities);
                 e.onComplete();
@@ -123,7 +131,7 @@ public class WeatherViewModel extends AndroidViewModel {
         return Observable.create(new ObservableOnSubscribe<Boolean>() {
             @Override
             public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
-                CityDao cityDao = mRepositoryManager.obtainRoomDatabase(CityDatabase.class, CityDatabase.DATABASE_NAME).cityDao();
+                CityDao cityDao = getDB(mRepositoryManager);
                 for (int i = 0; i < cities.size(); i++) {
                     City city = cities.get(i);
                     city.setIndex(i);
@@ -139,7 +147,7 @@ public class WeatherViewModel extends AndroidViewModel {
         return Observable.create(new ObservableOnSubscribe<Boolean>() {
             @Override
             public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
-                CityDao cityDao = mRepositoryManager.obtainRoomDatabase(CityDatabase.class, CityDatabase.DATABASE_NAME).cityDao();
+                CityDao cityDao = getDB(mRepositoryManager);
                 boolean result = cityDao.delete(city) > 0;
                 e.onNext(result);
                 e.onComplete();
@@ -148,63 +156,46 @@ public class WeatherViewModel extends AndroidViewModel {
     }
 
     public Observable<City> getLocation() {
-        return RxLocation.requestLocation(AMapLocationHelper.getInstance(this.getApplication()))
-                .timeout(20, TimeUnit.SECONDS)
+        return new RxLocation(getApplication())
+//                .timeout(TIMEOUT_DURATION, TimeUnit.SECONDS)
+                .observeOn(Schedulers.io())
                 .map(new Function<AMapLocation, String>() {
                     @Override
-                    public String apply(AMapLocation aMapLocation) throws Exception {
-                        if (aMapLocation.getErrorCode() != 0) {
+                    public String apply(AMapLocation location) throws Exception {
+                        if (location.getErrorCode() != 0) {
                             //定位失败时，可通过ErrCode（错误码）信息来确定失败的原因，errInfo是错误信息，详见错误码表。
-                            Log.e(TAG, "location Error, ErrCode:" + aMapLocation.getErrorCode()
-                                    + ", errInfo:" + aMapLocation.getErrorInfo());
-                            throw new Exception(aMapLocation.getAdCode() + ": " + aMapLocation.getErrorInfo());
+                            Log.e(TAG, "getLocation Error!!! ErrCode:" + location.getErrorCode()
+                                    + ", errInfo:" + location.getErrorInfo());
+                            throw new Exception(location.getAdCode() + ": " + location.getErrorInfo());
                         }
-                        String city = "";
-                        if (aMapLocation.getErrorCode() == 0) {
-//                            city = aMapLocation.getDistrict();
-//                            if (TextUtils.isEmpty(city)) {
-                            city = aMapLocation.getCity();
-//                            }
-                            Log.d(TAG, "onLocationChanged: city = " + city + ", district = " + aMapLocation.getDistrict());
-                            if (!TextUtils.isEmpty(city)) {
-                                return city;
-                            }
-                        } else {
-                            //定位失败时，可通过ErrCode（错误码）信息来确定失败的原因，errInfo是错误信息，详见错误码表。
-                            Log.e(TAG, "location Error, ErrCode:" + aMapLocation.getErrorCode()
-                                    + ", errInfo:" + aMapLocation.getErrorInfo());
-                            throw new Exception(aMapLocation.getAdCode() + ": " + aMapLocation.getErrorInfo());
-                        }
-                        return city;
+                        final double longitude = location.getLongitude();
+                        final double latitude = location.getLatitude();
+                        String coordinate = latitude + "," + longitude;
+//                        String coordinate = location.getCity().replace("市", "");
+                        Log.d(TAG, "getLocation: location = " + coordinate);
+                        return coordinate;
                     }
                 })
-                .map(new Function<String, String>() {
-                    @Override
-                    public String apply(String s) throws Exception {
-                        return s.replace("市", "");
-                    }
-                }).flatMap(new Function<String, ObservableSource<City>>() {
+                .flatMap(new Function<String, ObservableSource<City>>() {
                     @Override
                     public ObservableSource<City> apply(String s) throws Exception {
-                        Log.d(TAG, "getCity start flatMap: city = " + s);
-                        return mRepositoryManager.obtainRetrofitService(ApiService.class).searchCity(BuildConfig.HEWEATHER_KEY, s)
-                                .filter(new Predicate<HeCity>() {
-                                    @Override
-                                    public boolean test(HeCity heCity) throws Exception {
-                                        Log.i(TAG, "filter... heCity = " + heCity);
-                                        return heCity != null && heCity.isOK();
-                                    }
-                                }).map(new Function<HeCity, City>() {
+                        Log.d(TAG, "getLocation flatMap: location = " + s);
+                        return search(mRepositoryManager, s)
+                                .map(new Function<HeCity, City>() {
                                     @Override
                                     public City apply(HeCity heCity) throws Exception {
-                                        Log.i(TAG, "map... heCity = " + heCity);
+                                        Log.i(TAG, "getLocation map: heCity = " + heCity);
                                         HeCity.HeWeather5Bean.BasicBean basicBean = heCity.getHeWeather5().get(0).getBasic();
                                         City city = new City(basicBean.getCity(), basicBean.getCnty(),
                                                 basicBean.getId(), basicBean.getLat(), basicBean.getLon(), basicBean.getProv());
                                         city.setIsLocation(1);
-                                        CityDao cityDao = mRepositoryManager.obtainRoomDatabase(CityDatabase.class, CityDatabase.DATABASE_NAME).cityDao();
+                                        CityDao cityDao = getDB(mRepositoryManager);
+                                        final City exist = cityDao.getCityByLocation();
+                                        Log.d(TAG, "getLocation exist = " + exist);
+                                        if (exist != null) {
+                                            cityDao.delete(exist);
+                                        }
                                         cityDao.insert(city);
-                                        //DBUtil.updateCity(context, city, true);
                                         return city;
                                     }
                                 });
@@ -212,11 +203,22 @@ public class WeatherViewModel extends AndroidViewModel {
                 });
     }
 
+    private CityDao getDB(IRepositoryManager repositoryManager) {
+        return repositoryManager.obtainRoomDatabase(CityDatabase.class,
+                CityDatabase.DATABASE_NAME).cityDao();
+    }
+
+    private Observable<HeCity> search(IRepositoryManager repositoryManager, String query) {
+        return repositoryManager.obtainRetrofitService(ApiService.class)
+                .searchCity(BuildConfig.HEWEATHER_KEY, query);
+    }
+
     public Observable<HeWeather> getWeather(String city, boolean force) {
-        return mRepositoryManager.obtainCacheService(CacheService.class)
-                .getWeather(mRepositoryManager.obtainRetrofitService(ApiService.class)
-                                .getWeather(BuildConfig.HEWEATHER_KEY, city, LANG),
-                        new DynamicKey(city), new EvictProvider(force))
-                .timeout(10, TimeUnit.SECONDS);
+        final CacheService cacheService = mRepositoryManager.obtainCacheService(CacheService.class);
+        final ApiService apiService = mRepositoryManager.obtainRetrofitService(ApiService.class);
+        return cacheService.getWeather(apiService.getWeather(BuildConfig.HEWEATHER_KEY, city, LANG),
+                new DynamicKey(city), new EvictProvider(force))
+                .timeout(TIMEOUT_DURATION, TimeUnit.SECONDS)
+                .observeOn(Schedulers.io());
     }
 }

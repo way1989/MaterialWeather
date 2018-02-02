@@ -26,6 +26,7 @@ import com.ape.material.weather.R;
 import com.ape.material.weather.bean.City;
 import com.ape.material.weather.fragment.BaseFragment;
 import com.ape.material.weather.fragment.WeatherFragment;
+import com.ape.material.weather.util.RxBus;
 import com.ape.material.weather.util.RxSchedulers;
 import com.ape.material.weather.util.UiUtil;
 import com.ape.material.weather.widget.SimplePagerIndicator;
@@ -39,6 +40,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 
 
@@ -99,20 +101,9 @@ public class MainActivity extends BaseActivity
                 .subscribe(new Consumer<MenuItem>() {
                     @Override
                     public void accept(MenuItem menuItem) throws Exception {
-                        onMenuItemClick(menuItem);
+                        mViewModel.getMenuItemMutableLiveData().setValue(menuItem);
                     }
                 });
-    }
-
-    private void onMenuItemClick(MenuItem menuItem) {
-        switch (menuItem.getItemId()) {
-            case R.id.action_share:
-                final BaseFragment fragment = mAdapter.getCurrentFragment();
-                Log.d(TAG, "onMenuItemClick: id = share... currentFragment = " + fragment);
-                if (fragment != null) {
-                    fragment.onShareItemClick();
-                }
-        }
     }
 
     @Override
@@ -149,6 +140,16 @@ public class MainActivity extends BaseActivity
     protected void onResume() {
         super.onResume();
         mDynamicWeatherView.onResume();
+//        RxBus.getInstance().toObservable(BaseWeatherType.class)
+//                .debounce(400, TimeUnit.MILLISECONDS)
+//                .compose(this.<BaseWeatherType>bindUntilEvent(ActivityEvent.PAUSE))
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(new Consumer<BaseWeatherType>() {
+//                    @Override
+//                    public void accept(BaseWeatherType baseWeatherType) throws Exception {
+//                        onDrawerTypeChange(baseWeatherType);
+//                    }
+//                });
     }
 
     @Override
@@ -180,28 +181,6 @@ public class MainActivity extends BaseActivity
                 mSelectItem = -1;
             }
         }
-    }
-
-    private SpannableString getTitle(City city) {
-        final String name = TextUtils.isEmpty(city.getCity()) ? UNKNOWN_CITY : city.getCity();
-        if (city.getIsLocation() != 1) {
-            return new SpannableString(name);
-        }
-        DynamicDrawableSpan drawableSpan =
-                new DynamicDrawableSpan(DynamicDrawableSpan.ALIGN_BASELINE) {//基于文本基线,默认是文本底部
-                    @Override
-                    public Drawable getDrawable() {
-                        Drawable d = getResources().getDrawable(R.drawable.ic_location_on_white_18dp);
-                        d.setBounds(0, 0, d.getIntrinsicWidth(), d.getIntrinsicHeight());
-                        return d;
-                    }
-                };
-        //ImageSpan imgSpan = new ImageSpan(getApplicationContext(), R.drawable.ic_location_on_white_18dp);
-
-        SpannableString spannableString = new SpannableString(name + " ");
-        spannableString.setSpan(drawableSpan, spannableString.length() - 1,
-                spannableString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        return spannableString;
     }
 
     public void getCities() {

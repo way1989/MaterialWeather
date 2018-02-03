@@ -6,7 +6,7 @@
     <dimen name="nav_header_height">160dp</dimen>
 
 
-    <dimen name="w_divider_size">0.5dp</dimen>
+    <dimen name="w_divider_size">1px</dimen>
     <dimen name="w_divider_size_secondary">0.5dp</dimen>
 
     <dimen name="list_item_height">64dp</dimen>

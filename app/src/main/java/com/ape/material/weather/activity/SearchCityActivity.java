@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -65,7 +66,7 @@ public class SearchCityActivity extends BaseActivity implements MenuItem.OnActio
         Log.d(TAG, "onCreate: getHotCity = " + mHotCities);
 
         mInputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
         mRecyclerView.setOnTouchListener(this);
         mSearchAdapter = new SearchAdapter(R.layout.item_search_city, mHotCities);
         //mSearchAdapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
@@ -77,10 +78,8 @@ public class SearchCityActivity extends BaseActivity implements MenuItem.OnActio
             }
         });
         mRecyclerView.setAdapter(mSearchAdapter);
-        mRecyclerView.addItemDecoration(new SimpleListDividerDecorator(ContextCompat
-                .getDrawable(getApplicationContext(), R.drawable.list_divider_h), false));
-
-
+        mRecyclerView.addItemDecoration(new SimpleListDividerDecorator(
+                getDrawable(R.drawable.list_divider_h), getDrawable(R.drawable.list_divider_v),false));
     }
 
     @Override
@@ -114,10 +113,7 @@ public class SearchCityActivity extends BaseActivity implements MenuItem.OnActio
 
 
     private void search(String query) {
-        if (TextUtils.isEmpty(query) || query.trim().equals("")) {
-            mLoadingLayout.setStatus(LoadingLayout.Success);
-            mSearchAdapter.setNewData(mHotCities);
-        } else {
+        if (!TextUtils.isEmpty(query) || !query.trim().equals("")) {
             mLoadingLayout.setStatus(LoadingLayout.Loading);
             mViewModel.search(query)
                     .compose(this.<List<City>>bindUntilEvent(ActivityEvent.DESTROY))
@@ -154,19 +150,18 @@ public class SearchCityActivity extends BaseActivity implements MenuItem.OnActio
 
     public void onSearchResult(List<City> cities) {
         Log.d(TAG, "onSearchResult... city size = " + cities.size());
+        mLoadingLayout.setStatus(LoadingLayout.Success);
         if (cities.isEmpty()) {
             mSearchAdapter.setNewData(mHotCities);
-            mLoadingLayout.setStatus(LoadingLayout.Success);
         } else {
             mSearchAdapter.setNewData(cities);
-            mLoadingLayout.setStatus(LoadingLayout.Success);
         }
     }
 
     public void onSearchError(Throwable e) {
         Log.d(TAG, "onSearchError... e = " + e.getMessage());
-        mSearchAdapter.setNewData(mHotCities);
         mLoadingLayout.setStatus(LoadingLayout.Success);
+        mSearchAdapter.setNewData(mHotCities);
         if (BuildConfig.LOG_DEBUG)
             Snackbar.make(mRecyclerView, e.getMessage(), Snackbar.LENGTH_LONG).show();
     }

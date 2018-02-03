@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
     <!--24h预报 -->
-    <TextView
+  <!--  <TextView
         style="@style/w_section_title"
-        android:text="@string/weather_hours_forecast_title"/>
+        android:text="@string/weather_hours_forecast_title"/>-->
 
     <com.ape.material.weather.widget.HourlyForecastView
         android:id="@+id/w_hourlyForecastView"
@@ -14,6 +14,5 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/w_divider_size"
-        android:layout_marginTop="0dp"
         android:background="@color/w_divider"/>
 </merge>

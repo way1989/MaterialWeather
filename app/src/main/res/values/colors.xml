@@ -38,4 +38,7 @@
     <color name="bg_item_swiping_active_state">#ff9999ff</color>
     <color name="bg_item_swiping_state">#ffddddff</color>
     <color name="snackbar_action_color_done">#ffccccff</color>
+
+    <color name="colorTextDark">#424242</color>
+    <color name="colorTextDark2nd">#757575</color>
 </resources>

@@ -50,7 +50,7 @@ public class AstroView extends View {
         super(context, attrs);
         density = context.getResources().getDisplayMetrics().density;
         dashPathEffect = new DashPathEffect(new float[]{density * 3, density * 3}, 1);
-        paint.setColor(Color.WHITE);
+        paint.setColor(0xff424242);
         paint.setStyle(Style.STROKE);
         paint.setStrokeWidth(density);
         paint.setTextAlign(Align.CENTER);
@@ -84,7 +84,7 @@ public class AstroView extends View {
         if (this.todayForecast == null || this.now == null) {
             return;
         }
-        paint.setColor(Color.BLACK);
+        paint.setColor(0xff424242);
         float textSize = paint.getTextSize();
         try {
             paint.setStrokeWidth(density);
@@ -94,7 +94,7 @@ public class AstroView extends View {
             paint.setPathEffect(dashPathEffect);
             canvas.drawPath(sunPath, paint);
             paint.setPathEffect(null);
-            paint.setColor(Color.BLACK);
+            paint.setColor(0xff424242);
             int saveCount = canvas.save();
             canvas.translate(width / 2f - fanPillerHeight * 1f, textSize + sunArcHeight - fanPillerHeight);
             // draw wind text

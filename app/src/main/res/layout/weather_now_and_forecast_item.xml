@@ -4,14 +4,14 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="520dp"
-        android:orientation="vertical">
+        android:layout_height="520dp">
 
         <LinearLayout
+            android:id="@+id/layout_now"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="16dp"
+            android:alpha="0"
             android:gravity="center"
             android:orientation="horizontal">
 
@@ -20,20 +20,124 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-thin"
-                tools:text="-"
                 android:textColor="@color/mxx_text_primary"
                 android:textSize="72sp"
-                android:textStyle="normal"/>
+                android:textStyle="normal"
+                tools:text="-"/>
 
             <TextView
                 android:id="@+id/w_now_cond_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:text=""
                 android:textColor="@color/mxx_text_primary"
                 android:textSize="20sp"/>
         </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/layout_details"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/layout_now"
+            android:alpha="0">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@+id/layout_details_vis"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingEnd="20dp"
+                android:paddingStart="20dp">
+
+                <TextView
+                    android:id="@+id/tv_now_hum"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp"
+                    tools:text="30%"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="湿度"
+                    android:textColor="@android:color/white"
+                    android:textSize="10sp"/>
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="26dp"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@+id/layout_details_vis"
+                android:background="#80ffffff"/>
+
+            <LinearLayout
+                android:id="@+id/layout_details_vis"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingEnd="20dp"
+                android:paddingStart="20dp">
+
+                <TextView
+                    android:id="@+id/tv_now_vis"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp"
+                    tools:text="56"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="能见度"
+                    android:textColor="@android:color/white"
+                    android:textSize="10sp"/>
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="26dp"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@+id/layout_details_vis"
+                android:background="#80ffffff"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@+id/layout_details_vis"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingEnd="20dp"
+                android:paddingStart="20dp">
+
+                <TextView
+                    android:id="@+id/tv_now_pcpn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp"
+                    tools:text="3级"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="降雨量"
+                    android:textColor="@android:color/white"
+                    android:textSize="10sp"/>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
 
         <TextView
             android:id="@+id/w_basic_update_loc"
@@ -45,10 +149,11 @@
             android:layout_marginEnd="8dp"
             android:fontFamily="sans-serif-light"
             android:shadowColor="@android:color/black"
+            android:alpha="0"
             android:shadowRadius="3"
             android:text=""
             android:textColor="@android:color/white"
-            android:textSize="12dp"
+            android:textSize="12sp"
             android:textStyle="normal"/>
 
         <com.ape.material.weather.widget.DailyForecastView

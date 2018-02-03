@@ -24,24 +24,60 @@
             <include
                 android:id="@+id/hours_forecast_item"
                 layout="@layout/weather_hours_forecast_item"/>
-            <!-- 详细信息 -->
-            <include
-                android:id="@+id/detail_item"
-                layout="@layout/weather_detail_item"/>
 
             <!-- 空气质量 -->
-            <include
-                android:id="@+id/air_quality_item"
-                layout="@layout/weather_air_quality_item"/>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/white"
+                android:paddingEnd="8dp"
+                android:paddingStart="8dp"
+                android:paddingBottom="16dp"
+                android:paddingTop="16dp">
+
+                <com.ape.material.weather.widget.AqiView
+                    android:id="@+id/w_aqi_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"/>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/aqi_recyclerview"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_toEndOf="@+id/w_aqi_view"/>
+
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/w_divider_size"
+                android:background="@color/w_divider"/>
+            <!--  <include
+                  android:id="@+id/air_quality_item"
+                  layout="@layout/weather_air_quality_item"/>-->
             <!-- 太阳和风速 -->
             <include
                 android:id="@+id/astro_item"
                 layout="@layout/weather_astro_item"/>
 
             <!--生活指数 -->
-            <include
-                android:id="@+id/index_item"
-                layout="@layout/weather_index_item"/>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/suggestion_recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/white"
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp"
+                />
+            <!--  <include
+                  android:id="@+id/index_item"
+                  layout="@layout/weather_index_item"/>-->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/w_divider_size"
+                android:background="@color/w_divider"/>
 
             <TextView
                 android:layout_width="match_parent"
@@ -50,7 +86,7 @@
                 android:gravity="center"
                 android:text="@string/weather_source_title"
                 android:textColor="@color/w_text_secondary"
-                android:textSize="12dp"/>
+                android:textSize="12sp"/>
         </com.ape.material.weather.widget.FirstMatchInScrollViewLinearLayout>
     </ScrollView>
 

@@ -8,6 +8,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
@@ -17,12 +19,14 @@ import android.widget.TextView;
 
 import com.ape.material.weather.BuildConfig;
 import com.ape.material.weather.R;
+import com.ape.material.weather.adapter.AqiAdapter;
+import com.ape.material.weather.adapter.SuggestionAdapter;
+import com.ape.material.weather.bean.AqiDetailBean;
 import com.ape.material.weather.bean.City;
 import com.ape.material.weather.bean.HeWeather;
 import com.ape.material.weather.util.FormatUtil;
-import com.ape.material.weather.util.RxImage;
-import com.ape.material.weather.util.RxSchedulers;
 import com.ape.material.weather.util.ShareUtils;
+import com.ape.material.weather.util.WeatherUtil;
 import com.ape.material.weather.widget.AqiView;
 import com.ape.material.weather.widget.AstroView;
 import com.ape.material.weather.widget.DailyForecastView;
@@ -30,10 +34,12 @@ import com.ape.material.weather.widget.HourlyForecastView;
 import com.ape.material.weather.widget.dynamic.BaseWeatherType;
 import com.ape.material.weather.widget.dynamic.ShortWeatherInfo;
 import com.ape.material.weather.widget.dynamic.TypeUtil;
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.trello.rxlifecycle2.android.FragmentEvent;
 
-import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import io.reactivex.ObservableSource;
@@ -62,10 +68,17 @@ public class WeatherFragment extends BaseFragment implements SwipeRefreshLayout.
     ScrollView mWWeatherScrollView;
     @BindView(R.id.w_PullRefreshLayout)
     SwipeRefreshLayout mWPullRefreshLayout;
+    @BindView(R.id.suggestion_recyclerView)
+    RecyclerView mSuggestionRecyclerView;
+
+    @BindView(R.id.aqi_recyclerview)
+    RecyclerView mAqiRecyclerView;
 
     private OnDrawerTypeChangeListener mListener;
     private City mCity;
     private HeWeather mWeather;
+    private SuggestionAdapter mSuggestionAdapter;
+    private AqiAdapter mAqiAdapter;
 
     public static WeatherFragment makeInstance(@NonNull City city) {
         WeatherFragment fragment = new WeatherFragment();
@@ -105,24 +118,25 @@ public class WeatherFragment extends BaseFragment implements SwipeRefreshLayout.
 
     @Override
     public void onShareItemClick() {
-        if (getUserVisibleHint() && mWWeatherScrollView != null) {
+        if (getUserVisibleHint() && mWeather != null && mWeather.isOK()) {
+            final String shareInfo = WeatherUtil.getInstance().getShareMessage(mWeather);
+            ShareUtils.shareText(getActivity(), shareInfo, "分享到");
             mWWeatherScrollView.scrollTo(0, 0);
-            RxImage.saveText2ImageObservable(mWWeatherScrollView)
-                    .compose(RxSchedulers.<File>io_main())
-                    .compose(RxSchedulers.<File>io_main())
-                    .subscribe(new Consumer<File>() {
-                        @Override
-                        public void accept(File file) throws Exception {
-                            Log.d(TAG, "onShareItemClick onNext: file = " + file);
-                            ShareUtils.shareImage(getActivity(), file, "分享到");
-                        }
-                    }, new Consumer<Throwable>() {
-                        @Override
-                        public void accept(Throwable throwable) throws Exception {
-                            Log.e(TAG, "onShareItemClick onError: ", throwable);
-                            showErrorTip("share error:" + throwable.getMessage());
-                        }
-                    });
+//            RxImage.saveText2ImageObservable(mWWeatherScrollView)
+//                    .compose(RxSchedulers.<File>io_main())
+//                    .subscribe(new Consumer<File>() {
+//                        @Override
+//                        public void accept(File file) throws Exception {
+//                            Log.d(TAG, "onShareItemClick onNext: file = " + file);
+//                            ShareUtils.shareImage(getActivity(), file, "分享到");
+//                        }
+//                    }, new Consumer<Throwable>() {
+//                        @Override
+//                        public void accept(Throwable throwable) throws Exception {
+//                            Log.e(TAG, "onShareItemClick onError: ", throwable);
+//                            showErrorTip("share error:" + throwable.getMessage());
+//                        }
+//                    });
         }
     }
 
@@ -193,6 +207,28 @@ public class WeatherFragment extends BaseFragment implements SwipeRefreshLayout.
     @Override
     protected void initView() {
         mCity = getArgCity();
+
+        mAqiRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2) {
+            @Override
+            public boolean canScrollVertically() {
+                return false;
+            }
+        });
+        mAqiAdapter = new AqiAdapter(R.layout.item_weather_aqi, null);
+        mAqiAdapter.setDuration(1000);
+        mAqiAdapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
+        mAqiRecyclerView.setAdapter(mAqiAdapter);
+
+        mSuggestionRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 4) {
+            @Override
+            public boolean canScrollVertically() {
+                return false;
+            }
+        });
+        mSuggestionAdapter = new SuggestionAdapter(R.layout.item_suggestion, null);
+        mSuggestionAdapter.setDuration(1000);
+        mSuggestionAdapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
+        mSuggestionRecyclerView.setAdapter(mSuggestionAdapter);
         mWPullRefreshLayout.setOnRefreshListener(this);
 
         if (mWWeatherScrollView != null)
@@ -209,6 +245,7 @@ public class WeatherFragment extends BaseFragment implements SwipeRefreshLayout.
             }
         });
     }
+
     private void onMenuItemClick(MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case R.id.action_share:
@@ -216,6 +253,7 @@ public class WeatherFragment extends BaseFragment implements SwipeRefreshLayout.
                 onShareItemClick();
         }
     }
+
     @Override
     public void onRefresh() {
         if (mCity.getIsLocation() == 1 /*&& TextUtils.isEmpty(mCity.getAreaId())*/) {
@@ -258,8 +296,24 @@ public class WeatherFragment extends BaseFragment implements SwipeRefreshLayout.
             mWDailyForecastView.setData(weather);
             mWHourlyForecastView.setData(weather);
             mWAstroView.setData(weather);
-            setTextViewString(R.id.w_now_tmp, getString(R.string.weather_temp, w.getNow().getTmp()));
+            View layoutNow = mRootView.findViewById(R.id.layout_now);
+            View layoutDetails = mRootView.findViewById(R.id.layout_details);
 
+            setTextViewString(R.id.w_now_tmp, getString(R.string.weather_temp, w.getNow().getTmp()));
+            setTextViewString(R.id.tv_now_hum, w.getNow().getHum() + "%");// 湿度
+            setTextViewString(R.id.tv_now_vis, getString(R.string.weather_km, w.getNow().getVis()));// 能见度
+            setTextViewString(R.id.tv_now_pcpn, getString(R.string.weather_mm, w.getNow().getPcpn())); // 降雨量
+
+            layoutNow.setAlpha(0f);
+            layoutDetails.setAlpha(0f);
+            layoutNow.animate().alpha(1f).setDuration(1000);
+            layoutDetails.setTranslationY(-100.0f);
+            layoutDetails.animate().translationY(0).setDuration(1000);
+            layoutDetails.animate().alpha(1f).setDuration(1000);
+
+            TextView updateTextView = mRootView.findViewById(R.id.w_basic_update_loc);
+            updateTextView.setAlpha(0f);
+            updateTextView.animate().alpha(1f).setDuration(1000);
             if (FormatUtil.isToday(w.getBasic().getUpdate().getLoc())) {
                 setTextViewString(R.id.w_basic_update_loc,
                         getString(R.string.weather_update, w.getBasic().getUpdate().getLoc().substring(11)));
@@ -268,61 +322,84 @@ public class WeatherFragment extends BaseFragment implements SwipeRefreshLayout.
                         getString(R.string.weather_update, w.getBasic().getUpdate().getLoc().substring(5)));
             }
 
-            setTextViewString(R.id.w_todaydetail_bottomline, w.getNow().getCond().getTxt() + "  " + weather.getTodayTempDescription());
-            setTextViewString(R.id.w_todaydetail_temp, getString(R.string.weather_temp, w.getNow().getTmp()));
-
-            setTextViewString(R.id.w_now_fl, getString(R.string.weather_temp, w.getNow().getFl()));
-            setTextViewString(R.id.w_now_hum, w.getNow().getHum() + "%");// 湿度
-            setTextViewString(R.id.w_now_vis, getString(R.string.weather_km, w.getNow().getVis()));// 能见度
-            setTextViewString(R.id.w_now_pcpn, getString(R.string.weather_mm, w.getNow().getPcpn())); // 降雨量
+//            setTextViewString(R.id.w_todaydetail_bottomline, w.getNow().getCond().getTxt() + "  " + weather.getTodayTempDescription());
+//            setTextViewString(R.id.w_todaydetail_temp, getString(R.string.weather_temp, w.getNow().getTmp()));
+//
+//            setTextViewString(R.id.w_now_fl, getString(R.string.weather_temp, w.getNow().getFl()));
+//            setTextViewString(R.id.w_now_hum, w.getNow().getHum() + "%");// 湿度
+//            setTextViewString(R.id.w_now_vis, getString(R.string.weather_km, w.getNow().getVis()));// 能见度
+//            setTextViewString(R.id.w_now_pcpn, getString(R.string.weather_mm, w.getNow().getPcpn())); // 降雨量
 
             if (weather.hasAqi()) {
-                mWAqiView.setData(w.getAqi());
-                final String qlty = w.getAqi().getCity().getQlty();
-                if (TextUtils.isEmpty(qlty)) {
-                    setTextViewString(R.id.w_now_cond_text, w.getNow().getCond().getTxt());
-                } else {
-                    setTextViewString(R.id.w_now_cond_text, w.getNow().getCond().getTxt() + "\r\n" + qlty);
-                }
-                setTextViewString(R.id.w_aqi_detail_text, qlty);
-                final String pm25 = w.getAqi().getCity().getPm25();
-                setTextViewString(R.id.w_aqi_pm25, TextUtils.isEmpty(pm25) ? getString(R.string.nodata)
-                        : getString(R.string.weather_ug_m3, pm25));
-                final String pm10 = w.getAqi().getCity().getPm10();
-                setTextViewString(R.id.w_aqi_pm10, TextUtils.isEmpty(pm10) ? getString(R.string.nodata)
-                        : getString(R.string.weather_ug_m3, pm10));
-                final String so2 = w.getAqi().getCity().getSo2();
-                setTextViewString(R.id.w_aqi_so2, TextUtils.isEmpty(so2) ? getString(R.string.nodata)
-                        : getString(R.string.weather_ug_m3, so2));
-                final String no2 = w.getAqi().getCity().getNo2();
-                setTextViewString(R.id.w_aqi_no2, TextUtils.isEmpty(no2) ? getString(R.string.nodata)
-                        : getString(R.string.weather_ug_m3, no2));
+                mWAqiView.setAqi(weather);
+                setAqiDetail(weather);
+//                final String qlty = w.getAqi().getCity().getQlty();
+//                if (TextUtils.isEmpty(qlty)) {
+//                    setTextViewString(R.id.w_now_cond_text, w.getNow().getCond().getTxt());
+//                } else {
+//                    setTextViewString(R.id.w_now_cond_text, w.getNow().getCond().getTxt() + "\r\n" + qlty);
+//                }
+//                setTextViewString(R.id.w_aqi_detail_text, qlty);
+//                final String pm25 = w.getAqi().getCity().getPm25();
+//                setTextViewString(R.id.w_aqi_pm25, TextUtils.isEmpty(pm25) ? getString(R.string.nodata)
+//                        : getString(R.string.weather_ug_m3, pm25));
+//                final String pm10 = w.getAqi().getCity().getPm10();
+//                setTextViewString(R.id.w_aqi_pm10, TextUtils.isEmpty(pm10) ? getString(R.string.nodata)
+//                        : getString(R.string.weather_ug_m3, pm10));
+//                final String so2 = w.getAqi().getCity().getSo2();
+//                setTextViewString(R.id.w_aqi_so2, TextUtils.isEmpty(so2) ? getString(R.string.nodata)
+//                        : getString(R.string.weather_ug_m3, so2));
+//                final String no2 = w.getAqi().getCity().getNo2();
+//                setTextViewString(R.id.w_aqi_no2, TextUtils.isEmpty(no2) ? getString(R.string.nodata)
+//                        : getString(R.string.weather_ug_m3, no2));
             } else {
-                setTextViewString(R.id.w_now_cond_text, w.getNow().getCond().getTxt());
-                mRootView.findViewById(R.id.air_quality_item).setVisibility(View.GONE);
+//                setTextViewString(R.id.w_now_cond_text, w.getNow().getCond().getTxt());
+//                mRootView.findViewById(R.id.air_quality_item).setVisibility(View.GONE);
             }
-            if (w.getSuggestion() != null) {
-                setTextViewString(R.id.w_suggestion_comf, w.getSuggestion().getComf().getTxt());
-                setTextViewString(R.id.w_suggestion_cw, w.getSuggestion().getCw().getTxt());
-                setTextViewString(R.id.w_suggestion_drsg, w.getSuggestion().getDrsg().getTxt());
-                setTextViewString(R.id.w_suggestion_flu, w.getSuggestion().getFlu().getTxt());
-                setTextViewString(R.id.w_suggestion_sport, w.getSuggestion().getSport().getTxt());
-                setTextViewString(R.id.w_suggestion_tarv, w.getSuggestion().getTrav().getTxt());
-                setTextViewString(R.id.w_suggestion_uv, w.getSuggestion().getUv().getTxt());
-                setTextViewString(R.id.w_suggestion_comf_brf, w.getSuggestion().getComf().getBrf());
-                setTextViewString(R.id.w_suggestion_cw_brf, w.getSuggestion().getCw().getBrf());
-                setTextViewString(R.id.w_suggestion_drsg_brf, w.getSuggestion().getDrsg().getBrf());
-                setTextViewString(R.id.w_suggestion_flu_brf, w.getSuggestion().getFlu().getBrf());
-                setTextViewString(R.id.w_suggestion_sport_brf, w.getSuggestion().getSport().getBrf());
-                setTextViewString(R.id.w_suggestion_tarv_brf, w.getSuggestion().getTrav().getBrf());
-                setTextViewString(R.id.w_suggestion_uv_brf, w.getSuggestion().getUv().getBrf());
-            } else {
-                mRootView.findViewById(R.id.index_item).setVisibility(View.GONE);
-            }
+            setSuggesstion(weather);
+//            if (w.getSuggestion() != null) {
+//                setTextViewString(R.id.w_suggestion_comf, w.getSuggestion().getComf().getTxt());
+//                setTextViewString(R.id.w_suggestion_cw, w.getSuggestion().getCw().getTxt());
+//                setTextViewString(R.id.w_suggestion_drsg, w.getSuggestion().getDrsg().getTxt());
+//                setTextViewString(R.id.w_suggestion_flu, w.getSuggestion().getFlu().getTxt());
+//                setTextViewString(R.id.w_suggestion_sport, w.getSuggestion().getSport().getTxt());
+//                setTextViewString(R.id.w_suggestion_tarv, w.getSuggestion().getTrav().getTxt());
+//                setTextViewString(R.id.w_suggestion_uv, w.getSuggestion().getUv().getTxt());
+//                setTextViewString(R.id.w_suggestion_comf_brf, w.getSuggestion().getComf().getBrf());
+//                setTextViewString(R.id.w_suggestion_cw_brf, w.getSuggestion().getCw().getBrf());
+//                setTextViewString(R.id.w_suggestion_drsg_brf, w.getSuggestion().getDrsg().getBrf());
+//                setTextViewString(R.id.w_suggestion_flu_brf, w.getSuggestion().getFlu().getBrf());
+//                setTextViewString(R.id.w_suggestion_sport_brf, w.getSuggestion().getSport().getBrf());
+//                setTextViewString(R.id.w_suggestion_tarv_brf, w.getSuggestion().getTrav().getBrf());
+//                setTextViewString(R.id.w_suggestion_uv_brf, w.getSuggestion().getUv().getBrf());
+//            } else {
+//                mRootView.findViewById(R.id.index_item).setVisibility(View.GONE);
+//            }
         } catch (Exception e) {
             e.printStackTrace();
             toast(mCity.getCity() + " Error\n" + e.toString());
         }
+    }
+
+    private void setAqiDetail(HeWeather weather) {
+        List<AqiDetailBean> list = new ArrayList<>();
+        AqiDetailBean pm25 = new AqiDetailBean("PM2.5", "细颗粒物", weather.getWeather().getAqi().getCity().getPm25());
+        list.add(pm25);
+        AqiDetailBean pm10 = new AqiDetailBean("PM10", "可吸入颗粒物", weather.getWeather().getAqi().getCity().getPm10());
+        list.add(pm10);
+        AqiDetailBean so2 = new AqiDetailBean("SO2", "二氧化硫", weather.getWeather().getAqi().getCity().getSo2());
+        list.add(so2);
+        AqiDetailBean no2 = new AqiDetailBean("NO2", "二氧化氮", weather.getWeather().getAqi().getCity().getNo2());
+        list.add(no2);
+        AqiDetailBean co = new AqiDetailBean("CO", "一氧化碳", weather.getWeather().getAqi().getCity().getCo());
+        list.add(co);
+        AqiDetailBean o3 = new AqiDetailBean("O3", "臭氧", weather.getWeather().getAqi().getCity().getO3());
+        list.add(o3);
+        mAqiAdapter.setNewData(list);
+    }
+
+    private void setSuggesstion(HeWeather weather) {
+        mSuggestionAdapter.setNewData(WeatherUtil.getSuggestion(weather));
     }
 
     private void changeDynamicWeather(HeWeather weather) {

@@ -13,7 +13,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="16dp"
             android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/w_now_tmp"
@@ -22,17 +22,17 @@
                 android:fontFamily="sans-serif-thin"
                 tools:text="-"
                 android:textColor="@color/mxx_text_primary"
-                android:textSize="72dp"
+                android:textSize="72sp"
                 android:textStyle="normal"/>
 
             <TextView
                 android:id="@+id/w_now_cond_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginStart="8dp"
                 android:text=""
-                android:textColor="@color/w_text_secondary_white"
-                android:textSize="20dp"/>
+                android:textColor="@color/mxx_text_primary"
+                android:textSize="20sp"/>
         </LinearLayout>
 
         <TextView

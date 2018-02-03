@@ -162,9 +162,8 @@ public class WeatherFragment extends BaseFragment implements SwipeRefreshLayout.
     }
 
     private void getWeather(City city, boolean force) {
-        Log.i(TAG, "getWeather... city = " + city + ", areaId = " + city.getAreaId()
-                + ", request location = " + city.getIsLocation());
-        mViewModel.getWeather(city.getAreaId(), force)
+        Log.i(TAG, "getWeather... city = " + city + ", areaId = " + city.getAreaId());
+        mViewModel.getWeather(city, force)
                 .doOnSubscribe(new Consumer<Disposable>() {
                     @Override
                     public void accept(Disposable disposable) throws Exception {
@@ -285,7 +284,7 @@ public class WeatherFragment extends BaseFragment implements SwipeRefreshLayout.
                 if (TextUtils.isEmpty(qlty)) {
                     setTextViewString(R.id.w_now_cond_text, w.getNow().getCond().getTxt());
                 } else {
-                    setTextViewString(R.id.w_now_cond_text, w.getNow().getCond().getTxt() + " | " + qlty);
+                    setTextViewString(R.id.w_now_cond_text, w.getNow().getCond().getTxt() + "\r\n" + qlty);
                 }
                 setTextViewString(R.id.w_aqi_detail_text, qlty);
                 final String pm25 = w.getAqi().getCity().getPm25();

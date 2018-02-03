@@ -30,8 +30,36 @@ public class City implements Serializable {
     @ColumnInfo(name = "orderIndex")
     private int index;
 
+    private String codeTxt;
+    private String code;
+    private String tmp;
+
     public City() {
 
+    }
+
+    public String getCodeTxt() {
+        return codeTxt;
+    }
+
+    public void setCodeTxt(String codeTxt) {
+        this.codeTxt = codeTxt;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getTmp() {
+        return tmp;
+    }
+
+    public void setTmp(String tmp) {
+        this.tmp = tmp;
     }
 
     public City(String city, String country, @NonNull String id, String lat, String lon, String prov) {

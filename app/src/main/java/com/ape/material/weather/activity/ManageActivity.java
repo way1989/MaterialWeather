@@ -36,6 +36,7 @@ import butterknife.BindView;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 public class ManageActivity extends BaseActivity {
@@ -218,26 +219,39 @@ public class ManageActivity extends BaseActivity {
             if (city != null) {
                 mDataChanged = true;
                 mAdapter.addData(city);
-                getWeather(city.getAreaId(), true);
+                getWeather(city);
             }
         }
     }
-    private void getWeather(String areaId, boolean force) {
-        Log.i(TAG, "getWeather... areaId = " + areaId);
-        mViewModel.getWeather(areaId, force)
-                .compose(this.<HeWeather>bindUntilEvent(ActivityEvent.DESTROY))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<HeWeather>() {
+    private void getWeather(final City city) {
+        Log.i(TAG, "getWeather... city = " + city);
+        mViewModel.getWeather(city, true)
+                .map(new Function<HeWeather, City>() {
                     @Override
-                    public void accept(HeWeather heWeather) throws Exception {
-                        Log.d(TAG, "getWeather: onNext weather isOK = " + heWeather.isOK());
+                    public City apply(HeWeather heWeather) throws Exception {
+                        Log.d(TAG, "getWeather: map weather isOK = " + heWeather.isOK());
                         if (heWeather.isOK()) {
                             String code = heWeather.getWeather().getNow().getCond().getCode();
                             String codeTxt = heWeather.getWeather().getNow().getCond().getTxt();
                             String tmp = heWeather.getWeather().getNow().getTmp();
                             Log.d(TAG, "getWeather: codeTxt = " + codeTxt + ", code = " + code + ", tmp = " + tmp);
+                            city.setCode(code);
+                            city.setCodeTxt(codeTxt);
+                            city.setTmp(tmp);
+                            //mViewModel.updateSync(city);
                         }
+                        return city;
+                    }
+                })
+                .compose(this.<City>bindUntilEvent(ActivityEvent.DESTROY))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<City>() {
+                    @Override
+                    public void accept(City city1) throws Exception {
+                        Log.d(TAG, "getWeather: onNext weather city1 = " + city1);
+                        mAdapter.remove(mAdapter.getItemCount() - 1);
+                        mAdapter.addData(city1);
                     }
                 }, new Consumer<Throwable>() {
                     @Override

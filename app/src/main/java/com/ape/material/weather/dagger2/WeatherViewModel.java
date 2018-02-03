@@ -32,6 +32,7 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.ObservableSource;
+import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import io.rx_cache2.DynamicKey;
@@ -59,7 +60,7 @@ public class WeatherViewModel extends AndroidViewModel {
         mMenuItemMutableLiveData.setValue(menuItem);
     }
 
-    public MutableLiveData<MenuItem> getMenuItemMutableLiveData(){
+    public MutableLiveData<MenuItem> getMenuItemMutableLiveData() {
         return mMenuItemMutableLiveData;
     }
 
@@ -213,12 +214,28 @@ public class WeatherViewModel extends AndroidViewModel {
                 .searchCity(BuildConfig.HEWEATHER_KEY, query);
     }
 
-    public Observable<HeWeather> getWeather(String city, boolean force) {
+    public Observable<HeWeather> getWeather(final City city, boolean force) {
         final CacheService cacheService = mRepositoryManager.obtainCacheService(CacheService.class);
         final ApiService apiService = mRepositoryManager.obtainRetrofitService(ApiService.class);
-        return cacheService.getWeather(apiService.getWeather(BuildConfig.HEWEATHER_KEY, city, LANG),
+        return cacheService.getWeather(apiService.getWeather(BuildConfig.HEWEATHER_KEY, city.getAreaId(), LANG),
                 new DynamicKey(city), new EvictProvider(force))
                 .timeout(TIMEOUT_DURATION, TimeUnit.SECONDS)
-                .observeOn(Schedulers.io());
+                .observeOn(Schedulers.io())
+                .doOnNext(new Consumer<HeWeather>() {
+                    @Override
+                    public void accept(HeWeather heWeather) throws Exception {
+                        Log.d(TAG, "getWeather: map weather isOK = " + heWeather.isOK());
+                        if (heWeather.isOK()) {
+                            String code = heWeather.getWeather().getNow().getCond().getCode();
+                            String codeTxt = heWeather.getWeather().getNow().getCond().getTxt();
+                            String tmp = heWeather.getWeather().getNow().getTmp();
+                            Log.d(TAG, "getWeather: codeTxt = " + codeTxt + ", code = " + code + ", tmp = " + tmp);
+                            city.setCode(code);
+                            city.setCodeTxt(codeTxt);
+                            city.setTmp(tmp);
+                            getDB(mRepositoryManager).update(city);
+                        }
+                    }
+                });
     }
 }

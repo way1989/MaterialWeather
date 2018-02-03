@@ -21,14 +21,17 @@ import com.ape.material.weather.BuildConfig;
 import com.ape.material.weather.R;
 import com.ape.material.weather.adapter.SearchAdapter;
 import com.ape.material.weather.bean.City;
+import com.ape.material.weather.bean.HotCity;
 import com.ape.material.weather.util.AppConstant;
 import com.ape.material.weather.util.RxSchedulers;
 import com.ape.material.weather.widget.SimpleListDividerDecorator;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.google.gson.GsonBuilder;
 import com.jakewharton.rxbinding2.support.v7.widget.RxSearchView;
 import com.trello.rxlifecycle2.android.ActivityEvent;
 import com.weavey.loading.lib.LoadingLayout;
 
+import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -45,6 +48,7 @@ public class SearchCityActivity extends BaseActivity implements MenuItem.OnActio
     private SearchAdapter mSearchAdapter;
     private SearchView mSearchView;
     private InputMethodManager mInputMethodManager;
+    private List<City> mHotCities;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,10 +57,18 @@ public class SearchCityActivity extends BaseActivity implements MenuItem.OnActio
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+        String json = getString(R.string.hot_city_json);
+        HotCity hotCity = new GsonBuilder()
+                .excludeFieldsWithModifiers(Modifier.PROTECTED)//忽略protected字段
+                .create().fromJson(json, HotCity.class);
+        mHotCities = hotCity.getCities();
+        Log.d(TAG, "onCreate: getHotCity = " + mHotCities);
+
         mInputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mSearchAdapter = new SearchAdapter(R.layout.item_search_city);
-        mSearchAdapter.openLoadAnimation(BaseQuickAdapter.SLIDEIN_BOTTOM);
+        mRecyclerView.setOnTouchListener(this);
+        mSearchAdapter = new SearchAdapter(R.layout.item_search_city, mHotCities);
+        //mSearchAdapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
         mSearchAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
@@ -67,6 +79,8 @@ public class SearchCityActivity extends BaseActivity implements MenuItem.OnActio
         mRecyclerView.setAdapter(mSearchAdapter);
         mRecyclerView.addItemDecoration(new SimpleListDividerDecorator(ContextCompat
                 .getDrawable(getApplicationContext(), R.drawable.list_divider_h), false));
+
+
     }
 
     @Override
@@ -101,8 +115,8 @@ public class SearchCityActivity extends BaseActivity implements MenuItem.OnActio
 
     private void search(String query) {
         if (TextUtils.isEmpty(query) || query.trim().equals("")) {
-            mLoadingLayout.setStatus(LoadingLayout.Empty);
-            mSearchAdapter.setNewData(null);
+            mLoadingLayout.setStatus(LoadingLayout.Success);
+            mSearchAdapter.setNewData(mHotCities);
         } else {
             mLoadingLayout.setStatus(LoadingLayout.Loading);
             mViewModel.search(query)
@@ -141,8 +155,8 @@ public class SearchCityActivity extends BaseActivity implements MenuItem.OnActio
     public void onSearchResult(List<City> cities) {
         Log.d(TAG, "onSearchResult... city size = " + cities.size());
         if (cities.isEmpty()) {
-            mSearchAdapter.setNewData(null);
-            mLoadingLayout.setStatus(LoadingLayout.Empty);
+            mSearchAdapter.setNewData(mHotCities);
+            mLoadingLayout.setStatus(LoadingLayout.Success);
         } else {
             mSearchAdapter.setNewData(cities);
             mLoadingLayout.setStatus(LoadingLayout.Success);
@@ -151,8 +165,8 @@ public class SearchCityActivity extends BaseActivity implements MenuItem.OnActio
 
     public void onSearchError(Throwable e) {
         Log.d(TAG, "onSearchError... e = " + e.getMessage());
-        mSearchAdapter.setNewData(null);
-        mLoadingLayout.setStatus(LoadingLayout.Empty);
+        mSearchAdapter.setNewData(mHotCities);
+        mLoadingLayout.setStatus(LoadingLayout.Success);
         if (BuildConfig.LOG_DEBUG)
             Snackbar.make(mRecyclerView, e.getMessage(), Snackbar.LENGTH_LONG).show();
     }

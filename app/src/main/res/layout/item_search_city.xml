@@ -1,28 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="64dp"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:foreground="?selectableItemBackground"
-              android:gravity="center"
-              android:orientation="horizontal">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    android:foreground="?selectableItemBackground"
+    android:gravity="center"
+    android:orientation="horizontal">
 
     <TextView
         android:id="@+id/city_name_tv"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_gravity="center"
         android:gravity="center"
-        tools:text="深圳"
-        android:textSize="18dp"/>
+        style="?android:attr/textAppearanceMedium"
+        tools:text="深圳" />
 
     <TextView
         android:id="@+id/city_prov_tv"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_gravity="center"
+        android:layout_marginStart="8dp"
         android:gravity="center"
-        tools:text="广东"
-        android:textSize="16dp"/>
+        style="?android:attr/textAppearanceSmall"
+        tools:text="广东" />
 
 </LinearLayout>

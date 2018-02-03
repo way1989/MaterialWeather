@@ -236,14 +236,12 @@ public class WeatherFragment extends BaseFragment implements SwipeRefreshLayout.
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-
-        changeDynamicWeather(mWeather);
-
         if (!isVisibleToUser && mIsDataInitiated) {
             mIsDataInitiated = !(mWeather == null || !mWeather.isOK()
                     || (System.currentTimeMillis() - mWeather.getUpdateTime() > 30 * 60 * 1000));
         }
+        super.setUserVisibleHint(isVisibleToUser);
+        changeDynamicWeather(mWeather);
     }
 
     private void updateWeatherUI() {

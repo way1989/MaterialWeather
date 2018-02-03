@@ -26,13 +26,13 @@ public class City implements Serializable {
     private String lon;
     @ColumnInfo(name = "province")
     private String prov;
-    private int isLocation;
+    protected int isLocation;
     @ColumnInfo(name = "orderIndex")
-    private int index;
+    protected int index;
 
-    private String codeTxt;
-    private String code;
-    private String tmp;
+    protected String codeTxt;
+    protected String code;
+    protected String tmp;
 
     public City() {
 

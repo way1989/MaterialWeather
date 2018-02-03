@@ -47,5 +47,185 @@
     <string name="weather_common_index_title">Common index</string>
     <string name="relocation_toast">new location city: %1$s</string>
     <string name="weather_source_title">HeWeather</string>
+    <string name="hot_city_json">"{
+  "cities": [
+    {
+      "city": "北京",
+      "country": "中国",
+      "areaId": "CN101010100",
+      "lat": "39.904989",
+      "lon": "116.405285",
+      "prov": "北京"
+    },
+    {
+      "city": "上海",
+      "country": "中国",
+      "areaId": "CN101020100",
+      "lat": "31.231706",
+      "lon": "121.472644",
+      "prov": "上海"
+    },
+    {
+      "city": "广州",
+      "country": "中国",
+      "areaId": "CN101280101",
+      "lat": "23.125178",
+      "lon": "113.280637",
+      "prov": "广东"
+    },
+    {
+      "city": "深圳",
+      "country": "中国",
+      "areaId": "CN101280601",
+      "lat": "22.547",
+      "lon": "114.085947",
+      "prov": "广东"
+    },
+    {
+      "city": "珠海",
+      "country": "中国",
+      "areaId": "CN101280701",
+      "lat": "22.224979",
+      "lon": "113.553986",
+      "prov": "广东"
+    },
+    {
+      "city": "佛山",
+      "country": "中国",
+      "areaId": "CN101280800",
+      "lat": "23.028762",
+      "lon": "113.122717",
+      "prov": "广东"
+    },
+    {
+      "city": "南京",
+      "country": "中国",
+      "areaId": "CN101190101",
+      "lat": "32.041544",
+      "lon": "118.767413",
+      "prov": "江苏"
+    },
+    {
+      "city": "苏州",
+      "country": "中国",
+      "areaId": "CN101190401",
+      "lat": "31.299379",
+      "lon": "120.619585",
+      "prov": "江苏"
+    },
+    {
+      "city": "厦门",
+      "country": "中国",
+      "areaId": "CN101230201",
+      "lat": "24.490474",
+      "lon": "118.11022",
+      "prov": "福建"
+    },
+    {
+      "city": "长沙",
+      "country": "中国",
+      "areaId": "CN101250101",
+      "lat": "28.19409",
+      "lon": "112.982279",
+      "prov": "湖南"
+    },
+    {
+      "city": "成都",
+      "country": "中国",
+      "areaId": "CN101270101",
+      "lat": "30.659462",
+      "lon": "104.065735",
+      "prov": "四川"
+    },
+    {
+      "city": "福州",
+      "country": "中国",
+      "areaId": "CN101230101",
+      "lat": "26.075302",
+      "lon": "119.306239",
+      "prov": "福建"
+    },
+    {
+      "city": "杭州",
+      "country": "中国",
+      "areaId": "CN101210101",
+      "lat": "30.287459",
+      "lon": "120.153576",
+      "prov": "浙江"
+    },
+    {
+      "city": "武汉",
+      "country": "中国",
+      "areaId": "CN101200101",
+      "lat": "30.584355",
+      "lon": "114.298572",
+      "prov": "湖北"
+    },
+    {
+      "city": "青岛",
+      "country": "中国",
+      "areaId": "CN101120201",
+      "lat": "36.082982",
+      "lon": "120.355173",
+      "prov": "山东"
+    },
+    {
+      "city": "西安",
+      "country": "中国",
+      "areaId": "CN101050311",
+      "lat": "44.581032",
+      "lon": "129.61311",
+      "prov": "陕西"
+    },
+    {
+      "city": "太原",
+      "country": "中国",
+      "areaId": "CN101100101",
+      "lat": "37.857014",
+      "lon": "112.549248",
+      "prov": "山西"
+    },
+    {
+      "city": "石家庄",
+      "country": "中国",
+      "areaId": "CN101090101",
+      "lat": "38.045474",
+      "lon": "114.502461",
+      "prov": "河北"
+    },
+    {
+      "city": "沈阳",
+      "country": "中国",
+      "areaId": "CN101070101",
+      "lat": "41.796767",
+      "lon": "123.429096",
+      "prov": "辽宁"
+    },
+    {
+      "city": "重庆",
+      "country": "中国",
+      "areaId": "CN101040100",
+      "lat": "29.291965",
+      "lon": "108.170255",
+      "prov": "重庆"
+    },
+    {
+      "city": "天津",
+      "country": "中国",
+      "areaId": "CN101030100",
+      "lat": "39.125596",
+      "lon": "117.190182",
+      "prov": "天津"
+    },
+    {
+      "city": "南宁",
+      "country": "中国",
+      "areaId": "CN101300101",
+      "lat": "22.82402",
+      "lon": "108.320004",
+      "prov": "广西"
+    }
+  ]
+}"</string>
 
 </resources>

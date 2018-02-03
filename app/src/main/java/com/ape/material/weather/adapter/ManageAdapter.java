@@ -1,6 +1,7 @@
 package com.ape.material.weather.adapter;
 
 import android.support.annotation.LayoutRes;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -30,6 +31,9 @@ public class ManageAdapter extends BaseItemDraggableAdapter<City, BaseViewHolder
         CharSequence name = item.getCity();
         if (item.getIsLocation() == 1) {
             name = UiUtil.getNameWithIcon(item.getCity(), tvName.getContext().getDrawable(R.drawable.ic_location_on_black_18dp));
+            helper.getView(R.id.drag_handle).setAlpha(0.2f);
+        } else {
+            helper.getView(R.id.drag_handle).setAlpha(1.0f);
         }
         // set text
         tvName.setText(name);

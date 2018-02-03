@@ -509,7 +509,7 @@ public class FormatUtil {
     int convertWeatherIcon(String weatherCode) {
         final int hourOfDay = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
         final boolean isNotNight = hourOfDay >= 7 && hourOfDay <= 18;
-        final int w = Integer.valueOf(weatherCode);
+        final int w = Integer.valueOf(TextUtils.isEmpty(weatherCode) ? "999" : weatherCode);
         switch (w) {
             case 100:
                 return isNotNight ? R.drawable.ic_stat_icon_sun : R.drawable.ic_stat_icon_sun_night;

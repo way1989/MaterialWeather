@@ -9,13 +9,15 @@ import com.ape.material.weather.bean.City;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 
+import java.util.List;
+
 /**
  * Created by android on 18-1-30.
  */
 
 public class SearchAdapter extends BaseQuickAdapter<City, BaseViewHolder> {
-    public SearchAdapter(@LayoutRes int layoutResId) {
-        super(layoutResId);
+    public SearchAdapter(@LayoutRes int layoutResId, List<City> cities) {
+        super(layoutResId, cities);
     }
 
     @Override
@@ -23,10 +25,6 @@ public class SearchAdapter extends BaseQuickAdapter<City, BaseViewHolder> {
         TextView cityName = helper.getView(R.id.city_name_tv);
         TextView cityProv = helper.getView(R.id.city_prov_tv);
         cityName.setText(item.getCity());
-        if (!TextUtils.isEmpty(item.getProv())) {
-            cityProv.setText("--" + item.getProv() + "--" + item.getCountry());
-        } else {
-            cityProv.setText("--" + item.getCountry());
-        }
+        cityProv.setText(item.getProv());
     }
 }

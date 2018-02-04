@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<TextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/city_name_tv"
+    style="?android:attr/textAppearanceSmall"
+    android:layout_width="match_parent"
+    android:layout_height="32dp"
+    android:layout_gravity="center"
+    android:gravity="start|center_vertical"
+    android:paddingEnd="16dp"
+    android:paddingStart="16dp"
+    android:textColor="@color/colorTextDark2nd"
+    tools:text="深圳"/>
+
+
+

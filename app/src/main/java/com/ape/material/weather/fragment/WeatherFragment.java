@@ -333,12 +333,12 @@ public class WeatherFragment extends BaseFragment implements SwipeRefreshLayout.
             if (weather.hasAqi()) {
                 mWAqiView.setAqi(weather);
                 setAqiDetail(weather);
-//                final String qlty = w.getAqi().getCity().getQlty();
-//                if (TextUtils.isEmpty(qlty)) {
-//                    setTextViewString(R.id.w_now_cond_text, w.getNow().getCond().getTxt());
-//                } else {
-//                    setTextViewString(R.id.w_now_cond_text, w.getNow().getCond().getTxt() + "\r\n" + qlty);
-//                }
+                final String qlty = w.getAqi().getCity().getQlty();
+                if (TextUtils.isEmpty(qlty)) {
+                    setTextViewString(R.id.w_now_cond_text, w.getNow().getCond().getTxt());
+                } else {
+                    setTextViewString(R.id.w_now_cond_text, w.getNow().getCond().getTxt() + "\r\n" + qlty);
+                }
 //                setTextViewString(R.id.w_aqi_detail_text, qlty);
 //                final String pm25 = w.getAqi().getCity().getPm25();
 //                setTextViewString(R.id.w_aqi_pm25, TextUtils.isEmpty(pm25) ? getString(R.string.nodata)
@@ -353,7 +353,7 @@ public class WeatherFragment extends BaseFragment implements SwipeRefreshLayout.
 //                setTextViewString(R.id.w_aqi_no2, TextUtils.isEmpty(no2) ? getString(R.string.nodata)
 //                        : getString(R.string.weather_ug_m3, no2));
             } else {
-//                setTextViewString(R.id.w_now_cond_text, w.getNow().getCond().getTxt());
+                setTextViewString(R.id.w_now_cond_text, w.getNow().getCond().getTxt());
 //                mRootView.findViewById(R.id.air_quality_item).setVisibility(View.GONE);
             }
             setSuggesstion(weather);

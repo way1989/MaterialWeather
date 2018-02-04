@@ -23,6 +23,7 @@ import com.ape.material.weather.R;
 import com.ape.material.weather.adapter.SearchAdapter;
 import com.ape.material.weather.bean.City;
 import com.ape.material.weather.bean.HotCity;
+import com.ape.material.weather.bean.SearchItem;
 import com.ape.material.weather.util.AppConstant;
 import com.ape.material.weather.util.RxSchedulers;
 import com.ape.material.weather.widget.SimpleListDividerDecorator;
@@ -33,6 +34,7 @@ import com.trello.rxlifecycle2.android.ActivityEvent;
 import com.weavey.loading.lib.LoadingLayout;
 
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -50,6 +52,7 @@ public class SearchCityActivity extends BaseActivity implements MenuItem.OnActio
     private SearchView mSearchView;
     private InputMethodManager mInputMethodManager;
     private List<City> mHotCities;
+    private List<SearchItem> mSearchItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,28 +61,41 @@ public class SearchCityActivity extends BaseActivity implements MenuItem.OnActio
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+        mSearchItems = new ArrayList<>();
+
         String json = getString(R.string.hot_city_json);
         HotCity hotCity = new GsonBuilder()
                 .excludeFieldsWithModifiers(Modifier.PROTECTED)//忽略protected字段
                 .create().fromJson(json, HotCity.class);
         mHotCities = hotCity.getCities();
         Log.d(TAG, "onCreate: getHotCity = " + mHotCities);
+        List<SearchItem> searchItems = getSearchItems(mHotCities, true);
+        mSearchItems.addAll(searchItems);
 
         mInputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         mRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
         mRecyclerView.setOnTouchListener(this);
-        mSearchAdapter = new SearchAdapter(R.layout.item_search_city, mHotCities);
+        mSearchAdapter = new SearchAdapter(R.layout.item_search_city, R.layout.item_search_head, mSearchItems);
         //mSearchAdapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
         mSearchAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                final City city = mSearchAdapter.getItem(position);
+                final City city = mSearchAdapter.getItem(position).t;
                 SearchCityActivity.this.onItemClick(city);
             }
         });
         mRecyclerView.setAdapter(mSearchAdapter);
         mRecyclerView.addItemDecoration(new SimpleListDividerDecorator(
                 getDrawable(R.drawable.list_divider_h), getDrawable(R.drawable.list_divider_v),false));
+    }
+
+    private List<SearchItem> getSearchItems(List<City> cities, boolean isHotCity) {
+        List<SearchItem> searchItems = new ArrayList<>();
+        SearchItem searchItem = new SearchItem(true, isHotCity ? "热门城市:" : "搜索结果:");
+        searchItems.add(searchItem);
+        for (City city : cities)
+            searchItems.add(new SearchItem(city));
+        return searchItems;
     }
 
     @Override
@@ -152,16 +168,27 @@ public class SearchCityActivity extends BaseActivity implements MenuItem.OnActio
         Log.d(TAG, "onSearchResult... city size = " + cities.size());
         mLoadingLayout.setStatus(LoadingLayout.Success);
         if (cities.isEmpty()) {
-            mSearchAdapter.setNewData(mHotCities);
+            mSearchItems.clear();
+            List<SearchItem> hotSearchItems = getSearchItems(mHotCities, true);
+            mSearchItems.addAll(hotSearchItems);
+            mSearchAdapter.setNewData(mSearchItems);
         } else {
-            mSearchAdapter.setNewData(cities);
+            mSearchItems.clear();
+            List<SearchItem> hotSearchItems = getSearchItems(mHotCities, true);
+            List<SearchItem> searchItems = getSearchItems(cities, false);
+            mSearchItems.addAll(searchItems);
+            mSearchItems.addAll(hotSearchItems);
+            mSearchAdapter.setNewData(mSearchItems);
         }
     }
 
     public void onSearchError(Throwable e) {
         Log.d(TAG, "onSearchError... e = " + e.getMessage());
         mLoadingLayout.setStatus(LoadingLayout.Success);
-        mSearchAdapter.setNewData(mHotCities);
+        mSearchItems.clear();
+        List<SearchItem> hotSearchItems = getSearchItems(mHotCities, true);
+        mSearchItems.addAll(hotSearchItems);
+        mSearchAdapter.setNewData(mSearchItems);
         if (BuildConfig.LOG_DEBUG)
             Snackbar.make(mRecyclerView, e.getMessage(), Snackbar.LENGTH_LONG).show();
     }

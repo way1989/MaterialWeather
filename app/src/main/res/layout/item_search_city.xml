@@ -13,6 +13,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="center"
         android:gravity="center"
+        android:textColor="@color/colorTextDark"
         style="?android:attr/textAppearanceMedium"
         tools:text="深圳" />
 
@@ -23,6 +24,7 @@
         android:layout_gravity="center"
         android:layout_marginStart="8dp"
         android:gravity="center"
+        android:textColor="@color/colorTextDark2nd"
         style="?android:attr/textAppearanceSmall"
         tools:text="广东" />
 

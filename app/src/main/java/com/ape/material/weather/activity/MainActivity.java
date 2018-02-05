@@ -175,6 +175,7 @@ public class MainActivity extends BaseActivity
         if (mCities != null && !mCities.isEmpty()) {
             mAdapter.setNewData(mCities);
             mMainViewPager.setAdapter(mAdapter);
+            mMainViewPager.setOffscreenPageLimit(mAdapter.getCount() - 1);
             if (mSelectItem >= 0 && mSelectItem < mAdapter.getCount()) {
                 mMainViewPager.setCurrentItem(mSelectItem);
                 mIndicator.notifyDataSetChanged();

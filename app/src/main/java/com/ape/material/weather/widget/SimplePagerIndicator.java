@@ -1,8 +1,11 @@
 package com.ape.material.weather.widget;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.support.annotation.Nullable;
 import android.support.v4.view.PagerAdapter;
@@ -10,6 +13,7 @@ import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.ape.material.weather.R;
 import com.ape.material.weather.util.UiUtil;
 
 import java.util.ArrayList;
@@ -28,12 +32,13 @@ public class SimplePagerIndicator extends View implements ViewPager.OnPageChange
     private Paint roundPaint;
     private Paint selectedRoundPaint;
     private Paint textPaint;
-    private float textSize;
     private float roundRadius;
     private float roundPadding = 10;
     private List<String> titles;
     private int selectedPosition = 0;
     private float positionOffset = 0.0f;
+    private Bitmap locationBitmap;
+    private Matrix matrix;
 
     public SimplePagerIndicator(Context context) {
         this(context, null);
@@ -48,8 +53,9 @@ public class SimplePagerIndicator extends View implements ViewPager.OnPageChange
 
         titles = new ArrayList<>();
 
-        textSize = UiUtil.sp2px(context, 18);
-        roundRadius = 5;
+        float textSize = UiUtil.sp2px(context, 18);
+        roundPadding = UiUtil.dp2px(context, 3);
+        roundRadius = UiUtil.dp2px(context, 2);
 
         roundPaint = new Paint();
         roundPaint.setStyle(Paint.Style.FILL_AND_STROKE);
@@ -71,6 +77,8 @@ public class SimplePagerIndicator extends View implements ViewPager.OnPageChange
         textPaint.setTextSize(textSize);
         textPaint.setTextAlign(Paint.Align.CENTER);
 
+        locationBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_location_on_white_18dp);
+        matrix = new Matrix();
     }
 
     @Override
@@ -87,12 +95,25 @@ public class SimplePagerIndicator extends View implements ViewPager.OnPageChange
             float startX = getWidth() / 2 - roundTotalWidth / 2 + roundRadius;
 
             for (int i = 0; i < count; i++) {
-                canvas.drawCircle(startX + (2 * roundRadius * i) + roundPadding * i, roundBaseline, roundRadius, roundPaint);
+                if (i == 0) {
+                    matrix.reset();
+                    matrix.postScale(0.4f, 0.4f);
+                    matrix.postTranslate(startX - locationBitmap.getWidth()/5, roundBaseline - locationBitmap.getHeight() / 5);
+                    canvas.drawBitmap(locationBitmap, matrix, roundPaint);
+                } else {
+                    canvas.drawCircle(startX + (2 * roundRadius * i) + roundPadding * i, roundBaseline, roundRadius, roundPaint);
+                }
             }
 
             float offSetX = (roundPadding + 2 * roundRadius) * positionOffset;
-
-            canvas.drawCircle(startX + (2 * roundRadius * selectedPosition) + roundPadding * selectedPosition + offSetX, roundBaseline, roundRadius, selectedRoundPaint);
+            if (selectedPosition == 0) {
+                matrix.reset();
+                matrix.postScale(0.4f, 0.4f);
+                matrix.postTranslate(startX + offSetX - locationBitmap.getWidth()/5, roundBaseline - locationBitmap.getHeight() / 5);
+                canvas.drawBitmap(locationBitmap, matrix, selectedRoundPaint);
+            } else {
+                canvas.drawCircle(startX + (2 * roundRadius * selectedPosition) + roundPadding * selectedPosition + offSetX, roundBaseline, roundRadius, selectedRoundPaint);
+            }
         }
 
         if (positionOffset >= 0) {

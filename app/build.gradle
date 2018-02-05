@@ -83,13 +83,6 @@ dependencies {
     implementation "com.jakewharton:butterknife:$rootProject.butterknifeVersion"
     annotationProcessor "com.jakewharton:butterknife-compiler:$rootProject.butterknifeVersion"
 
-    //permission dispatcher
-//    implementation 'com.github.hotchemi:permissionsdispatcher:2.4.0', {
-//        // if you don't use android.app.Fragment you can exclude support for them
-//        exclude module: "support-v13"
-//    }
-//    annotationProcessor 'com.github.hotchemi:permissionsdispatcher-processor:2.4.0'
-
     //rxjava
     implementation 'io.reactivex.rxjava2:rxjava:2.1.6'
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
@@ -104,10 +97,6 @@ dependencies {
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
 
-//    implementation('com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.11.0@aar') {
-//        transitive = true
-//    }
-
     //loading layout
     implementation 'com.lai.weavey:loadinglayout:1.3.1'
 
@@ -119,10 +108,6 @@ dependencies {
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
     releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
     testImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
-
-    //Blockcanary
-    debugCompile 'com.github.markzhai:blockcanary-android:1.5.0'
-    releaseCompile 'com.github.markzhai:blockcanary-no-op:1.5.0'
 
     //sqliteonweb
     debugImplementation 'io.github.skyhacker2:sqliteonweb:1.0.2'
@@ -141,7 +126,6 @@ dependencies {
 
     //rxpermissions
     implementation 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.5@aar'
-    //implementation 'com.github.LinweiJ:ViewPagerIndicator:0.0.2'
 
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.35'
 

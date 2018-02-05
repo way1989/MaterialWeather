@@ -149,6 +149,7 @@ public class AstroView extends View {
 
         try {
             // draw the sun
+            paint.setColor(0xFFFBD029);
             String[] sr = todayForecast.getAstro().getSr().split(":");// 日出
             int srTime = Integer.valueOf(sr[0]) * 60 * 60 + Integer.valueOf(sr[1]) * 60;// 精确到秒
             String[] ss = todayForecast.getAstro().getSs().split(":");// 日落

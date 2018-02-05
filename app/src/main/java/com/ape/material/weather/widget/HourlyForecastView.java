@@ -64,7 +64,7 @@ public class HourlyForecastView extends View {
         if (isInEditMode()) {
             return;
         }
-
+        paint.setColor(0xff424242);
         paint.setStyle(Style.FILL);
 
         // 一共需要 顶部文字2(+图占4行)+底部文字0 + 【间距1 + 日期1 + 间距0.5 +　晴1 + 间距0.5f + 微风1 +
@@ -102,9 +102,11 @@ public class HourlyForecastView extends View {
             x[i] = index * dW + dW / 2f;
             y[i] = dCenterY - d.offsetPercent * dH * smallerPercent;
             // ///draw the froecast data'text
+            paint.setColor(0xFF8FC55F);
             canvas.drawText(d.tmp + "°", x[i], y[i] - textSize + textOffset, paint);
 
             // 降水概率Java字符'\ue612'xml字符&#xe612;
+            paint.setColor(0xff424242);
             if (i == 0) {
                 final float i0_x = dW / 2f;
                 canvas.drawText("时间", i0_x, textSize * 7.5f + textOffset, paint);// 日期d.date.substring(5)
@@ -120,6 +122,7 @@ public class HourlyForecastView extends View {
         final float data_x0 = data_length_offset * dW;
 
         //draw gone tmp path
+        paint.setColor(0xFF8FC55F);
         goneTmpPath.moveTo(0, y[0]);
         goneTmpPath.lineTo(data_x0, y[0]);
         paint.setPathEffect(dashPathEffect);

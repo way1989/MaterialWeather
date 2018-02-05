@@ -90,11 +90,11 @@ public class WeatherViewModel extends AndroidViewModel {
                 });
     }
 
-    public Observable<Boolean> addOrUpdateCity(final City city) {
+    public Observable<City> addCity(final City city) {
         Log.d(TAG, "addCity... city = " + city.getCity());
-        return Observable.create(new ObservableOnSubscribe<Boolean>() {
+        return Observable.create(new ObservableOnSubscribe<City>() {
             @Override
-            public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
+            public void subscribe(ObservableEmitter<City> e) throws Exception {
                 CityDao cityDao = getDB(mRepositoryManager);
                 final boolean exist = cityDao.getCityByAreaId(city.getAreaId()) != null;
                 Log.d(TAG, "addCity... exist = " + exist);
@@ -104,7 +104,7 @@ public class WeatherViewModel extends AndroidViewModel {
                     city.setIndex(cityDao.getCityCount());
                     id = cityDao.insert(city);
                 }
-                e.onNext(!exist && id > 0);
+                e.onNext(!exist && id > 0 ? city : null);
                 e.onComplete();
             }
         });

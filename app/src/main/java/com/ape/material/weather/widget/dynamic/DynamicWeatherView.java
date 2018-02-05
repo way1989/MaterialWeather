@@ -5,10 +5,12 @@ import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.PixelFormat;
+import android.graphics.SurfaceTexture;
 import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.TextureView;
 import android.view.animation.AnimationUtils;
 
 import java.lang.ref.WeakReference;
@@ -18,7 +20,7 @@ import java.lang.ref.WeakReference;
  * Created by liyu on 2017/8/16.
  */
 
-public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Callback {
+public class DynamicWeatherView extends TextureView implements TextureView.SurfaceTextureListener {
 
     private int mFromColor;
     private DrawThread mDrawThread;
@@ -37,9 +39,10 @@ public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Cal
     public DynamicWeatherView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         mWeatherType = new DefaultType(context.getResources());
-        SurfaceHolder holder = getHolder();
-        holder.addCallback(this);
-        holder.setFormat(PixelFormat.RGBA_8888);
+        setSurfaceTextureListener(this);
+//        SurfaceHolder holder = getHolder();
+//        holder.addCallback(this);
+//        holder.setFormat(PixelFormat.RGBA_8888);
     }
 
     public int getColor() {
@@ -95,39 +98,47 @@ public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Cal
 
     public void onDestroy() {
         mDrawThread.setRunning(false);
-        getHolder().removeCallback(this);
+        setSurfaceTextureListener(null);
         if (mWeatherType != null) {
             mWeatherType.endAnimation(null);
         }
     }
 
     @Override
-    public void surfaceCreated(SurfaceHolder holder) {
-        mDrawThread = new DrawThread(holder);
+    public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
+        mDrawThread = new DrawThread(this);
         mDrawThread.setWeatherType(mWeatherType);
         mDrawThread.setRunning(true);
         mDrawThread.start();
         mWeatherType.startAnimation(mWeatherType.getColor());
+
     }
 
     @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+    public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
+
     }
 
     @Override
-    public void surfaceDestroyed(SurfaceHolder holder) {
+    public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
         mDrawThread.setRunning(false);
+        return false;
+    }
+
+    @Override
+    public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+
     }
 
     private static class DrawThread extends Thread {
 
         private final Object mObject = new Object();
-        WeakReference<SurfaceHolder> mSurfaceHolderWeakReference;
+        WeakReference<TextureView> mSurfaceHolderWeakReference;
         WeakReference<BaseWeatherType> mWeatherTypeWeakReference;
         private boolean mIsRunning = false;
         private boolean mSuspended = false;
 
-        DrawThread(SurfaceHolder holder) {
+        DrawThread(TextureView holder) {
             mSurfaceHolderWeakReference = new WeakReference<>(holder);
         }
 
@@ -171,7 +182,7 @@ public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Cal
                 if (!mIsRunning) {
                     return;
                 }
-                SurfaceHolder holder = mSurfaceHolderWeakReference.get();
+                TextureView holder = mSurfaceHolderWeakReference.get();
                 BaseWeatherType weatherType = mWeatherTypeWeakReference.get();
                 if (holder == null || weatherType == null) {
                     continue;

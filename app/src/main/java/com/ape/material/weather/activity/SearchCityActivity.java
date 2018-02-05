@@ -4,10 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
@@ -208,18 +206,18 @@ public class SearchCityActivity extends BaseActivity implements MenuItem.OnActio
     public void onItemClick(final City city) {
         Log.d(TAG, "onItemClick city = " + city.getCity());
         hideInputManager();
-        mViewModel.addOrUpdateCity(city)
-                .compose(this.<Boolean>bindUntilEvent(ActivityEvent.DESTROY))
-                .compose(RxSchedulers.<Boolean>io_main())
-                .subscribe(new Consumer<Boolean>() {
+        mViewModel.addCity(city)
+                .compose(this.<City>bindUntilEvent(ActivityEvent.DESTROY))
+                .compose(RxSchedulers.<City>io_main())
+                .subscribe(new Consumer<City>() {
                     @Override
-                    public void accept(Boolean result) throws Exception {
-                        onSaveCitySucceed(result ? city : null);
+                    public void accept(City result) throws Exception {
+                        onSaveCitySucceed(result);
                     }
                 }, new Consumer<Throwable>() {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
-                        Log.e(TAG, "accept: addOrUpdateCity city = " + city, throwable);
+                        Log.e(TAG, "accept: addCity city = " + city, throwable);
                     }
                 });
     }

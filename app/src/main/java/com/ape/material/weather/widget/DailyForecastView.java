@@ -72,6 +72,7 @@ public class DailyForecastView extends View {
         if (isInEditMode()) {
             return;
         }
+        paint.setColor(0xff424242);
         paint.setStyle(Style.FILL);
         //一共需要 顶部文字2(+图占8行)+底部文字2 + 【间距1 + 日期1 + 间距0.5 +　晴1 + 间距0.5f + 微风1 + 底部边距1f 】 = 18行
         //                                  12     13       14      14.5    15.5      16      17       18
@@ -118,12 +119,15 @@ public class DailyForecastView extends View {
         for (int i = 0; i < length; i++) {
             final Data d = datas[i];
             x[i] = i * dW + dW / 2f;
-            ;
+
             yMax[i] = dCenterY - d.maxOffsetPercent * dH;
             yMin[i] = dCenterY - d.minOffsetPercent * dH;
 
+            paint.setColor(0xFFFD6C35);
             canvas.drawText(d.tmp_max + "°", x[i], yMax[i] - textSize + textOffset, paint);// - textSize
+            paint.setColor(0xFF62B1FF);
             canvas.drawText(d.tmp_min + "°", x[i], yMin[i] + textSize + textOffset, paint);
+            paint.setColor(0xff424242);
             canvas.drawText(FormatUtil.prettyDate(d.date), x[i], textSize * 13.5f + textOffset, paint);//日期d.date.substring(5)
             canvas.drawText(d.cond_txt_d + "", x[i], textSize * 15f + textOffset, paint);//“晴"
             canvas.drawText(d.wind_sc, x[i], textSize * 16.5f + textOffset, paint);//微风
@@ -157,7 +161,9 @@ public class DailyForecastView extends View {
             canvas.clipRect(0, 0, this.width * pathPercent, this.height);
             //canvas.drawColor(0x66ffffff);
         }
+        paint.setColor(0xFFFD6C35);
         canvas.drawPath(tmpMaxPath, paint);
+        paint.setColor(0xFF62B1FF);
         canvas.drawPath(tmpMinPath, paint);
         if (needClip) {
             canvas.restore();

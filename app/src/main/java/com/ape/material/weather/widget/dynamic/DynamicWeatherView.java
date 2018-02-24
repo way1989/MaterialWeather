@@ -122,6 +122,7 @@ public class DynamicWeatherView extends TextureView implements TextureView.Surfa
     @Override
     public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
         mDrawThread.setRunning(false);
+        setSurfaceTextureListener(null);
         return false;
     }
 
@@ -150,21 +151,21 @@ public class DynamicWeatherView extends TextureView implements TextureView.Surfa
         }
 
         void setRunning(boolean running) {
+            mIsRunning = running;
             if (!running) {
                 synchronized (mObject) {
                     mObject.notifyAll();
                 }
             }
-            mIsRunning = running;
         }
 
         void setSuspend(boolean suspend) {
+            this.mSuspended = suspend;
             if (!suspend) {
                 synchronized (mObject) {
                     mObject.notifyAll();
                 }
             }
-            this.mSuspended = suspend;
         }
 
         @Override

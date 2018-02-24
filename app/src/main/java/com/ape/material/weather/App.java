@@ -6,6 +6,7 @@ import com.ape.material.weather.dagger2.AppComponent;
 import com.ape.material.weather.dagger2.AppModule;
 import com.ape.material.weather.dagger2.DaggerAppComponent;
 import com.squareup.leakcanary.LeakCanary;
+import com.tencent.bugly.crashreport.CrashReport;
 
 import io.github.skyhacker2.sqliteonweb.SQLiteOnWeb;
 
@@ -19,7 +20,7 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
+        CrashReport.initCrashReport(getApplicationContext(), BuildConfig.APP_ID, BuildConfig.DEBUG);
         LeakCanary.install(this);
         SQLiteOnWeb.init(this).start();
 
